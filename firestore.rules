@@ -1,11 +1,11 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     // Messages:
-    //   - Anyone can read.
+    //   - Authenticated users can read.
     //   - Authenticated users can add, edit and delete messages.
     //   - Validation: Check uid is same as auth token and text length below 300 char.
     match /messages/{messageId} {
-      allow read;
+      allow read: if request.auth != null;
       allow create, update, delete: if request.auth != null
                     && request.resource.data.uid == request.auth.uid
                     && request.resource.data.text is string

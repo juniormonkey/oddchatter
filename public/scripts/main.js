@@ -53,15 +53,33 @@ function isUserSignedIn() {
   return !!firebase.auth().currentUser;
 }
 
+function checkForCallbacks(text, callbacks) {
+  callbacks.forEach(function(callback) {
+    if (text !== callback + '!!') {
+      return;
+    }
+
+    firebase.firestore()
+      .collection(callback)
+      .doc(getUid())
+      .set({
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(error) {
+      console.error('Error writing new message to database', error);
+    });
+  });
+}
+
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
+  checkForCallbacks(messageText, ['SCIENCE', 'ART', 'MAPS', 'SHIPS', 'RISK']);
+
   // Add a new message entry to the database.
   return firebase.firestore().collection('messages').add({
     uid: getUid(),
     name: getUserName(),
     text: messageText,
     profilePicUrl: getProfilePicUrl(),
-    counted: false,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   }).catch(function(error) {
     console.error('Error writing new message to database', error);
@@ -96,45 +114,21 @@ function loadMessages() {
   listenForCallback('RISK', ['risk.mp4']);
 }
 
+var lastCallbackTimestamp = new Date(Date.now() - 10000);
+
 function listenForCallback(callback, videoUrls) {
-  var messages = firebase.firestore()
-                  .collection('messages')
-                  .where('text', '==', callback + '!!')
-                  .where('counted', '==', false)
-                  .where('timestamp', '>',  new Date(Date.now() - 60000))
-                  .limit(12);
-
-  messages.onSnapshot(function(snapshot) {
-    snapshot.forEach(function(doc) {
-      firebase.firestore()
-        .collection(callback)
-        .doc(doc.data().uid)
-        .set({
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(function() {
-        doc.ref.update({
-          counted: true
-        });
-      }).catch(function(error) {
-        console.error('Error writing new message to database', error);
-      });
-    });
-  });
-
+  var tenSecondsAgo = new Date(Date.now() - 10000);
   var voices = firebase.firestore()
                  .collection(callback)
-                 .where('timestamp', '>',  new Date(Date.now() - 60000))
+                 .where('timestamp', '>',  new Date(Math.max(lastCallbackTimestamp, tenSecondsAgo)))
+                 .orderBy('timestamp', 'desc')
                  .limit(12);
 
   voices.onSnapshot(function(snapshot) {
-    if (snapshot.size > 2) {
+    if (snapshot.size >= 2) {
+      lastCallbackTimestamp = snapshot.docs[0].data().timestamp.toDate();
       var videoUrl = 'video/' + videoUrls[Math.floor(Math.random() * videoUrls.length)]
       displayCallback('!!!!' + callback + '!1!', videoUrl);
-      snapshot.forEach(function(doc) {
-        doc.ref.delete().catch(function(error) {
-          console.error('Error deleting document from database', error);
-        });
-      });
     }
   });
 }
@@ -148,7 +142,7 @@ function nextCallbackId() {
 function displayCallback(message, videoUrl) {
   window.console.log('displayCallback(', message, ');');
   var callbackId = nextCallbackId();
-  displayMessage(callbackId, null, 'THE CROWD GOES WILD', '', 'images/adventureharvey.jpg', videoUrl);
+  displayMessage(callbackId, null, message, '', 'images/adventureharvey.jpg', videoUrl);
 }
 
 // Triggered when the send new message form is submitted.

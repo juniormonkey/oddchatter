@@ -131,7 +131,7 @@ main, #messages-card {
   position: absolute;
   display: flex;
   flex-direction: row;
-  top: 22px;
+  top: 18px;
   width: 100%;
   right: 0;
   padding-left: 10px;
@@ -176,9 +176,13 @@ main, #messages-card {
     width: 33px;
     height: 33px;
     background-size: 33px;
+    font-size: 10px;
   }
   #user-container #user-name {
     display: none;
+  }
+  #user-container .mdl-button {
+    padding: 0 5px;
   }
 }
 .mdl-textfield__label:after {
@@ -203,6 +207,9 @@ main, #messages-card {
 }
 h1, h2, h3, h4 {
   font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif; 
+}
+h3 {
+  font-size: 30px;
 }
 .messagebuttons {
   display: flex;

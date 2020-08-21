@@ -184,6 +184,7 @@ class Callback {
     let messageElement = div.querySelector('.message');
 
     let button = document.createElement('button');
+    button.className = 'mdl-button mdl-js-button mdl-button--raised';
     button.textContent = this.buttonText;
     messageElement.innerHTML = '';
     messageElement.appendChild(button);

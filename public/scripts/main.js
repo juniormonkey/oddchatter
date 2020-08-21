@@ -14,7 +14,7 @@
 'use strict';
 
 const CALLBACK_WINDOW_MS = 10000;
-const CALLBACK_THRESHOLD = 2;
+const CALLBACK_THRESHOLD = 3;
 
 const Timestamp = firebase.firestore.Timestamp;
 
@@ -150,18 +150,19 @@ class Callback {
     let voices = firebase.firestore()
                      .collection(this.text)
                      .orderBy('timestamp', 'desc')
-                     .limit(CALLBACK_THRESHOLD + 1);
+                     .limit(CALLBACK_THRESHOLD);
 
     let callback = this;
     voices.onSnapshot(function(snapshot) {
       let callbackWindowStartMillis = Math.max(
           callback.lastCalledTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
-      if (snapshot.size > CALLBACK_THRESHOLD) {
-        if (snapshot.docs[CALLBACK_THRESHOLD].data().timestamp.toMillis() >
-            callbackWindowStartMillis) {
-          callback.lastCalledTimestampMillis =
-              snapshot.docs[0].data().timestamp.toMillis() + 1000;
-          callback.display(callback.lastCalledTimestampMillis);
+      if (snapshot.size >= CALLBACK_THRESHOLD) {
+        let firstTimestampMillis =
+            snapshot.docs[CALLBACK_THRESHOLD - 1].data().timestamp.toMillis();
+        if (firstTimestampMillis > callbackWindowStartMillis) {
+          let lastTimestampMillis = snapshot.docs[0].data().timestamp.toMillis();
+          callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
+          callback.display(lastTimestampMillis + 1);
         }
       }
     });

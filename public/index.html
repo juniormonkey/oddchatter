@@ -69,14 +69,14 @@
           Sign out
         </button>
         <button id="sign-in" class="mdl-button mdl-js-button mdl-color-text--white">
-          <i class="material-icons">account_circle</i>Sign in with Google
+          <i class="material-icons">account_circle</i>Sign in
         </button>
       </div>
     </div>
   </header>
 
   <main class="public-works mdl-layout__content mdl-color--grey-800">
-    <div id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
+    <div hidden id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
 
       <!-- Messages container -->
       <div id="messages-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
@@ -98,17 +98,17 @@
               </button>
             </form>
             <form id="art-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
+              <button id="art" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                🎨
               </button>
             </form>
             <form id="maps-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
+              <button id="maps" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 🗺️
               </button>
             </form>
             <form id="ships-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
+              <button id="ships" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 🚢
               </button>
             </form>
@@ -120,6 +120,16 @@
         <button class="mdl-snackbar__action" type="button"></button>
       </div>
 
+    </div>
+
+    <div id="signin-splashscreen" class="mdl-cell mdl-cell--12-col mdl-grid">
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-cell mdl-cell--4-col" id="signin-card">
+        <button id="sign-in-splash" class="mdl-button mdl-js-button mdl-button--raised mdl-color-text--white">
+          <i class="material-icons">account_circle</i>Sign in with Google
+        </button>
+      </div>
+      <div class="mdl-layout-spacer"></div>
     </div>
   </main>
 </div>

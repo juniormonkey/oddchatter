@@ -206,6 +206,12 @@ function authStateObserver(user) {
 
     // Hide sign-in button.
     signInButtonElement.setAttribute('hidden', 'true');
+
+    // Hide the sign-in UI
+    splashScreenElement.setAttribute('hidden', 'true');
+
+    // Show the messages UI
+    messagesCardContainerElement.removeAttribute('hidden');
   } else { // User is signed out!
     // Hide user's profile and sign-out button.
     userNameElement.setAttribute('hidden', 'true');
@@ -214,6 +220,12 @@ function authStateObserver(user) {
 
     // Show sign-in button.
     signInButtonElement.removeAttribute('hidden');
+
+    // Show the sign-in UI
+    splashScreenElement.removeAttribute('hidden')
+
+    // Show the messages UI
+    messagesCardContainerElement.setAttribute('hidden', 'true');
   }
 }
 
@@ -382,6 +394,9 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
+var splashScreenElement = document.getElementById('signin-splashscreen');
+var signInSplashButtonElement = document.getElementById('sign-in-splash');
+var messagesCardContainerElement = document.getElementById('messages-card-container');
 
 var scienceFormElement = document.getElementById('science-form');
 scienceFormElement.addEventListener('submit', onScienceFormSubmit);
@@ -399,6 +414,7 @@ shipsFormElement.addEventListener('submit', onShipsFormSubmit);
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
+signInSplashButtonElement.addEventListener('click', signIn);
 
 // Toggle for the button.
 messageInputElement.addEventListener('keyup', toggleButton);

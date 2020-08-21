@@ -54,7 +54,7 @@ function isUserSignedIn() {
 }
 
 function checkForCallbacks(text, callbacks) {
-  callbacks.forEach(function(callback) {
+  callbacks.forEach((callback) => {
     if (text !== callback + '!!') {
       return;
     }
@@ -127,7 +127,9 @@ function displayOnBoardingButton(id, timestamp, buttonText, callback, videoUrl, 
 
 // Introduces everything and initializes the background audio.
 async function onBoarding() {
-  await displayOnBoardingMessage('onboarding1', 1, 'This is not a quiet event! Let me show you how it works...');
+  await displayOnBoardingMessage('onboarding0', 1, 'Welcome to the Odd Chatter room!');
+  await displayOnBoardingMessage('onboarding1', 1, 'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
+  await displayOnBoardingMessage('onboarding1a', 1, 'Let me show you how it works...');
   await displayOnBoardingMessage('onboarding2', 2, 'When you hear or see some SCIENCE, click this button to make some noise:');
   await displayOnBoardingButton('science', 3, '🔬', 'SCIENCE', 'video/science1.mp4', scienceAudioElement);
   await waitFor(2000);
@@ -146,7 +148,6 @@ async function onBoarding() {
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
-  window.console.log('loadMessage');
   // Create the query to load the last 12 messages and listen for new ones.
   var query = firebase.firestore()
                   .collection('messages')
@@ -198,7 +199,6 @@ function nextCallbackId() {
 }
 
 function displayCallback(message, timestamp, videoUrl, audioElement) {
-  window.console.log('displayCallback(', message, ');');
   var callbackId = nextCallbackId();
   displayMessage(callbackId, firebase.firestore.Timestamp.fromMillis(timestamp), message, '', 'images/adventureharvey.jpg', videoUrl);
   audioElement.play();

@@ -1,6 +1,4 @@
 /**
- * Copyright 2018 Google Inc. All Rights Reserved.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +13,19 @@
  */
 'use strict';
 
-// Signs-in Friendly Chat.
+const CALLBACK_WINDOW_MS = 10000;
+const CALLBACK_THRESHOLD = 2;
+
+const Timestamp = firebase.firestore.Timestamp;
+
+// Signs-in Odd Chatter.
 function signIn() {
   // Sign in Firebase with credential from the Google user.
   var provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
 }
 
-// Signs-out of Friendly Chat.
+// Signs-out of Odd Chatter.
 function signOut() {
   // Sign out of Firebase.
   firebase.auth().signOut();
@@ -91,7 +94,7 @@ const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
 async function displayOnBoardingMessage(id, timestamp, message) {
   displayMessage(
       id,
-      new firebase.firestore.Timestamp(timestamp),
+      Timestamp.fromMillis(timestamp),
       'Harvey',
       message,
       'images/adventureharvey.jpg',
@@ -100,7 +103,7 @@ async function displayOnBoardingMessage(id, timestamp, message) {
 }
 
 function displayOnBoardingButton(id, timestamp, buttonText, callback, videoUrl, audioElement) {
-  var div = createAndInsertMessage(id, new firebase.firestore.Timestamp(timestamp));
+  var div = createAndInsertMessage(id, Timestamp.fromMillis(timestamp));
 
   div.querySelector('.name').textContent = 'Harvey';
   div.querySelector('.pic').style.backgroundImage =
@@ -128,21 +131,21 @@ function displayOnBoardingButton(id, timestamp, buttonText, callback, videoUrl, 
 // Introduces everything and initializes the background audio.
 async function onBoarding() {
   await displayOnBoardingMessage('onboarding0', 1, 'Welcome to the Odd Chatter room!');
-  await displayOnBoardingMessage('onboarding1', 1, 'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
-  await displayOnBoardingMessage('onboarding1a', 1, 'Let me show you how it works...');
-  await displayOnBoardingMessage('onboarding2', 2, 'When you hear or see some SCIENCE, click this button to make some noise:');
-  await displayOnBoardingButton('science', 3, '🔬', 'SCIENCE', 'video/science1.mp4', scienceAudioElement);
+  await displayOnBoardingMessage('onboarding1', 10, 'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
+  await displayOnBoardingMessage('onboarding1a', 15, 'Let me show you how it works...');
+  await displayOnBoardingMessage('onboarding2', 20, 'When you hear or see some SCIENCE, click this button to make some noise:');
+  await displayOnBoardingButton('science', 30, '🔬', 'SCIENCE', 'video/science1.mp4', scienceAudioElement);
   await waitFor(2000);
-  await displayOnBoardingMessage('onboarding3', 4, 'When there\'s some ART, click this button:');
-  await displayOnBoardingButton('art', 5, '🎨', 'ART', 'video/art1.mp4', artAudioElement);
+  await displayOnBoardingMessage('onboarding3', 40, 'When there\'s some ART, click this button:');
+  await displayOnBoardingButton('art', 50, '🎨', 'ART', 'video/art1.mp4', artAudioElement);
   await waitFor(2000);
-  await displayOnBoardingMessage('onboarding4', 6, 'Whenever you spot a MAP, this is your button:');
-  await displayOnBoardingButton('maps', 7, '🗺️', 'MAPS', 'video/maps1.mp4', mapsAudioElement);
+  await displayOnBoardingMessage('onboarding4', 60, 'Whenever you spot a MAP, this is your button:');
+  await displayOnBoardingButton('maps', 70, '🗺️', 'MAPS', 'video/maps1.mp4', mapsAudioElement);
   await waitFor(2000);
-  await displayOnBoardingMessage('onboarding5', 8, 'And how could we forget seafaring vessels - click here for SHIPS:');
-  await displayOnBoardingButton('ships', 9, '🚢', 'SHIPS', 'video/ships1.mp4', shipsAudioElement);
+  await displayOnBoardingMessage('onboarding5', 80, 'And how could we forget seafaring vessels - click here for SHIPS:');
+  await displayOnBoardingButton('ships', 90, '🚢', 'SHIPS', 'video/ships1.mp4', shipsAudioElement);
   await waitFor(2000);
-  await displayOnBoardingMessage('onboarding6', 10, 'Now you\'re ready to learn something weird!');
+  await displayOnBoardingMessage('onboarding6', 100, 'Now you\'re ready to learn something weird!');
   return waitFor(150);
 }
 
@@ -173,19 +176,23 @@ function loadMessages() {
   listenForCallback('SHIPS', ['ships1.mp4', 'ships2.mp4', 'ships3.mp4', 'ships4.mp4', 'ships5.mp4', 'ships6.mp4'], shipsAudioElement);
 }
 
-var lastCallbackTimestamp = new Date(Date.now() - 10000);
+var lastCallbackTimestampMillis = Date.now() - CALLBACK_WINDOW_MS;
 
 function listenForCallback(callback, videoUrls, audioElement) {
-  var tenSecondsAgo = new Date(Date.now() - 10000);
+  var callbackWindowStartMillis = Math.max(lastCallbackTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
   var voices = firebase.firestore()
                  .collection(callback)
-                 .where('timestamp', '>',  new Date(Math.max(lastCallbackTimestamp, tenSecondsAgo)))
+                 .where('timestamp', '>',  Timestamp.fromMillis(callbackWindowStartMillis))
                  .orderBy('timestamp', 'desc')
-                 .limit(12);
+                 .limit(CALLBACK_THRESHOLD + 1);
 
   voices.onSnapshot(function(snapshot) {
-    if (snapshot.size >= 2) {
-      lastCallbackTimestamp = snapshot.docs[0].data().timestamp.toDate();
+    if (snapshot.size > 0) {
+      window.console.log("voice.onSnapshot() id[0]=", snapshot.docs[0].id, "date[0]=", snapshot.docs[0].data().timestamp.toDate());
+    }
+    if (snapshot.size >= CALLBACK_THRESHOLD) {
+      window.console.log("
+      lastCallbackTimestampMillis = snapshot.docs[0].data().timestamp.toMillis();
       var videoUrl = 'video/' + videoUrls[Math.floor(Math.random() * videoUrls.length)]
       displayCallback('!!!!' + callback + '!1!', lastCallbackTimestamp.getTime(), videoUrl, audioElement);
     }
@@ -200,7 +207,7 @@ function nextCallbackId() {
 
 function displayCallback(message, timestamp, videoUrl, audioElement) {
   var callbackId = nextCallbackId();
-  displayMessage(callbackId, firebase.firestore.Timestamp.fromMillis(timestamp), message, '', 'images/adventureharvey.jpg', videoUrl);
+  displayMessage(callbackId, Timestamp.fromMillis(timestamp), message, '', 'images/adventureharvey.jpg', videoUrl);
   audioElement.play();
 }
 

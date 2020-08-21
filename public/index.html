@@ -52,9 +52,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap">
   <link rel="stylesheet" href="styles/main.css">
 
-  <!-- TODO: Enable First Input Delay polyfill library. -->
-  <!--  <script type="text/javascript">!function(n,e){var t,o,i,c=[],f={passive:!0,capture:!0},r=new Date,a="pointerup",u="pointercancel";function p(n,c){t||(t=c,o=n,i=new Date,w(e),s())}function s(){o>=0&&o<i-r&&(c.forEach(function(n){n(o,t)}),c=[])}function l(t){if(t.cancelable){var o=(t.timeStamp>1e12?new Date:performance.now())-t.timeStamp;"pointerdown"==t.type?function(t,o){function i(){p(t,o),r()}function c(){r()}function r(){e(a,i,f),e(u,c,f)}n(a,i,f),n(u,c,f)}(o,t):p(o,t)}}function w(n){["click","mousedown","keydown","touchstart","pointerdown"].forEach(function(e){n(e,l,f)})}w(n),self.perfMetrics=self.perfMetrics||{},self.perfMetrics.onFirstInputDelay=function(n){c.push(n),s()}}(addEventListener,removeEventListener);</script> -->
-
 </head>
 <body>
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
@@ -68,10 +65,10 @@
       <div id="user-container">
         <div hidden id="user-pic"></div>
         <div hidden id="user-name"></div>
-        <button hidden id="sign-out" class="mdl-button mdl-js-button dl-color-text--white"><!-- mdl-js-ripple-effect m -->
+        <button hidden id="sign-out" class="mdl-button mdl-js-button dl-color-text--white">
           Sign out
         </button>
-        <button id="sign-in" class="mdl-button mdl-js-button dl-color-text--white"><!-- mdl-js-ripple-effect m -->
+        <button id="sign-in" class="mdl-button mdl-js-button dl-color-text--white">
           <i class="material-icons">account_circle</i>Sign in with Google
         </button>
       </div>
@@ -91,28 +88,27 @@
               <input class="mdl-textfield__input" type="text" id="message" autocomplete="off">
               <label class="mdl-textfield__label" for="message">Message...</label>
             </div>
-            <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised"><!-- mdl-js-ripple-effect m -->
-              Send
+            <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised">              Send
             </button>
           </form>
           <div class="messagebuttons">
             <form id="science-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised"><!-- mdl-js-ripple-effect m -->
+              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 SCIENCE!!
               </button>
             </form>
             <form id="art-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised"><!-- mdl-js-ripple-effect m -->
+              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                ART!!
               </button>
             </form>
             <form id="maps-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised"><!-- mdl-js-ripple-effect m -->
+              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 MAPS!!
               </button>
             </form>
             <form id="ships-form" class="one-button-form" action=#">
-              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised"><!-- mdl-js-ripple-effect m -->
+              <button id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 SHIPS!!
               </button>
             </form>

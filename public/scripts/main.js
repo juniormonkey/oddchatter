@@ -124,13 +124,14 @@ onBoarding() {
   }
   await displayOnBoardingMessage(timestamp++,
                                  'Now you\'re ready to learn something weird!');
-  waitFor(150);
+  waitFor(250);
 
-  toggleButton();
   scienceButtonElement.removeAttribute('disabled');
   artButtonElement.removeAttribute('disabled');
   mapsButtonElement.removeAttribute('disabled');
   shipsButtonElement.removeAttribute('disabled');
+  messageInputElement.removeAttribute('disabled');
+  messageInputElement.focus();
 
   return waitFor(1);
 }
@@ -146,23 +147,22 @@ class Callback {
   }
 
   listenInChat() {
-    let callbackWindowStartMillis = Math.max(this.lastCalledTimestampMillis,
-                                             Date.now() - CALLBACK_WINDOW_MS);
     let voices = firebase.firestore()
                      .collection(this.text)
-                     .where('timestamp', '>',
-                            Timestamp.fromMillis(callbackWindowStartMillis))
                      .orderBy('timestamp', 'desc')
                      .limit(CALLBACK_THRESHOLD + 1);
 
     let callback = this;
     voices.onSnapshot(function(snapshot) {
-      if (snapshot.size > 0) {
-      }
-      if (snapshot.size >= CALLBACK_THRESHOLD) {
-        callback.lastCalledTimestampMillis =
-            snapshot.docs[0].data().timestamp.toMillis() + 1000;
-        callback.display(callback.lastCalledTimestampMillis);
+      let callbackWindowStartMillis = Math.max(
+          callback.lastCalledTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
+      if (snapshot.size > CALLBACK_THRESHOLD) {
+        if (snapshot.docs[CALLBACK_THRESHOLD].data().timestamp.toMillis() >
+            callbackWindowStartMillis) {
+          callback.lastCalledTimestampMillis =
+              snapshot.docs[0].data().timestamp.toMillis() + 1000;
+          callback.display(callback.lastCalledTimestampMillis);
+        }
       }
     });
   }

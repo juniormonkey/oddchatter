@@ -72,7 +72,7 @@ function checkForCallbacks(text, callbacks) {
 
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
-  checkForCallbacks(messageText, ['SCIENCE', 'ART', 'MAPS', 'SHIPS', 'RISK']);
+  checkForCallbacks(messageText, ['SCIENCE', 'ART', 'MAPS', 'SHIPS']);
 
   // Add a new message entry to the database.
   return firebase.firestore().collection('messages').add({
@@ -86,18 +86,29 @@ function saveMessage(messageText) {
   });
 }
 
-function displayOnBoardingMessage(id, message) {}
+const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
 
-// Introduces everything and initializes the background audio.
-function onBoarding() {
-  var div = createAndInsertMessage('science', new firebase.firestore.Timestamp(1));
+async function displayOnBoardingMessage(id, timestamp, message) {
+  displayMessage(
+      id,
+      new firebase.firestore.Timestamp(timestamp),
+      'Harvey',
+      message,
+      'images/adventureharvey.jpg',
+      null);
+  await waitFor(100);
+}
+
+function displayOnBoardingButton(id, timestamp, buttonText, callback, videoUrl, audioElement) {
+  var div = createAndInsertMessage(id, new firebase.firestore.Timestamp(timestamp));
 
   div.querySelector('.name').textContent = 'Harvey';
-  div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic('images/adventureharvey.jpg') + ')';
+  div.querySelector('.pic').style.backgroundImage =
+      'url(' + addSizeToGoogleProfilePic('images/adventureharvey.jpg') + ')';
   var messageElement = div.querySelector('.message');
 
   var button = document.createElement('button');
-  button.textContent = 'SCIENCE';
+  button.textContent = buttonText;
   messageElement.innerHTML = '';
   messageElement.appendChild(button);
 
@@ -108,16 +119,34 @@ function onBoarding() {
 
   return new Promise((resolve, reject) => {
     button.addEventListener('click', e => {
-      scienceAudioElement.play();
+      displayCallback('!!!!' + callback + '!1!', timestamp, videoUrl, audioElement);
       resolve();
     });
   });
+}
 
-  // How do we wait for the user to finish this before going to loadMessages? idk.
+// Introduces everything and initializes the background audio.
+async function onBoarding() {
+  await displayOnBoardingMessage('onboarding1', 1, 'This is not a quiet event! Let me show you how it works...');
+  await displayOnBoardingMessage('onboarding2', 2, 'When you hear or see some SCIENCE, click this button to make some noise:');
+  await displayOnBoardingButton('science', 3, '🔬', 'SCIENCE', 'video/science1.mp4', scienceAudioElement);
+  await waitFor(2000);
+  await displayOnBoardingMessage('onboarding3', 4, 'When there\'s some ART, click this button:');
+  await displayOnBoardingButton('art', 5, '🎨', 'ART', 'video/art1.mp4', artAudioElement);
+  await waitFor(2000);
+  await displayOnBoardingMessage('onboarding4', 6, 'Whenever you spot a MAP, this is your button:');
+  await displayOnBoardingButton('maps', 7, '🗺️', 'MAPS', 'video/maps1.mp4', mapsAudioElement);
+  await waitFor(2000);
+  await displayOnBoardingMessage('onboarding5', 8, 'And how could we forget seafaring vessels - click here for SHIPS:');
+  await displayOnBoardingButton('ships', 9, '🚢', 'SHIPS', 'video/ships1.mp4', shipsAudioElement);
+  await waitFor(2000);
+  await displayOnBoardingMessage('onboarding6', 10, 'Now you\'re ready to learn something weird!');
+  return waitFor(150);
 }
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
+  window.console.log('loadMessage');
   // Create the query to load the last 12 messages and listen for new ones.
   var query = firebase.firestore()
                   .collection('messages')
@@ -138,10 +167,9 @@ function loadMessages() {
   });
 
   listenForCallback('SCIENCE', ['science1.mp4', 'science2.mp4', 'science3.mp4', 'science4.mp4', 'science5.mp4', 'science6.mp4', 'science7.mp4'], scienceAudioElement);
-  listenForCallback('ART', ['art1.mp4', 'art2.mp4', 'art3.mp4'], scienceAudioElement);
-  listenForCallback('MAPS', ['maps1.mp4', 'maps2.mp4'], scienceAudioElement);
-  listenForCallback('SHIPS', ['ships1.mp4', 'ships2.mp4', 'ships3.mp4', 'ships4.mp4', 'ships5.mp4', 'ships6.mp4'], scienceAudioElement);
-  listenForCallback('RISK', ['risk.mp4'], scienceAudioElement);
+  listenForCallback('ART', ['art1.mp4', 'art2.mp4', 'art3.mp4'], artAudioElement);
+  listenForCallback('MAPS', ['maps1.mp4', 'maps2.mp4'], mapsAudioElement);
+  listenForCallback('SHIPS', ['ships1.mp4', 'ships2.mp4', 'ships3.mp4', 'ships4.mp4', 'ships5.mp4', 'ships6.mp4'], shipsAudioElement);
 }
 
 var lastCallbackTimestamp = new Date(Date.now() - 10000);
@@ -158,7 +186,7 @@ function listenForCallback(callback, videoUrls, audioElement) {
     if (snapshot.size >= 2) {
       lastCallbackTimestamp = snapshot.docs[0].data().timestamp.toDate();
       var videoUrl = 'video/' + videoUrls[Math.floor(Math.random() * videoUrls.length)]
-      displayCallback('!!!!' + callback + '!1!', videoUrl, audioElement);
+      displayCallback('!!!!' + callback + '!1!', lastCallbackTimestamp.getTime(), videoUrl, audioElement);
     }
   });
 }
@@ -169,10 +197,10 @@ function nextCallbackId() {
   return 'callback-message-' + callbackIdx++;
 }
 
-function displayCallback(message, videoUrl, audioElement) {
+function displayCallback(message, timestamp, videoUrl, audioElement) {
   window.console.log('displayCallback(', message, ');');
   var callbackId = nextCallbackId();
-  displayMessage(callbackId, null, message, '', 'images/adventureharvey.jpg', videoUrl);
+  displayMessage(callbackId, firebase.firestore.Timestamp.fromMillis(timestamp), message, '', 'images/adventureharvey.jpg', videoUrl);
   audioElement.play();
 }
 
@@ -367,6 +395,7 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
       messageListElement.scrollTop = messageListElement.scrollHeight;
     });
     video.playsInline = true;
+    video.autoplay = true;
     video.muted = true;
     video.className = 'callback-video';
     var mp4 = document.createElement('source');
@@ -423,6 +452,9 @@ var signInSplashButtonElement = document.getElementById('sign-in-splash');
 var messagesCardContainerElement = document.getElementById('messages-card-container');
 
 var scienceAudioElement = document.getElementById('science-audio');
+var artAudioElement = document.getElementById('art-audio');
+var mapsAudioElement = document.getElementById('maps-audio');
+var shipsAudioElement = document.getElementById('ships-audio');
 
 var scienceFormElement = document.getElementById('science-form');
 scienceFormElement.addEventListener('submit', onScienceFormSubmit);
@@ -449,7 +481,7 @@ messageInputElement.addEventListener('change', toggleButton);
 // initialize Firebase
 initFirebaseAuth();
 
-onBoarding().then(() => 
+onBoarding().then(() =>
 
 // We load currently existing chat messages and listen to new ones.
 loadMessages());

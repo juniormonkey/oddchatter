@@ -18,10 +18,22 @@ const CALLBACK_THRESHOLD = 2;
 
 const Timestamp = firebase.firestore.Timestamp;
 
+class IncrementingId {
+  constructor(text) {
+    this.text = text;
+    this.index = 0;
+  }
+
+  next() { return this.text + this.index++; }
+}
+
+const onboardingId = new IncrementingId('onboarding-message-');
+const callbackId = new IncrementingId('callback-message-');
+
 // Signs-in Odd Chatter.
 function signIn() {
   // Sign in Firebase with credential from the Google user.
-  var provider = new firebase.auth.GoogleAuthProvider();
+  const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
 }
 
@@ -39,176 +51,189 @@ function initFirebaseAuth() {
 
 // Returns the signed-in user's profile Pic URL.
 function getProfilePicUrl() {
-  return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
+  return firebase.auth().currentUser.photoURL ||
+         '/images/profile_placeholder.png';
 }
 
-function getUid() {
-  return firebase.auth().currentUser.uid;
-}
+function getUid() { return firebase.auth().currentUser.uid; }
 
 // Returns the signed-in user's display name.
-function getUserName() {
-  return firebase.auth().currentUser.displayName;
-}
+function getUserName() { return firebase.auth().currentUser.displayName; }
 
 // Returns true if a user is signed-in.
-function isUserSignedIn() {
-  return !!firebase.auth().currentUser;
-}
+function isUserSignedIn() { return !!firebase.auth().currentUser; }
 
-function checkForCallbacks(text, callbacks) {
+function checkForCallbacks(text) {
   callbacks.forEach((callback) => {
-    if (text !== callback + '!!') {
+    if (text !== callback.text + '!!') {
       return;
     }
 
     firebase.firestore()
-      .collection(callback)
-      .doc(getUid())
-      .set({
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(function(error) {
-      console.error('Error writing new message to database', error);
-    });
+        .collection(callback.text)
+        .doc(getUid())
+        .set({timestamp : firebase.firestore.FieldValue.serverTimestamp()})
+        .catch(function(error) {
+          console.error('Error writing new message to database', error);
+        });
   });
 }
 
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
-  checkForCallbacks(messageText, ['SCIENCE', 'ART', 'MAPS', 'SHIPS']);
+  checkForCallbacks(messageText);
 
   // Add a new message entry to the database.
-  return firebase.firestore().collection('messages').add({
-    uid: getUid(),
-    name: getUserName(),
-    text: messageText,
-    profilePicUrl: getProfilePicUrl(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  }).catch(function(error) {
-    console.error('Error writing new message to database', error);
-  });
+  return firebase.firestore()
+      .collection('messages')
+      .add({
+        uid : getUid(),
+        name : getUserName(),
+        text : messageText,
+        profilePicUrl : getProfilePicUrl(),
+        timestamp : firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .catch(function(error) {
+        console.error('Error writing new message to database', error);
+      });
 }
 
-const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
+const waitFor = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
-async function displayOnBoardingMessage(id, timestamp, message) {
-  displayMessage(
-      id,
-      Timestamp.fromMillis(timestamp),
-      'Harvey',
-      message,
-      'images/adventureharvey.jpg',
-      null);
+async function displayOnBoardingMessage(timestamp, message) {
+  displayMessage(onboardingId.next(), Timestamp.fromMillis(timestamp), 'Harvey',
+                 message, 'images/adventureharvey.jpg', null);
   await waitFor(100);
 }
 
-function displayOnBoardingButton(id, timestamp, buttonText, callback, videoUrl, audioElement) {
-  var div = createAndInsertMessage(id, Timestamp.fromMillis(timestamp));
+// Introduces everything and initializes the background audio.
+async function
+onBoarding() {
+  // Use a artificially low timestamp so that all real messages appear after the
+  // onboarding.
+  let timestamp = 1;
+  await displayOnBoardingMessage(timestamp++,
+                                 'Welcome to the Odd Chatter room!');
+  await displayOnBoardingMessage(
+      timestamp++,
+      'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
+  await displayOnBoardingMessage(timestamp++,
+                                 'Let me show you how it works...');
+  for (const callback of callbacks) {
+    await callback.onboard();
+  }
+  await displayOnBoardingMessage(timestamp++,
+                                 'Now you\'re ready to learn something weird!');
+  waitFor(150);
 
-  div.querySelector('.name').textContent = 'Harvey';
-  div.querySelector('.pic').style.backgroundImage =
-      'url(' + addSizeToGoogleProfilePic('images/adventureharvey.jpg') + ')';
-  var messageElement = div.querySelector('.message');
+  toggleButton();
+  scienceButtonElement.removeAttribute('disabled');
+  artButtonElement.removeAttribute('disabled');
+  mapsButtonElement.removeAttribute('disabled');
+  shipsButtonElement.removeAttribute('disabled');
 
-  var button = document.createElement('button');
-  button.textContent = buttonText;
-  messageElement.innerHTML = '';
-  messageElement.appendChild(button);
-
-  // Show the card fading-in and scroll to view the new message.
-  setTimeout(function() {div.classList.add('visible')}, 1);
-  messageListElement.scrollTop = messageListElement.scrollHeight;
-  messageInputElement.focus();
-
-  return new Promise((resolve, reject) => {
-    button.addEventListener('click', e => {
-      displayCallback('!!!!' + callback + '!1!', timestamp, videoUrl, audioElement);
-      resolve();
-    });
-  });
+  return waitFor(1);
 }
 
-// Introduces everything and initializes the background audio.
-async function onBoarding() {
-  await displayOnBoardingMessage('onboarding0', 1, 'Welcome to the Odd Chatter room!');
-  await displayOnBoardingMessage('onboarding1', 10, 'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
-  await displayOnBoardingMessage('onboarding1a', 15, 'Let me show you how it works...');
-  await displayOnBoardingMessage('onboarding2', 20, 'When you hear or see some SCIENCE, click this button to make some noise:');
-  await displayOnBoardingButton('science', 30, '🔬', 'SCIENCE', 'video/science1.mp4', scienceAudioElement);
-  await waitFor(2000);
-  await displayOnBoardingMessage('onboarding3', 40, 'When there\'s some ART, click this button:');
-  await displayOnBoardingButton('art', 50, '🎨', 'ART', 'video/art1.mp4', artAudioElement);
-  await waitFor(2000);
-  await displayOnBoardingMessage('onboarding4', 60, 'Whenever you spot a MAP, this is your button:');
-  await displayOnBoardingButton('maps', 70, '🗺️', 'MAPS', 'video/maps1.mp4', mapsAudioElement);
-  await waitFor(2000);
-  await displayOnBoardingMessage('onboarding5', 80, 'And how could we forget seafaring vessels - click here for SHIPS:');
-  await displayOnBoardingButton('ships', 90, '🚢', 'SHIPS', 'video/ships1.mp4', shipsAudioElement);
-  await waitFor(2000);
-  await displayOnBoardingMessage('onboarding6', 100, 'Now you\'re ready to learn something weird!');
-  return waitFor(150);
+class Callback {
+  constructor(text, onboardingMessage, buttonText, videoUrls, audioElement) {
+    this.text = text;
+    this.onboardingMessage = onboardingMessage;
+    this.buttonText = buttonText;
+    this.videoUrls = videoUrls;
+    this.audioElement = audioElement;
+    this.lastCalledTimestampMillis = Date.now() - CALLBACK_WINDOW_MS;
+  }
+
+  listenInChat() {
+    let callbackWindowStartMillis = Math.max(this.lastCalledTimestampMillis,
+                                             Date.now() - CALLBACK_WINDOW_MS);
+    let voices = firebase.firestore()
+                     .collection(this.text)
+                     .where('timestamp', '>',
+                            Timestamp.fromMillis(callbackWindowStartMillis))
+                     .orderBy('timestamp', 'desc')
+                     .limit(CALLBACK_THRESHOLD + 1);
+
+    let callback = this;
+    voices.onSnapshot(function(snapshot) {
+      if (snapshot.size > 0) {
+      }
+      if (snapshot.size >= CALLBACK_THRESHOLD) {
+        callback.lastCalledTimestampMillis =
+            snapshot.docs[0].data().timestamp.toMillis() + 1000;
+        callback.display(callback.lastCalledTimestampMillis);
+      }
+    });
+  }
+
+  async onboard(timestamp) {
+    await displayOnBoardingMessage(timestamp, this.onboardingMessage);
+    await this.displayOnBoardingButton(timestamp);
+    await waitFor(2000);
+  }
+
+  async displayOnBoardingButton(timestamp) {
+    let div = createAndInsertMessage(onboardingId.next(),
+                                     Timestamp.fromMillis(timestamp));
+
+    div.querySelector('.name').textContent = 'Harvey';
+    div.querySelector('.pic').style.backgroundImage =
+        'url(' + addSizeToGoogleProfilePic('images/adventureharvey.jpg') + ')';
+    let messageElement = div.querySelector('.message');
+
+    let button = document.createElement('button');
+    button.textContent = this.buttonText;
+    messageElement.innerHTML = '';
+    messageElement.appendChild(button);
+
+    // Show the card fading-in and scroll to view the new message.
+    setTimeout(function() { div.classList.add('visible') }, 1);
+    messageListElement.scrollTop = messageListElement.scrollHeight;
+    messageInputElement.focus();
+
+    let callback = this;
+    return new Promise((resolve, reject) => {
+      button.addEventListener('click', (e) => {
+        callback.display(timestamp);
+        resolve();
+      });
+    });
+  }
+
+  display(timestamp) {
+    let message = '!!!!' + this.text + '!1!';
+    let video =
+        'video/' +
+        this.videoUrls[Math.floor(Math.random() * this.videoUrls.length)];
+    displayMessage(callbackId.next(), Timestamp.fromMillis(timestamp), message,
+                   '', 'images/adventureharvey.jpg', video);
+    this.audioElement.play();
+  }
 }
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
   // Create the query to load the last 12 messages and listen for new ones.
-  var query = firebase.firestore()
+  let query = firebase.firestore()
                   .collection('messages')
                   .orderBy('timestamp', 'desc')
                   .limit(12);
-  
+
   // Start listening to the query.
   query.onSnapshot(function(snapshot) {
     snapshot.docChanges().forEach(function(change) {
       if (change.type === 'removed') {
         deleteMessage(change.doc.id);
       } else {
-        var message = change.doc.data();
+        let message = change.doc.data();
         displayMessage(change.doc.id, message.timestamp, message.name,
                        message.text, message.profilePicUrl, message.imageUrl);
       }
     });
   });
 
-  listenForCallback('SCIENCE', ['science1.mp4', 'science2.mp4', 'science3.mp4', 'science4.mp4', 'science5.mp4', 'science6.mp4', 'science7.mp4'], scienceAudioElement);
-  listenForCallback('ART', ['art1.mp4', 'art2.mp4', 'art3.mp4'], artAudioElement);
-  listenForCallback('MAPS', ['maps1.mp4', 'maps2.mp4'], mapsAudioElement);
-  listenForCallback('SHIPS', ['ships1.mp4', 'ships2.mp4', 'ships3.mp4', 'ships4.mp4', 'ships5.mp4', 'ships6.mp4'], shipsAudioElement);
-}
-
-var lastCallbackTimestampMillis = Date.now() - CALLBACK_WINDOW_MS;
-
-function listenForCallback(callback, videoUrls, audioElement) {
-  var callbackWindowStartMillis = Math.max(lastCallbackTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
-  var voices = firebase.firestore()
-                 .collection(callback)
-                 .where('timestamp', '>',  Timestamp.fromMillis(callbackWindowStartMillis))
-                 .orderBy('timestamp', 'desc')
-                 .limit(CALLBACK_THRESHOLD + 1);
-
-  voices.onSnapshot(function(snapshot) {
-    if (snapshot.size > 0) {
-      window.console.log("voice.onSnapshot() id[0]=", snapshot.docs[0].id, "date[0]=", snapshot.docs[0].data().timestamp.toDate());
-    }
-    if (snapshot.size >= CALLBACK_THRESHOLD) {
-      window.console.log("
-      lastCallbackTimestampMillis = snapshot.docs[0].data().timestamp.toMillis();
-      var videoUrl = 'video/' + videoUrls[Math.floor(Math.random() * videoUrls.length)]
-      displayCallback('!!!!' + callback + '!1!', lastCallbackTimestamp.getTime(), videoUrl, audioElement);
-    }
-  });
-}
-
-var callbackIdx = 0;
-
-function nextCallbackId() {
-  return 'callback-message-' + callbackIdx++;
-}
-
-function displayCallback(message, timestamp, videoUrl, audioElement) {
-  var callbackId = nextCallbackId();
-  displayMessage(callbackId, Timestamp.fromMillis(timestamp), message, '', 'images/adventureharvey.jpg', videoUrl);
-  audioElement.play();
+  callbacks.forEach((callback) => callback.listenInChat());
 }
 
 // Triggered when the send new message form is submitted.
@@ -248,15 +273,17 @@ function onMessageSubmitted(message) {
   }
 }
 
-// Triggers when the auth state change for instance when the user signs-in or signs-out.
+// Triggers when the auth state change for instance when the user signs-in or
+// signs-out.
 function authStateObserver(user) {
   if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
-    var profilePicUrl = getProfilePicUrl();
-    var userName = getUserName();
+    let profilePicUrl = getProfilePicUrl();
+    let userName = getUserName();
 
     // Set the user's profile pic and name.
-    userPicElement.style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
+    userPicElement.style.backgroundImage =
+        'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
     userNameElement.textContent = userName;
 
     // Show user's profile and sign-out button.
@@ -282,7 +309,7 @@ function authStateObserver(user) {
     signInButtonElement.removeAttribute('hidden');
 
     // Show the sign-in UI
-    splashScreenElement.removeAttribute('hidden')
+    splashScreenElement.removeAttribute('hidden');
 
     // Show the messages UI
     messagesCardContainerElement.setAttribute('hidden', 'true');
@@ -297,10 +324,7 @@ function checkSignedInWithMessage() {
   }
 
   // Display a message to the user using a Toast.
-  var data = {
-    message: 'You must sign-in first',
-    timeout: 2000
-  };
+  let data = {message : 'You must sign-in first', timeout : 2000};
   signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
   return false;
 }
@@ -312,13 +336,11 @@ function resetMaterialTextfield(element) {
 }
 
 // Template for messages.
-var MESSAGE_TEMPLATE =
-    '<div class="message-container">' +
-      '<div class="spacing"><div class="pic"></div></div>' +
-      '<div class="message"></div>' +
-      '<div class="name"></div>' +
-    '</div>';
-
+const MESSAGE_TEMPLATE = '<div class="message-container">' +
+                         '<div class="spacing"><div class="pic"></div></div>' +
+                         '<div class="message"></div>' +
+                         '<div class="name"></div>' +
+                         '</div>';
 
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
@@ -329,11 +351,11 @@ function addSizeToGoogleProfilePic(url) {
 }
 
 // A loading image URL.
-var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
+const LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
 
 // Delete a Message from the UI.
 function deleteMessage(id) {
-  var div = document.getElementById(id);
+  let div = document.getElementById(id);
   // If an element for that message exists we delete it.
   if (div) {
     div.parentNode.removeChild(div);
@@ -363,8 +385,7 @@ function createAndInsertMessage(id, timestamp) {
 
       if (!messageListNodeTime) {
         throw new Error(
-          `Child ${messageListNode.id} has no 'timestamp' attribute`
-        );
+            `Child ${messageListNode.id} has no 'timestamp' attribute`);
       }
 
       if (messageListNodeTime > timestamp) {
@@ -382,22 +403,24 @@ function createAndInsertMessage(id, timestamp) {
 
 // Displays a Message in the UI.
 function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
-  var div = document.getElementById(id) || createAndInsertMessage(id, timestamp);
+  let div =
+      document.getElementById(id) || createAndInsertMessage(id, timestamp);
 
   // profile picture
   if (picUrl) {
-    div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
+    div.querySelector('.pic').style.backgroundImage =
+        'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
   }
 
   div.querySelector('.name').textContent = name;
-  var messageElement = div.querySelector('.message');
+  let messageElement = div.querySelector('.message');
 
   if (text) { // If the message is text.
     messageElement.textContent = text;
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
   } else if (videoUrl) { // If the message is a video.
-    var video = document.createElement('video');
+    let video = document.createElement('video');
     video.addEventListener('load', function() {
       messageListElement.scrollTop = messageListElement.scrollHeight;
     });
@@ -405,19 +428,22 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
     video.autoplay = true;
     video.muted = true;
     video.className = 'callback-video';
-    var mp4 = document.createElement('source');
+    let mp4 = document.createElement('source');
     mp4.src = videoUrl;
     mp4.type = 'video/mp4';
-    var fallback = document.createTextNode('Your browser does not support the video tag.');
+    let fallback =
+        document.createTextNode('Your browser does not support the video tag.');
     video.innerHTML = '';
     video.appendChild(mp4);
     video.appendChild(fallback);
-    video.onloadedmetadata = function() { messageListElement.scrollTop = messageListElement.scrollHeight; };
+    video.onloadedmetadata = function() {
+      messageListElement.scrollTop = messageListElement.scrollHeight;
+    };
     messageElement.innerHTML = '';
     messageElement.appendChild(video);
   }
   // Show the card fading-in and scroll to view the new message.
-  setTimeout(function() {div.classList.add('visible')}, 1);
+  setTimeout(function() { div.classList.add('visible') }, 1);
   messageListElement.scrollTop = messageListElement.scrollHeight;
   messageInputElement.focus();
 }
@@ -434,8 +460,10 @@ function toggleButton() {
 
 // Checks that the Firebase SDK has been correctly setup and configured.
 function checkSetup() {
-  if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
-    window.alert('You have not configured and imported the Firebase SDK. ' +
+  if (!window.firebase || !(firebase.app instanceof Function) ||
+      !firebase.app().options) {
+    window.alert(
+        'You have not configured and imported the Firebase SDK. ' +
         'Make sure you go through the codelab setup instructions and make ' +
         'sure you are running the codelab using `firebase serve`');
   }
@@ -445,41 +473,70 @@ function checkSetup() {
 checkSetup();
 
 // Shortcuts to DOM Elements.
-var messageListElement = document.getElementById('messages');
-var messageFormElement = document.getElementById('message-form');
-var messageInputElement = document.getElementById('message');
-var submitButtonElement = document.getElementById('submit');
-var userPicElement = document.getElementById('user-pic');
-var userNameElement = document.getElementById('user-name');
-var signInButtonElement = document.getElementById('sign-in');
-var signOutButtonElement = document.getElementById('sign-out');
-var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-var splashScreenElement = document.getElementById('signin-splashscreen');
-var signInSplashButtonElement = document.getElementById('sign-in-splash');
-var messagesCardContainerElement = document.getElementById('messages-card-container');
+const messageListElement = document.getElementById('messages');
+const messageFormElement = document.getElementById('message-form');
+const messageInputElement = document.getElementById('message');
+const submitButtonElement = document.getElementById('submit');
+const scienceButtonElement = document.getElementById('science');
+const artButtonElement = document.getElementById('art');
+const mapsButtonElement = document.getElementById('maps');
+const shipsButtonElement = document.getElementById('ships');
+const userPicElement = document.getElementById('user-pic');
+const userNameElement = document.getElementById('user-name');
+const signInButtonElement = document.getElementById('sign-in');
+const signOutButtonElement = document.getElementById('sign-out');
+const signInSnackbarElement = document.getElementById('must-signin-snackbar');
+const splashScreenElement = document.getElementById('signin-splashscreen');
+const signInSplashButtonElement = document.getElementById('sign-in-splash');
+const messagesCardContainerElement =
+    document.getElementById('messages-card-container');
 
-var scienceAudioElement = document.getElementById('science-audio');
-var artAudioElement = document.getElementById('art-audio');
-var mapsAudioElement = document.getElementById('maps-audio');
-var shipsAudioElement = document.getElementById('ships-audio');
+const scienceAudioElement = document.getElementById('science-audio');
+const artAudioElement = document.getElementById('art-audio');
+const mapsAudioElement = document.getElementById('maps-audio');
+const shipsAudioElement = document.getElementById('ships-audio');
 
-var scienceFormElement = document.getElementById('science-form');
-scienceFormElement.addEventListener('submit', onScienceFormSubmit);
+const scienceFormElement = document.getElementById('science-form');
+const artFormElement = document.getElementById('art-form');
+const mapsFormElement = document.getElementById('maps-form');
+const shipsFormElement = document.getElementById('ships-form');
 
-var artFormElement = document.getElementById('art-form');
-artFormElement.addEventListener('submit', onArtFormSubmit);
+// Callbacks that we listen for.
+const callbacks = [
+  new Callback(
+      'SCIENCE',
+      'When you hear or see some SCIENCE, click this button to make some noise:',
+      '🔬',
+      [
+        'science1.mp4', 'science2.mp4', 'science3.mp4', 'science4.mp4',
+        'science5.mp4', 'science6.mp4', 'science7.mp4'
+      ],
+      scienceAudioElement),
+  new Callback('ART', 'When there\'s some ART, click this button:', '🎨',
+               [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ], artAudioElement),
+  new Callback('MAPS', 'Whenever you spot a MAP, this is your button:',
+               '🗺️', [ 'maps1.mp4', 'maps2.mp4' ], mapsAudioElement),
 
-var mapsFormElement = document.getElementById('maps-form');
-mapsFormElement.addEventListener('submit', onMapsFormSubmit);
-
-var shipsFormElement = document.getElementById('ships-form');
-shipsFormElement.addEventListener('submit', onShipsFormSubmit);
+  new Callback(
+      'SHIPS',
+      'And how could we forget seafaring vessels - click here for SHIPS:', '🚢',
+      [
+        'ships1.mp4', 'ships2.mp4', 'ships3.mp4', 'ships4.mp4', 'ships5.mp4',
+        'ships6.mp4'
+      ],
+      shipsAudioElement),
+];
 
 // Saves message on form submit.
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 signInSplashButtonElement.addEventListener('click', signIn);
+
+scienceFormElement.addEventListener('submit', onScienceFormSubmit);
+artFormElement.addEventListener('submit', onArtFormSubmit);
+mapsFormElement.addEventListener('submit', onMapsFormSubmit);
+shipsFormElement.addEventListener('submit', onShipsFormSubmit);
 
 // Toggle for the button.
 messageInputElement.addEventListener('keyup', toggleButton);
@@ -488,7 +545,9 @@ messageInputElement.addEventListener('change', toggleButton);
 // initialize Firebase
 initFirebaseAuth();
 
-onBoarding().then(() =>
-
-// We load currently existing chat messages and listen to new ones.
-loadMessages());
+// Start the onboarding once the messagesCardContainerElement is visible.
+new MutationObserver(function() {
+  if (!messagesCardContainerElement.hasAttribute('hidden')) {
+    onBoarding().then(() => loadMessages());
+  }
+}).observe(messagesCardContainerElement, {attributes : true});

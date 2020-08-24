@@ -26,7 +26,8 @@ loadConfiguration();
 const Timestamp = firebase.firestore.Timestamp;
 
 function logEvent(event_name, event_parameters) {
-  // DO nothing if analytics is not defined, eg because of an ad blocker or something.
+  // DO nothing if analytics is not defined, eg because of an ad blocker or
+  // something.
   if (typeof analytics !== 'undefined') {
     analytics.logEvent(event_name, event_parameters);
   }
@@ -49,7 +50,7 @@ function signIn() {
   // Sign in Firebase with credential from the Google user.
   const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
-  logEvent('login', {method: ''});
+  logEvent('login', {method : ''});
 }
 
 // Signs-out of Odd Chatter.
@@ -124,7 +125,7 @@ async function displayOnBoardingMessage(timestamp, message) {
 // Introduces everything and initializes the background audio.
 async function
 onBoarding() {
-  logEvent('screen_view', {screen_name: 'onboarding'});
+  logEvent('screen_view', {screen_name : 'onboarding'});
   // Use a artificially low timestamp so that all real messages appear after the
   // onboarding.
   let timestamp = 1;
@@ -154,7 +155,7 @@ onBoarding() {
   messageInputElement.removeAttribute('disabled');
   messageInputElement.focus();
 
-  logEvent('screen_view', {screen_name: 'chat'});
+  logEvent('screen_view', {screen_name : 'chat'});
   return waitFor(1);
 }
 
@@ -186,7 +187,7 @@ class Callback {
               snapshot.docs[0].data().timestamp.toMillis();
           callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
           callback.display(lastTimestampMillis + 1);
-          logEvent('screen_view', {screen_name: callback.getCollection()});
+          logEvent('screen_view', {screen_name : callback.getCollection()});
         }
       }
     });
@@ -289,7 +290,7 @@ function loadConfiguration() {
       if (outerContainerElement.hasAttribute('hidden')) {
         outerContainerElement.removeAttribute('hidden');
         spinnerElement.setAttribute('hidden', true);
-        logEvent('screen_view', {screen_name: 'main'});
+        logEvent('screen_view', {screen_name : 'main'});
       }
 
       CALLBACK_WINDOW_MS = config.callback_window_ms;
@@ -338,13 +339,15 @@ function loadMessages() {
 // Triggered when the send new message form is submitted.
 function onMessageFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'freeform', content_id: ''});
+  logEvent('share',
+           {method : 'chat', content_type : 'freeform', content_id : ''});
   onMessageSubmitted(messageInputElement.value);
 }
 
 function onScienceFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'SCIENCE', content_id: ''});
+  logEvent('share',
+           {method : 'chat', content_type : 'SCIENCE', content_id : ''});
   onMessageSubmitted('SCIENCE!!');
   scienceButtonElement.setAttribute('disabled', 'true');
   setTimeout(() => scienceButtonElement.removeAttribute('disabled'), 1000);
@@ -352,7 +355,7 @@ function onScienceFormSubmit(e) {
 
 function onArtFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'ART', content_id: ''});
+  logEvent('share', {method : 'chat', content_type : 'ART', content_id : ''});
   onMessageSubmitted('ART!!');
   artButtonElement.setAttribute('disabled', 'true');
   setTimeout(() => artButtonElement.removeAttribute('disabled'), 1000);
@@ -360,7 +363,7 @@ function onArtFormSubmit(e) {
 
 function onMapsFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'MAPS', content_id: ''});
+  logEvent('share', {method : 'chat', content_type : 'MAPS', content_id : ''});
   onMessageSubmitted('MAPS!!');
   mapsButtonElement.setAttribute('disabled', 'true');
   setTimeout(() => mapsButtonElement.removeAttribute('disabled'), 1000);
@@ -368,7 +371,7 @@ function onMapsFormSubmit(e) {
 
 function onShipsFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'SHIPS', content_id: ''});
+  logEvent('share', {method : 'chat', content_type : 'SHIPS', content_id : ''});
   onMessageSubmitted('SHIPS!!');
   shipsButtonElement.setAttribute('disabled', 'true');
   setTimeout(() => shipsButtonElement.removeAttribute('disabled'), 1000);
@@ -376,7 +379,8 @@ function onShipsFormSubmit(e) {
 
 function onApplauseFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'APPLAUSE', content_id: ''});
+  logEvent('share',
+           {method : 'chat', content_type : 'APPLAUSE', content_id : ''});
   onMessageSubmitted('👏');
   applauseButtonElement.setAttribute('disabled', 'true');
   setTimeout(() => applauseButtonElement.removeAttribute('disabled'), 1000);
@@ -384,7 +388,7 @@ function onApplauseFormSubmit(e) {
 
 function onBooFormSubmit(e) {
   e.preventDefault();
-  logEvent('share', {method: 'chat', content_type: 'BOO', content_id: ''});
+  logEvent('share', {method : 'chat', content_type : 'BOO', content_id : ''});
   onMessageSubmitted('👎');
   booButtonElement.setAttribute('disabled', 'true');
   setTimeout(() => booButtonElement.removeAttribute('disabled'), 1000);
@@ -704,4 +708,7 @@ new MutationObserver(() => {
       !messagesCardContainerElement.hasAttribute('hidden')) {
     onBoarding().then(() => loadMessages());
   }
-}).observe(outerContainerElement, {attributes : true});
+}).observe(outerContainerElement, {
+  attributes : true,
+  attributeFilter : [ 'hidden' ]
+});

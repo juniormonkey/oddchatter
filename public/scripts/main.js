@@ -174,7 +174,7 @@ class Callback {
   async onboard(timestamp) {
     await displayOnBoardingMessage(timestamp, this.onboardingMessage);
     await this.displayOnBoardingButton(timestamp);
-    await waitFor(2000);
+    await waitFor(this.audioElement.duration * 1000);
   }
 
   async displayOnBoardingButton(timestamp) {

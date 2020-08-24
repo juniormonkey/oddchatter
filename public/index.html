@@ -50,10 +50,24 @@
   <!-- App Styling -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap">
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/spinner.css">
 
 </head>
 <body>
-<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+<div id='spinner'>
+  <div id='floatingCirclesG'>
+    <div class="f_circleG" id="frotateG_01"></div>
+    <div class="f_circleG" id="frotateG_02"></div>
+    <div class="f_circleG" id="frotateG_03"></div>
+    <div class="f_circleG" id="frotateG_04"></div>
+    <div class="f_circleG" id="frotateG_05"></div>
+    <div class="f_circleG" id="frotateG_06"></div>
+    <div class="f_circleG" id="frotateG_07"></div>
+    <div class="f_circleG" id="frotateG_08"></div>
+  </div>
+</div>
+
+<div id='outer-container' hidden class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
   <!-- Header section containing logo -->
   <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
@@ -126,7 +140,7 @@
       </div>
 
       <!-- YT Live Stream container -->
-      <div id="youtube-stream-container" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+      <div id="youtube-stream-container" hidden class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
         <iframe id="youtube-stream" referrerPolicy="origin" frameBorder=0></iframe>
       </div>
       <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">

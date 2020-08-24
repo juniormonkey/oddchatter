@@ -12,8 +12,9 @@
  * limitations under the License.
  */
 
- html, body {
+html, body {
   font-family: 'EB Garamond', 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif; 
+  background-color: #000;
 }
 main, #messages-card {
   height: 100%;

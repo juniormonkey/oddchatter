@@ -13,8 +13,11 @@
  */
 'use strict';
 
-const CALLBACK_WINDOW_MS = 10000;
-const CALLBACK_THRESHOLD = 3;
+const DEFAULT_CALLBACK_WINDOW_MS = 10000;
+const DEFAULT_CALLBACK_THRESHOLD = 3;
+
+var CALLBACK_WINDOW_MS = DEFAULT_CALLBACK_WINDOW_MS;
+var CALLBACK_THRESHOLD = DEFAULT_CALLBACK_THRESHOLD;
 
 const Timestamp = firebase.firestore.Timestamp;
 
@@ -155,7 +158,7 @@ class Callback {
                      .limit(CALLBACK_THRESHOLD);
 
     let callback = this;
-    voices.onSnapshot(function(snapshot) {
+    voices.onSnapshot((snapshot) => {
       let callbackWindowStartMillis = Math.max(
           callback.lastCalledTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
       if (snapshot.size >= CALLBACK_THRESHOLD) {
@@ -251,6 +254,22 @@ function randomNumberBetween(from, to) {
   return from + Math.floor(Math.random() * (to - from + 1));
 }
 
+// Loads the callback thresholds and listens for changes.
+function loadThresholds() {
+  let query = firebase.firestore()
+                  .collection('configuration')
+                  .orderBy('timestamp', 'desc')
+                  .limit(1);
+
+  query.onSnapshot((snapshot) => {
+    if (snapshot.size > 0) {
+      let config = snapshot.docs[0].data();
+      CALLBACK_WINDOW_MS = config.callback_window_ms;
+      CALLBACK_THRESHOLD = config.callback_threshold;
+    }
+  });
+}
+
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
   // Create the query to load the last 12 messages and listen for new ones.
@@ -260,8 +279,8 @@ function loadMessages() {
                   .limit(12);
 
   // Start listening to the query.
-  query.onSnapshot(function(snapshot) {
-    snapshot.docChanges().forEach(function(change) {
+  query.onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
       if (change.type === 'removed') {
         deleteMessage(change.doc.id);
       } else {
@@ -326,7 +345,7 @@ function onBooFormSubmit(e) {
 function onMessageSubmitted(message) {
   // Check that the user entered a message and is signed in.
   if (message && checkSignedInWithMessage()) {
-    saveMessage(message).then(function() {
+    saveMessage(message).then(() => {
       // Clear message text field and re-enable the SEND button.
       resetMaterialTextfield(messageInputElement);
       toggleButton();
@@ -482,7 +501,7 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
   } else if (videoUrl) { // If the message is a video.
     let video = document.createElement('video');
-    video.addEventListener('load', function() {
+    video.addEventListener('load', () => {
       messageListElement.scrollTop = messageListElement.scrollHeight;
     });
     video.playsInline = true;
@@ -497,14 +516,14 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
     video.innerHTML = '';
     video.appendChild(mp4);
     video.appendChild(fallback);
-    video.onloadedmetadata = function() {
+    video.onloadedmetadata = () => {
       messageListElement.scrollTop = messageListElement.scrollHeight;
     };
     messageElement.innerHTML = '';
     messageElement.appendChild(video);
   }
   // Show the card fading-in and scroll to view the new message.
-  setTimeout(function() { div.classList.add('visible') }, 1);
+  setTimeout(() => {div.classList.add('visible')}, 1);
   messageListElement.scrollTop = messageListElement.scrollHeight;
   messageInputElement.focus();
 }
@@ -622,10 +641,10 @@ messageInputElement.addEventListener('change', toggleButton);
 // initialize Firebase
 initFirebaseAuth();
 
-// TODO: store the thresholds in the DB, and add a listener to check for changes.
+loadThresholds();
 
 // Start the onboarding once the messagesCardContainerElement is visible.
-new MutationObserver(function() {
+new MutationObserver(() => {
   if (!messagesCardContainerElement.hasAttribute('hidden')) {
     onBoarding().then(() => loadMessages());
   }

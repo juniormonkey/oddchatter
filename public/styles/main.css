@@ -30,9 +30,6 @@ main, #messages-card {
   height: calc(100% - 35px);
   padding-bottom: 0;
 }
-#messages-card {
-  margin-top: 15px;
-}
 .mdl-layout__header-row span {
   margin-left: 15px;
   margin-top: 17px;
@@ -185,7 +182,9 @@ main, #messages-card {
     min-width: 36px;
     padding: 0 5px;
   }
-
+  #youtube-stream-container {
+    display: none;
+  }
 }
 .mdl-textfield__label:after {
   background-color: #0288D1;

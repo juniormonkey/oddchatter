@@ -95,9 +95,8 @@ main, #messages-card {
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
-.message-container .name {
+.message-container .name, .message-container .admin {
   display: inline-block;
-  width: 100%;
   padding-left: 40px;
   color: #bbb;
   font-style: italic;
@@ -224,4 +223,7 @@ h3 {
 #signin-card {
   text-align: center;
   margin-top: calc(50% - 80px);
+}
+#youtube-stream {
+  height: 100%;
 }

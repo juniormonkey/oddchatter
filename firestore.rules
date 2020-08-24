@@ -6,10 +6,16 @@ service cloud.firestore {
     //   - Validation: Check uid is same as auth token and text length below 300 char.
     match /messages/{messageId} {
       allow read: if request.auth != null;
-      allow create, update, delete: if request.auth != null
+      allow create, update: if request.auth != null
                     && request.resource.data.uid == request.auth.uid
                     && request.resource.data.text is string
                     && request.resource.data.text.size() <= 300;
+      allow delete: if request.auth != null && (
+										request.resource.data.uid == request.auth.uid
+										|| request.auth.uid == '3wwC0lILdQgHMLNlZ6QeRVdYt8x1'
+										|| request.auth.uid == 'KbwVLHVeluOaZvoJ5js5zk1NAO42'
+										|| request.auth.uid == 'aZhpMwxmdhcQuZhZ81QMdRYVc3C3'
+										|| request.auth.uid == 'S15yWD3AK0bpEeBoFFCPejquf3E3');
     }
     // Callouts:
     //   - Anyone can read.

@@ -19,6 +19,7 @@ const DEFAULT_CALLBACK_THRESHOLD = 3;
 var CALLBACK_WINDOW_MS = DEFAULT_CALLBACK_WINDOW_MS;
 var CALLBACK_THRESHOLD = DEFAULT_CALLBACK_THRESHOLD;
 var YOUTUBE_VIDEO = '';
+var ADMIN_USERS = [];
 
 // Load the configuration from Firestore before doing anything else.
 loadConfiguration();
@@ -296,6 +297,8 @@ function loadConfiguration() {
       CALLBACK_WINDOW_MS = config.callback_window_ms;
       CALLBACK_THRESHOLD = config.callback_threshold;
 
+      ADMIN_USERS = config.admin_users;
+
       if (config.youtube_video !== YOUTUBE_VIDEO) {
         YOUTUBE_VIDEO = config.youtube_video;
         if (YOUTUBE_VIDEO) {
@@ -548,6 +551,27 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
 
   div.querySelector('.name').textContent = name;
   let messageElement = div.querySelector('.message');
+
+  // If the current user is an admin, add a delete link to all Firebase
+  // messages.
+  // (This ACL is also enforced by Firestore.)
+  if (!id.startsWith('onboarding-message-') &&
+      !id.startsWith('callback-message-') && ADMIN_USERS.includes(getUid())) {
+    let deleteLine = document.createElement('a');
+    deleteLine.className = 'admin';
+    deleteLine.setAttribute('href', '#');
+    deleteLine.textContent = 'delete';
+    deleteLine.addEventListener('click', () => {
+      firebase.firestore()
+          .collection("messages")
+          .doc(id)
+          .delete()
+          .catch(function(error) {
+            console.error("Error removing message: ", error);
+          });
+    });
+    div.appendChild(deleteLine);
+  }
 
   if (text) { // If the message is text.
     messageElement.textContent = text;

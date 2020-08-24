@@ -1,8 +1,4 @@
-
 firebase-debug.log
 *.swp
 *.cache
-*.cache
-*.cache
-*.cache
-*.cache
+.firebase/*

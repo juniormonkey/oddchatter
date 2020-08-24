@@ -181,9 +181,11 @@ main, #messages-card {
   #user-container #user-name {
     display: none;
   }
-  #user-container .mdl-button {
+  .mdl-button {
+    min-width: 36px;
     padding: 0 5px;
   }
+
 }
 .mdl-textfield__label:after {
   background-color: #0288D1;

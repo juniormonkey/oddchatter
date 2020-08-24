@@ -91,24 +91,34 @@
             </button>
           </form>
           <div class="messagebuttons">
-            <form id="science-form" class="one-button-form" action=#">
+            <form id="science-form" class="one-button-form" action=#>
               <button disabled id="science" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
 		🔬
               </button>
             </form>
-            <form id="art-form" class="one-button-form" action=#">
+            <form id="art-form" class="one-button-form" action=#>
               <button disabled id="art" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                🎨
               </button>
             </form>
-            <form id="maps-form" class="one-button-form" action=#">
+            <form id="maps-form" class="one-button-form" action=#>
               <button disabled id="maps" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 🗺️
               </button>
             </form>
-            <form id="ships-form" class="one-button-form" action=#">
+            <form id="ships-form" class="one-button-form" action=#>
               <button disabled id="ships" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
                 🚢
+              </button>
+            </form>
+            <form id="applause-form" class="one-button-form" action=#>
+              <button disabled id="applause" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
+                👏
+              </button>
+            </form>
+            <form id="boo-form" class="one-button-form" action=#>
+              <button disabled id="boo" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
+                👎
               </button>
             </form>
           </div>
@@ -137,10 +147,10 @@
 <audio playsinline hidden id='art-audio' src='video/art1.mp4'></audio>
 <audio playsinline hidden id='maps-audio' src='video/maps1.mp4'></audio>
 <audio playsinline hidden id='ships-audio' src='video/ships1.mp4'></audio>
+<audio playsinline hidden id='applause-audio' src='video/applause1.mp4'></audio>
+<audio playsinline hidden id='boo-audio' src='video/boo1.mp4'></audio>
 
 <!-- Import and configure the Firebase SDK -->
-<!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
-<!-- If you do not want to serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
 <script src="/__/firebase/7.17.1/firebase-app.js"></script>
 <script src="/__/firebase/7.17.1/firebase-auth.js"></script>
 <script src="/__/firebase/7.17.1/firebase-storage.js"></script>

@@ -34,5 +34,13 @@ service cloud.firestore {
       allow read;
       allow create, update, delete: if request.auth != null
     }
+    match /APPLAUSE/{calloutId} {
+      allow read;
+      allow create, update, delete: if request.auth != null
+    }
+    match /BOO/{calloutId} {
+      allow read;
+      allow create, update, delete: if request.auth != null
+    }
   }
 }

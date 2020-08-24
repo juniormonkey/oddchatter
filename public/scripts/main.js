@@ -65,12 +65,12 @@ function isUserSignedIn() { return !!firebase.auth().currentUser; }
 
 function checkForCallbacks(text) {
   callbacks.forEach((callback) => {
-    if (text !== callback.text + '!!') {
+    if (text !== callback.getMessage()) {
       return;
     }
 
     firebase.firestore()
-        .collection(callback.text)
+        .collection(callback.getCollection())
         .doc(getUid())
         .set({timestamp : firebase.firestore.FieldValue.serverTimestamp()})
         .catch(function(error) {
@@ -130,6 +130,8 @@ onBoarding() {
   artButtonElement.removeAttribute('disabled');
   mapsButtonElement.removeAttribute('disabled');
   shipsButtonElement.removeAttribute('disabled');
+  applauseButtonElement.removeAttribute('disabled');
+  booButtonElement.removeAttribute('disabled');
   messageInputElement.removeAttribute('disabled');
   messageInputElement.focus();
 
@@ -148,7 +150,7 @@ class Callback {
 
   listenInChat() {
     let voices = firebase.firestore()
-                     .collection(this.text)
+                     .collection(this.getCollection())
                      .orderBy('timestamp', 'desc')
                      .limit(CALLBACK_THRESHOLD);
 
@@ -160,7 +162,8 @@ class Callback {
         let firstTimestampMillis =
             snapshot.docs[CALLBACK_THRESHOLD - 1].data().timestamp.toMillis();
         if (firstTimestampMillis > callbackWindowStartMillis) {
-          let lastTimestampMillis = snapshot.docs[0].data().timestamp.toMillis();
+          let lastTimestampMillis =
+              snapshot.docs[0].data().timestamp.toMillis();
           callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
           callback.display(lastTimestampMillis + 1);
         }
@@ -204,14 +207,48 @@ class Callback {
   }
 
   display(timestamp) {
-    let message = '!!!!' + this.text + '!1!';
     let video =
         'video/' +
         this.videoUrls[Math.floor(Math.random() * this.videoUrls.length)];
-    displayMessage(callbackId.next(), Timestamp.fromMillis(timestamp), message,
-                   '', 'images/adventureharvey.jpg', video);
+    displayMessage(callbackId.next(), Timestamp.fromMillis(timestamp),
+                   this.getByline(), '', 'images/adventureharvey.jpg', video);
     this.audioElement.play();
   }
+
+  getByline() {
+    if (this.text === '👏' || this.text === '👎') {
+      return this.text.repeat(randomNumberBetween(3, 6));
+    }
+
+    return '!'.repeat(randomNumberBetween(2, 4)) + this.text +
+           '!'.repeat(randomNumberBetween(1, 3)) +
+           '1'.repeat(randomNumberBetween(0, 2)) +
+           '!'.repeat(randomNumberBetween(1, 2));
+  }
+
+  getMessage() {
+    if (this.text === '👏' || this.text === '👎') {
+      return this.text;
+    }
+
+    return this.text + '!!';
+  }
+
+  getCollection() {
+    if (this.text === '👏') {
+      return 'APPLAUSE';
+    }
+
+    if (this.text === '👎') {
+      return 'BOO';
+    }
+
+    return this.text;
+  }
+}
+
+function randomNumberBetween(from, to) {
+  return from + Math.floor(Math.random() * (to - from + 1));
 }
 
 // Loads chat messages history and listens for upcoming ones.
@@ -246,22 +283,32 @@ function onMessageFormSubmit(e) {
 
 function onScienceFormSubmit(e) {
   e.preventDefault();
-  onMessageSubmitted("SCIENCE!!");
+  onMessageSubmitted('SCIENCE!!');
 }
 
 function onArtFormSubmit(e) {
   e.preventDefault();
-  onMessageSubmitted("ART!!");
+  onMessageSubmitted('ART!!');
 }
 
 function onMapsFormSubmit(e) {
   e.preventDefault();
-  onMessageSubmitted("MAPS!!");
+  onMessageSubmitted('MAPS!!');
 }
 
 function onShipsFormSubmit(e) {
   e.preventDefault();
-  onMessageSubmitted("SHIPS!!");
+  onMessageSubmitted('SHIPS!!');
+}
+
+function onApplauseFormSubmit(e) {
+  e.preventDefault();
+  onMessageSubmitted('👏');
+}
+
+function onBooFormSubmit(e) {
+  e.preventDefault();
+  onMessageSubmitted('👎');
 }
 
 function onMessageSubmitted(message) {
@@ -483,6 +530,8 @@ const scienceButtonElement = document.getElementById('science');
 const artButtonElement = document.getElementById('art');
 const mapsButtonElement = document.getElementById('maps');
 const shipsButtonElement = document.getElementById('ships');
+const applauseButtonElement = document.getElementById('applause');
+const booButtonElement = document.getElementById('boo');
 const userPicElement = document.getElementById('user-pic');
 const userNameElement = document.getElementById('user-name');
 const signInButtonElement = document.getElementById('sign-in');
@@ -497,11 +546,15 @@ const scienceAudioElement = document.getElementById('science-audio');
 const artAudioElement = document.getElementById('art-audio');
 const mapsAudioElement = document.getElementById('maps-audio');
 const shipsAudioElement = document.getElementById('ships-audio');
+const applauseAudioElement = document.getElementById('applause-audio');
+const booAudioElement = document.getElementById('boo-audio');
 
 const scienceFormElement = document.getElementById('science-form');
 const artFormElement = document.getElementById('art-form');
 const mapsFormElement = document.getElementById('maps-form');
 const shipsFormElement = document.getElementById('ships-form');
+const applauseFormElement = document.getElementById('applause-form');
+const booFormElement = document.getElementById('boo-form');
 
 // Callbacks that we listen for.
 const callbacks = [
@@ -518,7 +571,6 @@ const callbacks = [
                [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ], artAudioElement),
   new Callback('MAPS', 'Whenever you spot a MAP, this is your button:',
                '🗺️', [ 'maps1.mp4', 'maps2.mp4' ], mapsAudioElement),
-
   new Callback(
       'SHIPS',
       'And how could we forget seafaring vessels - click here for SHIPS:', '🚢',
@@ -527,6 +579,15 @@ const callbacks = [
         'ships6.mp4'
       ],
       shipsAudioElement),
+  new Callback(
+      '👏',
+      'Our speakers live for the applause - click here to make affirming noises:',
+      '👏', [ 'applause1.mp4', 'applause2.mp4', 'applause3.mp4' ],
+      applauseAudioElement),
+  new Callback(
+      '👎',
+      'Finally - sosome things deserve to be booed. Click here to express disapproval:',
+      '👎', [ 'boo1.mp4', 'boo2.mp4', 'boo3.mp4' ], booAudioElement),
 ];
 
 // Saves message on form submit.
@@ -539,6 +600,8 @@ scienceFormElement.addEventListener('submit', onScienceFormSubmit);
 artFormElement.addEventListener('submit', onArtFormSubmit);
 mapsFormElement.addEventListener('submit', onMapsFormSubmit);
 shipsFormElement.addEventListener('submit', onShipsFormSubmit);
+applauseFormElement.addEventListener('submit', onApplauseFormSubmit);
+booFormElement.addEventListener('submit', onBooFormSubmit);
 
 // Toggle for the button.
 messageInputElement.addEventListener('keyup', toggleButton);

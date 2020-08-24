@@ -125,6 +125,9 @@ onBoarding() {
   for (const callback of callbacks) {
     await callback.onboard();
   }
+  await displayOnBoardingMessage(
+      timestamp++,
+      'Remember, the chat is public - so don\'t share your bank account password.');
   await displayOnBoardingMessage(timestamp++,
                                  'Now you\'re ready to learn something weird!');
   waitFor(250);

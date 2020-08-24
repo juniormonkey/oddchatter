@@ -284,31 +284,43 @@ function onMessageFormSubmit(e) {
 function onScienceFormSubmit(e) {
   e.preventDefault();
   onMessageSubmitted('SCIENCE!!');
+  scienceButtonElement.setAttribute('disabled', 'true');
+  setTimeout(() => scienceButtonElement.removeAttribute('disabled'), 1000);
 }
 
 function onArtFormSubmit(e) {
   e.preventDefault();
   onMessageSubmitted('ART!!');
+  artButtonElement.setAttribute('disabled', 'true');
+  setTimeout(() => artButtonElement.removeAttribute('disabled'), 1000);
 }
 
 function onMapsFormSubmit(e) {
   e.preventDefault();
   onMessageSubmitted('MAPS!!');
+  mapsButtonElement.setAttribute('disabled', 'true');
+  setTimeout(() => mapsButtonElement.removeAttribute('disabled'), 1000);
 }
 
 function onShipsFormSubmit(e) {
   e.preventDefault();
   onMessageSubmitted('SHIPS!!');
+  shipsButtonElement.setAttribute('disabled', 'true');
+  setTimeout(() => shipsButtonElement.removeAttribute('disabled'), 1000);
 }
 
 function onApplauseFormSubmit(e) {
   e.preventDefault();
   onMessageSubmitted('👏');
+  applauseButtonElement.setAttribute('disabled', 'true');
+  setTimeout(() => applauseButtonElement.removeAttribute('disabled'), 1000);
 }
 
 function onBooFormSubmit(e) {
   e.preventDefault();
   onMessageSubmitted('👎');
+  booButtonElement.setAttribute('disabled', 'true');
+  setTimeout(() => booButtonElement.removeAttribute('disabled'), 1000);
 }
 
 function onMessageSubmitted(message) {
@@ -609,6 +621,8 @@ messageInputElement.addEventListener('change', toggleButton);
 
 // initialize Firebase
 initFirebaseAuth();
+
+// TODO: store the thresholds in the DB, and add a listener to check for changes.
 
 // Start the onboarding once the messagesCardContainerElement is visible.
 new MutationObserver(function() {

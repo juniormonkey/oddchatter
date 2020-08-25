@@ -261,10 +261,13 @@ h3 {
 }
 #error-container {
   color: #FFF;
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 #error {
   width: 75%;
-  margin: 25% auto;
+  margin: 20% auto 0;
 }
 #error-harvey {
   background-image: url('/images/harvey-upsidedown.jpg');

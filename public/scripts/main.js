@@ -285,12 +285,12 @@ function loadConfiguration() {
     if (snapshot.size > 0) {
       let config = snapshot.docs[0].data();
       if (!config.enabled) {
-        window.location.href = 'https://www.oddsalon.com';
+        outerContainerElement.parentNode.removeChild(outerContainerElement);
         return;
       }
       if (outerContainerElement.hasAttribute('hidden')) {
         outerContainerElement.removeAttribute('hidden');
-        spinnerElement.setAttribute('hidden', true);
+        promoElement.setAttribute('hidden', true);
         logEvent('screen_view', {screen_name : 'main'});
       }
 
@@ -633,7 +633,7 @@ checkSetup();
 
 // Shortcuts to DOM Elements.
 const outerContainerElement = document.getElementById('outer-container');
-const spinnerElement = document.getElementById('spinner');
+const promoElement = document.getElementById('promo');
 const messageListElement = document.getElementById('messages');
 const messageFormElement = document.getElementById('message-form');
 const messageInputElement = document.getElementById('message');

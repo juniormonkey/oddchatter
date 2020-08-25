@@ -229,11 +229,33 @@ h3 {
 }
 #promo {
   position:  absolute;
-  width:  100%;
+  height: 100%;
+  width: 100%;
+  background-image: url('/images/screenshot.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 #promo-image {
+  background-image: url('/images/mistakes.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 	position: relative;
-	width: 100%;
-	height: 100%;
+  top: calc(50% - 250px);
+	height: 500px;
+  width: 889px;
+  display: block;
 	margin: auto;
+}
+@media screen and (max-width: 610px) {
+  #promo {
+    background-image: url('/images/screenshot-mobile.png');
+  }
+  #promo-image {
+    background-image: url('/images/mistakes-mobile.jpg');
+    height: 300px;
+    width: 300px;
+    top: calc(50% - 150px);
+  }
 }

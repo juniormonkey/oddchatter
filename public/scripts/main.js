@@ -285,7 +285,6 @@ function loadConfiguration() {
     if (snapshot.size > 0) {
       let config = snapshot.docs[0].data();
       if (!config.enabled) {
-        outerContainerElement.parentNode.removeChild(outerContainerElement);
         return;
       }
       if (outerContainerElement.hasAttribute('hidden')) {

@@ -15,7 +15,8 @@ service cloud.firestore {
 										|| request.auth.uid == '3wwC0lILdQgHMLNlZ6QeRVdYt8x1'
 										|| request.auth.uid == 'KbwVLHVeluOaZvoJ5js5zk1NAO42'
 										|| request.auth.uid == 'aZhpMwxmdhcQuZhZ81QMdRYVc3C3'
-										|| request.auth.uid == 'S15yWD3AK0bpEeBoFFCPejquf3E3');
+										|| request.auth.uid == 'S15yWD3AK0bpEeBoFFCPejquf3E3'
+                    || request.auth.uid == 'IeReT6Ewa7cSa0mphuxrdq3a6Eu1');
     }
     // Callouts:
     //   - Anyone can read.

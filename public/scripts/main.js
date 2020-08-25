@@ -476,6 +476,7 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '<div class="spacing"><div class="pic"></div></div>' +
                          '<div class="message"></div>' +
                          '<div class="name"></div>' +
+                         '<div class="timestamp"></div>' +
                          '</div>';
 
 // Adds a size to Google Profile pics URLs.
@@ -549,6 +550,11 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
   }
 
   div.querySelector('.name').textContent = name;
+  if (timestamp > Timestamp.fromMillis(10000)) {
+    div.querySelector('.timestamp').textContent =
+        timestamp.toDate().toLocaleDateString() + ' ' +
+        timestamp.toDate().toLocaleTimeString();
+  }
   let messageElement = div.querySelector('.message');
 
   // If the current user is an admin, add a delete link to all Firebase
@@ -684,7 +690,7 @@ const callbacks = [
   new Callback('ART', 'When there\'s some ART, click this button:', '🎨',
                [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ], artAudioElement),
   new Callback('MAPS', 'Whenever you spot a MAP, this is your button:',
-               '🗺️', [ 'maps1.mp4', 'maps2.mp4' ], mapsAudioElement),
+               '🗺️', [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ], mapsAudioElement),
   new Callback(
       'SHIPS',
       'And how could we forget seafaring vessels - click here for SHIPS:', '🚢',

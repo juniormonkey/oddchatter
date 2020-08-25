@@ -95,7 +95,7 @@ main, #messages-card {
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
-.message-container .name, .message-container .admin {
+.message-container .name, .message-container .timestamp, .message-container .admin {
   display: inline-block;
   padding-left: 40px;
   color: #bbb;

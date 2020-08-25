@@ -287,6 +287,13 @@ function loadConfiguration() {
       if (!config.enabled) {
         return;
       }
+      if (config.fallback_url) {
+        errorContainerElement.removeAttribute('hidden');
+        promoElement.setAttribute('hidden', true);
+        errorLinkElement.setAttribute('href', config.fallback_url);
+        logEvent('screen_view', {screen_name : 'error'});
+        return;
+      }
       if (outerContainerElement.hasAttribute('hidden')) {
         outerContainerElement.removeAttribute('hidden');
         promoElement.setAttribute('hidden', true);
@@ -639,6 +646,8 @@ checkSetup();
 // Shortcuts to DOM Elements.
 const outerContainerElement = document.getElementById('outer-container');
 const promoElement = document.getElementById('promo');
+const errorContainerElement = document.getElementById('error-container');
+const errorLinkElement = document.getElementById('error-link');
 const messageListElement = document.getElementById('messages');
 const messageFormElement = document.getElementById('message-form');
 const messageInputElement = document.getElementById('message');
@@ -690,7 +699,8 @@ const callbacks = [
   new Callback('ART', 'When there\'s some ART, click this button:', '🎨',
                [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ], artAudioElement),
   new Callback('MAPS', 'Whenever you spot a MAP, this is your button:',
-               '🗺️', [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ], mapsAudioElement),
+               '🗺️', [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ],
+               mapsAudioElement),
   new Callback(
       'SHIPS',
       'And how could we forget seafaring vessels - click here for SHIPS:', '🚢',

@@ -259,3 +259,31 @@ h3 {
     top: calc(50% - 150px);
   }
 }
+#error-container {
+  color: #FFF;
+}
+#error {
+  width: 75%;
+  margin: 25% auto;
+}
+#error-harvey {
+  background-image: url('/images/harvey-upsidedown.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 200px;
+  width: 200px;
+  margin: auto;
+}
+#error-header {
+  text-align: center;
+  margin: 20px 0;
+  font-size: xx-large;
+  font-weight: bold;
+  font-variant-caps: small-caps;
+}
+#error-text {
+  text-align: center;
+  margin: 20px 0;
+	font-size: large;
+}

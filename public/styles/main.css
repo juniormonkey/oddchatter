@@ -237,7 +237,7 @@ h3 {
   background-size: cover;
 }
 #promo-image {
-  background-image: url('/images/mistakes.jpg');
+  background-image: url('/images/magic.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -253,10 +253,10 @@ h3 {
     background-image: url('/images/screenshot-mobile.png');
   }
   #promo-image {
-    background-image: url('/images/mistakes-mobile.jpg');
-    height: 300px;
+    background-image: url('/images/magic-mobile.jpg');
+    height: 225px;
     width: 300px;
-    top: calc(50% - 150px);
+    top: calc(50% - 112px);
   }
 }
 #error-container {

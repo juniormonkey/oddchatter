@@ -301,6 +301,9 @@ function loadConfiguration() {
     if (snapshot.size > 0) {
       let config = snapshot.docs[0].data();
       if (!config.enabled) {
+        outerContainerElement.setAttribute('hidden', true);
+        promoElement.removeAttribute('hidden');
+        logEvent('screen_view', {screen_name : 'promo' });
         return;
       }
       if (config.fallback_url) {

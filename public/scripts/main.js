@@ -19,6 +19,7 @@ const DEFAULT_CALLBACK_THRESHOLD = 3;
 var CALLBACK_WINDOW_MS = DEFAULT_CALLBACK_WINDOW_MS;
 var CALLBACK_THRESHOLD = DEFAULT_CALLBACK_THRESHOLD;
 var YOUTUBE_VIDEO = '';
+var YOUTUBE_CHAT = '';
 var ADMIN_USERS = [];
 
 // Load the configuration from Firestore before doing anything else.
@@ -322,14 +323,29 @@ function loadConfiguration() {
 
       if (config.youtube_video !== YOUTUBE_VIDEO) {
         YOUTUBE_VIDEO = config.youtube_video;
-        if (YOUTUBE_VIDEO) {
-          youtubeStreamIframeElement.src =
-              "https://www.youtube.com/live_chat?v=" + YOUTUBE_VIDEO +
-              "&embed_domain=" + window.location.hostname;
-          youtubeStreamContainerElement.removeAttribute('hidden');
-        } else {
-          youtubeStreamContainerElement.setAttribute('hidden', true);
-        }
+      }
+      if (config.youtube_chat !== YOUTUBE_CHAT) {
+        YOUTUBE_CHAT = config.youtube_chat;
+      }
+      if (YOUTUBE_VIDEO) {
+        youtubeVideoIframeElement.src =
+            "https://www.youtube.com/embed/" + YOUTUBE_VIDEO;
+        youtubeVideoIframeElement.removeAttribute('hidden');
+      } else {
+        youtubeVideoIframeElement.setAttribute('hidden', true);
+      }
+      if (YOUTUBE_CHAT) {
+        youtubeChatIframeElement.src =
+            "https://www.youtube.com/live_chat?v=" + YOUTUBE_VIDEO +
+            "&embed_domain=" + window.location.hostname;
+        youtubeChatIframeElement.removeAttribute('hidden');
+      } else {
+        youtubeChatIframeElement.setAttribute('hidden', true);
+      }
+      if (YOUTUBE_CHAT || YOUTUBE_VIDEO) {
+        youtubeStreamContainerElement.removeAttribute('hidden');
+      } else {
+        youtubeStreamContainerElement.setAttribute('hidden', true);
       }
     }
   });
@@ -688,7 +704,8 @@ const messagesCardContainerElement =
     document.getElementById('messages-card-container');
 const youtubeStreamContainerElement =
     document.getElementById('youtube-stream-container');
-const youtubeStreamIframeElement = document.getElementById('youtube-stream');
+const youtubeVideoIframeElement = document.getElementById('youtube-video');
+const youtubeChatIframeElement = document.getElementById('youtube-chat');
 
 const scienceAudioElement = document.getElementById('science-audio');
 const artAudioElement = document.getElementById('art-audio');

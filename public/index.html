@@ -138,7 +138,14 @@
 
       <!-- YT Live Stream container -->
       <div id="youtube-stream-container" hidden class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
-        <iframe id="youtube-stream" referrerPolicy="origin" frameBorder=0></iframe>
+        <iframe hidden
+                id="youtube-video"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        <iframe hidden id="youtube-chat" referrerPolicy="origin" frameBorder=0></iframe>
       </div>
       <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">
         <div class="mdl-snackbar__text"></div>

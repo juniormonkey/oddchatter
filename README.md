@@ -51,7 +51,11 @@ The script installs a Firestore query listener in `loadMessages()` to add a mess
 
 ### Displaying callback videos
 
-The script installs a Firestore query listener in the `listenInChat()` method of each `Callback` object, to display the callback's video if the most recent `CALLBACK_THRESHOLD` documents in that callback's collection are all more recent than `CALLBACK_WINDOW_MS` milliseconds ago, or the last time the callback video was played, whichever is more recent. 
+The script installs a Firestore query listener in `Callback.prototype.listenInChat()`, to display the callback's video if the most recent `CALLBACK_THRESHOLD` documents in that callback's collection are all more recent than `CALLBACK_WINDOW_MS` milliseconds ago, or the last time the callback video was played, whichever is more recent. 
+
+### Onboarding
+
+Some browsers (iOS Safari *cough cough*) have auto-play policies that demand that a user interaction happen before you can play the sound. So before anything works, we need the user to click on a button to explicitly trigger the sound; then we can later play the sound at will. (See: https://rosswintle.uk/2019/01/skirting-the-ios-safari-audio-auto-play-policy-for-ui-sound-effects/) To ~~force~~ encourage our users to actually click the buttons, you need to go through a onboarding tutorial (implemented in `onBoarding()` and `Callback.prototype.onboard()`) that shows you each button in turn and requires you to click it and thus trigger the video & sound.
 
 ### Configuration
 

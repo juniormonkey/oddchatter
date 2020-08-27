@@ -127,6 +127,7 @@ async function displayOnBoardingMessage(timestamp, message) {
 async function
 onBoarding() {
   logEvent('screen_view', {screen_name : 'onboarding'});
+
   // Use a artificially low timestamp so that all real messages appear after the
   // onboarding.
   let timestamp = 1;
@@ -160,6 +161,19 @@ onBoarding() {
   return waitFor(1);
 }
 
+function getTimestampMillis(data) {
+  if (!data) {
+    return -1;
+  }
+  if (!data.timestamp) {
+    return -1;
+  }
+  if (!data.timestamp.toMillis) {
+    return -1;
+  }
+  return data.timestamp.toMillis();
+}
+
 class Callback {
   constructor(text, onboardingMessage, buttonText, videoUrls, audioElement) {
     this.text = text;
@@ -182,13 +196,14 @@ class Callback {
           callback.lastCalledTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
       if (snapshot.size >= CALLBACK_THRESHOLD) {
         let firstTimestampMillis =
-            snapshot.docs[CALLBACK_THRESHOLD - 1].data().timestamp.toMillis();
+            getTimestampMillis(snapshot.docs[CALLBACK_THRESHOLD - 1].data());
         if (firstTimestampMillis > callbackWindowStartMillis) {
-          let lastTimestampMillis =
-              snapshot.docs[0].data().timestamp.toMillis();
-          callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
-          callback.display(lastTimestampMillis + 1);
-          logEvent('screen_view', {screen_name : callback.getCollection()});
+          let lastTimestampMillis = getTimestampMillis(snapshot.docs[0].data());
+          if (lastTimestampMillis > 0) {
+            callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
+            callback.display(lastTimestampMillis + 1);
+            logEvent('screen_view', {screen_name : callback.getCollection()});
+          }
         }
       }
     });
@@ -567,8 +582,12 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
   // If the current user is an admin, add a delete link to all Firebase
   // messages.
   // (This ACL is also enforced by Firestore.)
-  if (!id.startsWith('onboarding-message-') &&
-      !id.startsWith('callback-message-') && ADMIN_USERS.includes(getUid())) {
+  if (ADMIN_USERS.includes(getUid()) &&
+      // Onboarding and callbacks aren't in the DB so they don't need this.
+      !id.startsWith('onboarding-message-') &&
+      !id.startsWith('callback-message-') &&
+      // Don't add a duplicate admin div.
+      !div.querySelector('.admin')) {
     let deleteLine = document.createElement('a');
     deleteLine.className = 'admin';
     deleteLine.setAttribute('href', '#');

@@ -10,9 +10,11 @@ A callback-enabled chat UI for use while watching Odd Salon.
 
 ## How this works
 
-The (client-side) frontend is plain old JS, it's all in public/scripts/main.js.
+Odd Chatter is a Firebase project, https://firebase.google.com/docs. All data and configuration is stored in Cloud Firestore data, and the HTML/JS/CSS frontend is hosted on Firebase Hosting. 
 
-The backend is a Firebase project, https://firebase.google.com/docs. All data and configuration is stored in Cloud Firestore data.
+You'll need to install Firebase locally both to compile and deploy the code: `npm install --save firebase`.
+
+The client-side code is JS, compiled using [google-closure-compiler](https://developers.google.com/closure/compiler). Install this using `npm install --save google-closure-compiler`. To build the compiled output, run `compile.sh` or `compile.bat`.
 
 ### Cloud Firestore data architecture
 

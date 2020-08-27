@@ -2,3 +2,5 @@ firebase-debug.log
 *.swp
 *.cache
 .firebase/*
+public/scripts/main.js
+node_modules/*

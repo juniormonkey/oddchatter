@@ -1,4 +1,5 @@
 /**
+ * @license
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,10 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-const DEFAULT_CALLBACK_WINDOW_MS = 10000;
-const DEFAULT_CALLBACK_THRESHOLD = 3;
+/**
+ * @fileoverview Main JS code for the Odd Chatter page.
+ */
+goog.module('oddsalon.oddchatter');
+
+var DEBUG_MODE = false;
+
+/** @const */ const DEFAULT_CALLBACK_WINDOW_MS = 10000;
+/** @const */ const DEFAULT_CALLBACK_THRESHOLD = 3;
 
 var CALLBACK_WINDOW_MS = DEFAULT_CALLBACK_WINDOW_MS;
 var CALLBACK_THRESHOLD = DEFAULT_CALLBACK_THRESHOLD;
@@ -22,11 +29,12 @@ var YOUTUBE_VIDEO = '';
 var YOUTUBE_CHAT = '';
 var ADMIN_USERS = [];
 
-// Load the configuration from Firestore before doing anything else.
-loadConfiguration();
+/** @const @private */ const Timestamp = firebase.firestore.Timestamp;
 
-const Timestamp = firebase.firestore.Timestamp;
-
+/**
+ * @param {string} event_name
+ * @param {Object} event_parameters
+ */
 function logEvent(event_name, event_parameters) {
   // DO nothing if analytics is not defined, eg because of an ad blocker or
   // something.
@@ -36,51 +44,80 @@ function logEvent(event_name, event_parameters) {
 }
 
 class IncrementingId {
+  /**
+   * @param {string} text Some prefix text to use in the ID.
+
+   */
   constructor(text) {
     this.text = text;
     this.index = 0;
   }
 
+  /**
+   * @return {string} The next ID in the sequence.
+   */
   next() { return this.text + this.index++; }
 }
 
-const onboardingId = new IncrementingId('onboarding-message-');
-const callbackId = new IncrementingId('callback-message-');
+/** @const */ const onboardingId = new IncrementingId('onboarding-message-');
+/** @const */ const callbackId = new IncrementingId('callback-message-');
 
-// Signs-in Odd Chatter.
+/**
+ * Signs-in Odd Chatter.
+ */
 function signIn() {
   // Sign in Firebase with credential from the Google user.
-  const provider = new firebase.auth.GoogleAuthProvider();
+  /** @const */ const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
   logEvent('login', {method : ''});
 }
 
-// Signs-out of Odd Chatter.
+/**
+ * Signs-out of Odd Chatter.
+ */
 function signOut() {
   // Sign out of Firebase.
   firebase.auth().signOut();
 }
 
-// Initiate firebase auth.
+/**
+ * Initiate firebase auth.
+ */
 function initFirebaseAuth() {
   // Listen to auth state changes.
   firebase.auth().onAuthStateChanged(authStateObserver);
 }
 
-// Returns the signed-in user's profile Pic URL.
+/**
+ * @return {string} The signed-in user's profile Pic URL.
+ */
 function getProfilePicUrl() {
   return firebase.auth().currentUser.photoURL ||
          '/images/profile_placeholder.png';
 }
 
+/**
+ * @return {string} The signed-in user's UID.
+ */
 function getUid() { return firebase.auth().currentUser.uid; }
 
-// Returns the signed-in user's display name.
+/**
+ * @return {string|null} The signed-in user's display name.
+ */
 function getUserName() { return firebase.auth().currentUser.displayName; }
 
-// Returns true if a user is signed-in.
+/**
+ * @return {boolean} true if a user is signed-in.
+ */
 function isUserSignedIn() { return !!firebase.auth().currentUser; }
 
+/**
+ * Compares the given message text against all the registered callbacks,
+ * and updates the timestamp for any callback that matches.
+ *
+ * @param {string} text The message text to check for the presence of a
+ *     callback.
+ */
 function checkForCallbacks(text) {
   callbacks.forEach((callback) => {
     if (text !== callback.getMessage()) {
@@ -91,13 +128,17 @@ function checkForCallbacks(text) {
         .collection(callback.getCollection())
         .doc(getUid())
         .set({timestamp : firebase.firestore.FieldValue.serverTimestamp()})
-        .catch(function(error) {
+        .catch((error) => {
           console.error('Error writing new message to database', error);
         });
   });
 }
 
-// Saves a new message on the Firebase DB.
+/**
+ * Saves a new message on the Firebase DB.
+ *
+ * @param {string} messageText The message text to save.
+ */
 function saveMessage(messageText) {
   checkForCallbacks(messageText);
 
@@ -111,26 +152,38 @@ function saveMessage(messageText) {
         profilePicUrl : getProfilePicUrl(),
         timestamp : firebase.firestore.FieldValue.serverTimestamp()
       })
-      .catch(function(error) {
+      .catch((error) => {
         console.error('Error writing new message to database', error);
       });
 }
 
+/**
+ * @private
+ */
 const waitFor = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
+/**
+ * Displays an onboarding message, in the same format as a regular chat
+ * message.
+ *
+ * @param {number} timestamp A timestamp to use, in milliseconds since epoch.
+ * @param {string} message The message to display.
+ */
 async function displayOnBoardingMessage(timestamp, message) {
   displayMessage(onboardingId.next(), Timestamp.fromMillis(timestamp), 'Harvey',
                  message, 'images/adventureharvey.jpg', null);
   await waitFor(100);
 }
 
-// Introduces everything and initializes the background audio.
-async function
-onBoarding() {
+/**
+ * An onboarding script, to introduce the callbacks and initialize the
+ * background audio.
+ */
+async function onBoarding() {
   logEvent('screen_view', {screen_name : 'onboarding'});
 
-  // Use a artificially low timestamp so that all real messages appear after the
-  // onboarding.
+  // Use a artificially low timestamp so that all real messages appear after
+  // the onboarding.
   let timestamp = 1;
   await displayOnBoardingMessage(timestamp++,
                                  'Welcome to the Odd Chatter room!');
@@ -139,9 +192,9 @@ onBoarding() {
       'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
   await displayOnBoardingMessage(timestamp++,
                                  'Let me show you how it works...');
-  for (const callback of callbacks) {
-    await callback.onboard();
-  }
+  //for (const callback of callbacks) {
+  //  await callback.onboard();
+  //}
   await displayOnBoardingMessage(
       timestamp++,
       'Remember, the chat is public - so don\'t share your bank account password.');
@@ -162,17 +215,23 @@ onBoarding() {
   return waitFor(1);
 }
 
+/**
+ * Safely get the timestamp from a Firestore data object.
+ * @return {number} The value of the object's 'timestamp' field, in
+ *     milliseconds since epoch
+ * @private
+ */
 function getTimestampMillis(data) {
   if (!data) {
     return -1;
   }
-  if (!data.timestamp) {
+  if (!data['timestamp']) {
     return -1;
   }
-  if (!data.timestamp.toMillis) {
+  if (!data['timestamp'].toMillis) {
     return -1;
   }
-  return data.timestamp.toMillis();
+  return data['timestamp'].toMillis();
 }
 
 class Callback {
@@ -192,30 +251,43 @@ class Callback {
                      .limit(CALLBACK_THRESHOLD);
 
     let callback = this;
-    voices.onSnapshot((snapshot) => {
-      let callbackWindowStartMillis = Math.max(
-          callback.lastCalledTimestampMillis, Date.now() - CALLBACK_WINDOW_MS);
-      if (snapshot.size >= CALLBACK_THRESHOLD) {
-        let firstTimestampMillis =
-            getTimestampMillis(snapshot.docs[CALLBACK_THRESHOLD - 1].data());
-        if (firstTimestampMillis > callbackWindowStartMillis) {
-          let lastTimestampMillis = getTimestampMillis(snapshot.docs[0].data());
-          if (lastTimestampMillis > 0) {
-            callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
-            callback.display(lastTimestampMillis + 1);
-            logEvent('screen_view', {screen_name : callback.getCollection()});
+    voices.onSnapshot(
+        (snapshot) => {
+          let callbackWindowStartMillis =
+              Math.max(callback.lastCalledTimestampMillis,
+                       Date.now() - CALLBACK_WINDOW_MS);
+          if (snapshot.size >= CALLBACK_THRESHOLD) {
+            let firstTimestampMillis = getTimestampMillis(
+                snapshot.docs[CALLBACK_THRESHOLD - 1].data());
+            if (firstTimestampMillis > callbackWindowStartMillis) {
+              let lastTimestampMillis =
+                  getTimestampMillis(snapshot.docs[0].data());
+              if (lastTimestampMillis > 0) {
+                callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
+                callback.display(lastTimestampMillis + 1);
+                logEvent('screen_view',
+                         {screen_name : callback.getCollection()});
+              }
+            }
           }
-        }
-      }
-    });
+        },
+        (error) => { console.error("Error querying Firestore: ", error); });
   }
 
+  /**
+   * @param {number} timestamp The timestamp to display, in milliseconds since
+   *     epoch.
+   */
   async onboard(timestamp) {
     await displayOnBoardingMessage(timestamp, this.onboardingMessage);
     await this.displayOnBoardingButton(timestamp);
     await waitFor(this.audioElement.duration * 1000);
   }
 
+  /**
+   * @param {number} timestamp The timestamp to display, in milliseconds since
+   *     epoch.
+   */
   async displayOnBoardingButton(timestamp) {
     let div = createAndInsertMessage(onboardingId.next(),
                                      Timestamp.fromMillis(timestamp));
@@ -232,7 +304,7 @@ class Callback {
     messageElement.appendChild(button);
 
     // Show the card fading-in and scroll to view the new message.
-    setTimeout(function() { div.classList.add('visible') }, 1);
+    setTimeout(() => {div.classList.add('visible')}, 1);
     messageListElement.scrollTop = messageListElement.scrollHeight;
     messageInputElement.focus();
 
@@ -245,6 +317,10 @@ class Callback {
     });
   }
 
+  /**
+   * @param {number} timestamp The timestamp to display, in milliseconds since
+   *     epoch.
+   */
   display(timestamp) {
     let video =
         'video/' +
@@ -286,75 +362,87 @@ class Callback {
   }
 }
 
+/**
+ * @param {number} from
+ * @param {number} to
+ * @return {number} A random number in the inclusive range [from, to].
+ * @private
+ */
 function randomNumberBetween(from, to) {
   return from + Math.floor(Math.random() * (to - from + 1));
 }
 
-// Loads the callback thresholds and YouTube ID, and listens for changes.
+/**
+ * Loads the callback thresholds and YouTube ID, and listens for changes.
+ */
 function loadConfiguration() {
   let query = firebase.firestore()
                   .collection('configuration')
                   .orderBy('timestamp', 'desc')
                   .limit(1);
 
-  query.onSnapshot((snapshot) => {
-    if (snapshot.size > 0) {
-      let config = snapshot.docs[0].data();
-      if (!config.enabled) {
-        outerContainerElement.setAttribute('hidden', true);
-        promoElement.removeAttribute('hidden');
-        logEvent('screen_view', {screen_name : 'promo' });
-        return;
-      }
-      if (config.fallback_url) {
-        errorContainerElement.removeAttribute('hidden');
-        promoElement.setAttribute('hidden', true);
-        errorLinkElement.setAttribute('href', config.fallback_url);
-        logEvent('screen_view', {screen_name : 'error'});
-        return;
-      }
-      if (outerContainerElement.hasAttribute('hidden')) {
-        outerContainerElement.removeAttribute('hidden');
-        promoElement.setAttribute('hidden', true);
-        logEvent('screen_view', {screen_name : 'main'});
-      }
+  query.onSnapshot(
+      (snapshot) => {
+        if (snapshot.size > 0) {
+          let config = snapshot.docs[0].data();
+          if (!config['enabled'] && !DEBUG_MODE) {
+            outerContainerElement.setAttribute('hidden', true);
+            promoElement.removeAttribute('hidden');
+            logEvent('screen_view', {screen_name : 'promo'});
+            return;
+          }
+          if (config['fallback_url']) {
+            errorContainerElement.removeAttribute('hidden');
+            promoElement.setAttribute('hidden', true);
+            errorLinkElement.setAttribute('href', config['fallback_url']);
+            logEvent('screen_view', {screen_name : 'error'});
+            return;
+          }
+          if (outerContainerElement.hasAttribute('hidden')) {
+            outerContainerElement.removeAttribute('hidden');
+            promoElement.setAttribute('hidden', true);
+            logEvent('screen_view', {screen_name : 'main'});
+          }
 
-      CALLBACK_WINDOW_MS = config.callback_window_ms;
-      CALLBACK_THRESHOLD = config.callback_threshold;
+          CALLBACK_WINDOW_MS = config['callback_window_ms'];
+          CALLBACK_THRESHOLD = config['callback_threshold'];
 
-      ADMIN_USERS = config.admin_users;
+          ADMIN_USERS = config['admin_users'];
 
-      if (config.youtube_video !== YOUTUBE_VIDEO) {
-        YOUTUBE_VIDEO = config.youtube_video;
-      }
-      if (config.youtube_chat !== YOUTUBE_CHAT) {
-        YOUTUBE_CHAT = config.youtube_chat;
-      }
-      if (YOUTUBE_VIDEO) {
-        youtubeVideoIframeElement.src =
-            "https://www.youtube.com/embed/" + YOUTUBE_VIDEO;
-        youtubeVideoIframeElement.removeAttribute('hidden');
-      } else {
-        youtubeVideoIframeElement.setAttribute('hidden', true);
-      }
-      if (YOUTUBE_CHAT) {
-        youtubeChatIframeElement.src =
-            "https://www.youtube.com/live_chat?v=" + YOUTUBE_VIDEO +
-            "&embed_domain=" + window.location.hostname;
-        youtubeChatIframeElement.removeAttribute('hidden');
-      } else {
-        youtubeChatIframeElement.setAttribute('hidden', true);
-      }
-      if (YOUTUBE_CHAT || YOUTUBE_VIDEO) {
-        youtubeStreamContainerElement.removeAttribute('hidden');
-      } else {
-        youtubeStreamContainerElement.setAttribute('hidden', true);
-      }
-    }
-  });
+          if (config['youtube_video'] !== YOUTUBE_VIDEO) {
+            YOUTUBE_VIDEO = config['youtube_video'];
+          }
+          if (config['youtube_chat'] !== YOUTUBE_CHAT) {
+            YOUTUBE_CHAT = config['youtube_chat'];
+          }
+          if (YOUTUBE_VIDEO) {
+            youtubeVideoIframeElement.src =
+                "https://www.youtube.com/embed/" + YOUTUBE_VIDEO;
+            youtubeVideoIframeElement.removeAttribute('hidden');
+          } else {
+            youtubeVideoIframeElement.setAttribute('hidden', true);
+          }
+          if (YOUTUBE_CHAT) {
+            youtubeChatIframeElement.src =
+                "https://www.youtube.com/live_chat?v=" + YOUTUBE_VIDEO +
+                "&embed_domain=" + window.location.hostname;
+            youtubeChatIframeElement.removeAttribute('hidden');
+          } else {
+            youtubeChatIframeElement.setAttribute('hidden', true);
+          }
+          if (YOUTUBE_CHAT || YOUTUBE_VIDEO) {
+            youtubeStreamContainerElement.removeAttribute('hidden');
+          } else {
+            youtubeStreamContainerElement.setAttribute('hidden', true);
+          }
+        }
+      },
+      (error) => { console.error("Error querying Firestore: ", error); });
 }
 
-// Loads chat messages history and listens for upcoming ones.
+/**
+ * Loads chat messages history and listens for upcoming ones.
+ */
 function loadMessages() {
   // Create the query to load the last 12 messages and listen for new
   // ones.
@@ -364,22 +452,28 @@ function loadMessages() {
                   .limit(12);
 
   // Start listening to the query.
-  query.onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === 'removed') {
-        deleteMessage(change.doc.id);
-      } else {
-        let message = change.doc.data();
-        displayMessage(change.doc.id, message.timestamp, message.name,
-                       message.text, message.profilePicUrl, message.imageUrl);
-      }
-    });
-  });
+  query.onSnapshot(
+      (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'removed') {
+            deleteMessage(change.doc.id);
+          } else {
+            let message = change.doc.data();
+            displayMessage(change.doc.id, message['timestamp'], message['name'],
+                           message['text'], message['profilePicUrl'],
+                           message['imageUrl']);
+          }
+        });
+      },
+      (error) => { console.error("Error querying Firestore: ", error); });
 
   callbacks.forEach((callback) => callback.listenInChat());
 }
 
-// Triggered when the send new message form is submitted.
+/**
+ * Triggered when the send new message form is submitted.
+ * @param {!Event} e
+ */
 function onMessageFormSubmit(e) {
   e.preventDefault();
   logEvent('share',
@@ -387,6 +481,10 @@ function onMessageFormSubmit(e) {
   onMessageSubmitted(messageInputElement.value);
 }
 
+/**
+ * Triggered when the SCIENCE form is submitted.
+ * @param {!Event} e
+ */
 function onScienceFormSubmit(e) {
   e.preventDefault();
   logEvent('share',
@@ -396,6 +494,10 @@ function onScienceFormSubmit(e) {
   setTimeout(() => scienceButtonElement.removeAttribute('disabled'), 1000);
 }
 
+/**
+ * Triggered when the ART form is submitted.
+ * @param {!Event} e
+ */
 function onArtFormSubmit(e) {
   e.preventDefault();
   logEvent('share', {method : 'chat', content_type : 'ART', content_id : ''});
@@ -404,6 +506,10 @@ function onArtFormSubmit(e) {
   setTimeout(() => artButtonElement.removeAttribute('disabled'), 1000);
 }
 
+/**
+ * Triggered when the MAPS form is submitted.
+ * @param {!Event} e
+ */
 function onMapsFormSubmit(e) {
   e.preventDefault();
   logEvent('share', {method : 'chat', content_type : 'MAPS', content_id : ''});
@@ -412,6 +518,10 @@ function onMapsFormSubmit(e) {
   setTimeout(() => mapsButtonElement.removeAttribute('disabled'), 1000);
 }
 
+/**
+ * Triggered when the SHIPS form is submitted.
+ * @param {!Event} e
+ */
 function onShipsFormSubmit(e) {
   e.preventDefault();
   logEvent('share', {method : 'chat', content_type : 'SHIPS', content_id : ''});
@@ -420,6 +530,10 @@ function onShipsFormSubmit(e) {
   setTimeout(() => shipsButtonElement.removeAttribute('disabled'), 1000);
 }
 
+/**
+ * Triggered when the APPLAUSE form is submitted.
+ * @param {!Event} e
+ */
 function onApplauseFormSubmit(e) {
   e.preventDefault();
   logEvent('share',
@@ -429,6 +543,10 @@ function onApplauseFormSubmit(e) {
   setTimeout(() => applauseButtonElement.removeAttribute('disabled'), 1000);
 }
 
+/**
+ * Triggered when the BOO form is submitted.
+ * @param {!Event} e
+ */
 function onBooFormSubmit(e) {
   e.preventDefault();
   logEvent('share', {method : 'chat', content_type : 'BOO', content_id : ''});
@@ -437,6 +555,10 @@ function onBooFormSubmit(e) {
   setTimeout(() => booButtonElement.removeAttribute('disabled'), 1000);
 }
 
+/**
+ * Handles the submitting of a new message (including the callbacks.)
+ * @param {string} message The message to submit.
+ */
 function onMessageSubmitted(message) {
   // Check that the user entered a message and is signed in.
   if (message && checkSignedInWithMessage()) {
@@ -448,9 +570,12 @@ function onMessageSubmitted(message) {
   }
 }
 
-// Triggers when the auth state change for instance when the user
-// signs-in or
-// signs-out.
+/**
+ * Triggers when the auth state change for instance when the user signs-in or
+ * signs-out.
+ *
+ * @param {firebase.User} user
+ */
 function authStateObserver(user) {
   if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
@@ -492,8 +617,9 @@ function authStateObserver(user) {
   }
 }
 
-// Returns true if user is signed-in. Otherwise false and displays a
-// message.
+/**
+ * Returns true if user is signed-in. Otherwise false and displays a message.
+ */
 function checkSignedInWithMessage() {
   // Return true if the user is signed in Firebase
   if (isUserSignedIn()) {
@@ -506,13 +632,20 @@ function checkSignedInWithMessage() {
   return false;
 }
 
-// Resets the given MaterialTextField.
+/**
+ * Resets the given MaterialTextField.
+ *
+ * @param {Element} element The text field element to reset.
+ */
 function resetMaterialTextfield(element) {
   element.value = '';
   element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
 }
 
-// Template for messages.
+/**
+ * Template for messages.
+ * @const
+ */
 const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '<div class="spacing"><div class="pic"></div></div>' +
                          '<div class="message"></div>' +
@@ -520,7 +653,12 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '<div class="timestamp"></div>' +
                          '</div>';
 
-// Adds a size to Google Profile pics URLs.
+/**
+ * Adds a size to Google Profile pics URLs.
+ *
+ * @param {string} url The profile pic URL to edit.
+ * @return {string} A new profile pic URL with the size param added.
+ */
 function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
     return url + '?sz=150';
@@ -528,10 +666,18 @@ function addSizeToGoogleProfilePic(url) {
   return url;
 }
 
-// A loading image URL.
+/**
+ * A loading image URL.
+ *
+ * @const
+ */
 const LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
 
-// Delete a Message from the UI.
+/**
+ * Delete a Message from the UI.
+ *
+ * @param {string} id The ID of the message to delete.
+ */
 function deleteMessage(id) {
   let div = document.getElementById(id);
   // If an element for that message exists we delete it.
@@ -540,33 +686,41 @@ function deleteMessage(id) {
   }
 }
 
+/**
+ * Creates a new Message in the UI.
+ *
+ * @param {string} id The ID of the message to create.
+ * @param {firebase.firestore.Timestamp|undefined} timestamp The timestamp of
+ *     the existing message, or undefined if it's a brand new message.
+ */
 function createAndInsertMessage(id, timestamp) {
-  const container = document.createElement('div');
+  /** @const */ const container = document.createElement('div');
   container.innerHTML = MESSAGE_TEMPLATE;
-  const div = container.firstChild;
+  /** @const */ const div = container.firstChild;
   div.setAttribute('id', id);
 
   // If timestamp is null, assume we've gotten a brand new message.
   // https://stackoverflow.com/a/47781432/4816918
-  timestamp = timestamp ? timestamp.toMillis() : Date.now();
-  div.setAttribute('timestamp', timestamp);
+  let timestampMillis = timestamp ? timestamp.toMillis() : Date.now();
+  div.setAttribute('timestamp', timestampMillis);
 
   // figure out where to insert new message
-  const existingMessages = messageListElement.children;
+  /** @const */ const existingMessages = messageListElement.children;
   if (existingMessages.length === 0) {
     messageListElement.appendChild(div);
   } else {
     let messageListNode = existingMessages[0];
 
     while (messageListNode) {
-      const messageListNodeTime = messageListNode.getAttribute('timestamp');
+      /** @const */ const messageListNodeTime =
+          messageListNode.getAttribute('timestamp');
 
       if (!messageListNodeTime) {
         throw new Error(
             `Child ${messageListNode.id} has no 'timestamp' attribute`);
       }
 
-      if (messageListNodeTime > timestamp) {
+      if (messageListNodeTime > timestampMillis) {
         break;
       }
 
@@ -579,7 +733,17 @@ function createAndInsertMessage(id, timestamp) {
   return div;
 }
 
-// Displays a Message in the UI.
+/**
+ * Displays a Message in the UI.
+ *
+ * @param {string} id The ID of the message to display.
+ * @param {firebase.firestore.Timestamp} timestamp The timestamp of the
+ *     message to display.
+ * @param {string} name The name of the author.
+ * @param {string|null} text The content of the message.
+ * @param {string} picUrl The URL of the author's profile pic.
+ * @param {string|null} videoUrl The URL of the callback video to play.
+ */
 function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
   let div =
       document.getElementById(id) || createAndInsertMessage(id, timestamp);
@@ -591,7 +755,7 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
   }
 
   div.querySelector('.name').textContent = name;
-  if (timestamp > Timestamp.fromMillis(10000)) {
+  if (timestamp && timestamp.toMillis() > 10000) {
     div.querySelector('.timestamp').textContent =
         timestamp.toDate().toLocaleDateString() + ' ' +
         timestamp.toDate().toLocaleTimeString();
@@ -616,9 +780,8 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
           .collection("messages")
           .doc(id)
           .delete()
-          .catch(function(error) {
-            console.error("Error removing message: ", error);
-          });
+          .catch(
+              (error) => { console.error("Error removing message: ", error); });
     });
     div.appendChild(deleteLine);
   }
@@ -656,9 +819,10 @@ function displayMessage(id, timestamp, name, text, picUrl, videoUrl) {
   messageInputElement.focus();
 }
 
-// Enables or disables the submit button depending on the values of the
-// input
-// fields.
+/**
+ * Enables or disables the submit button depending on the values of the input
+ * fields.
+ */
 function toggleButton() {
   if (messageInputElement.value) {
     submitButtonElement.removeAttribute('disabled');
@@ -667,7 +831,7 @@ function toggleButton() {
   }
 }
 
-// Checks that the Firebase SDK has been correctly setup and configured.
+/** Checks that the Firebase SDK has been correctly setup and configured. */
 function checkSetup() {
   if (!window.firebase || !(firebase.app instanceof Function) ||
       !firebase.app().options) {
@@ -678,53 +842,66 @@ function checkSetup() {
   }
 }
 
-// Checks that Firebase has been imported.
-checkSetup();
-
 // Shortcuts to DOM Elements.
-const outerContainerElement = document.getElementById('outer-container');
-const promoElement = document.getElementById('promo');
-const errorContainerElement = document.getElementById('error-container');
-const errorLinkElement = document.getElementById('error-link');
-const messageListElement = document.getElementById('messages');
-const messageFormElement = document.getElementById('message-form');
-const messageInputElement = document.getElementById('message');
-const submitButtonElement = document.getElementById('submit');
-const scienceButtonElement = document.getElementById('science');
-const artButtonElement = document.getElementById('art');
-const mapsButtonElement = document.getElementById('maps');
-const shipsButtonElement = document.getElementById('ships');
-const applauseButtonElement = document.getElementById('applause');
-const booButtonElement = document.getElementById('boo');
-const userPicElement = document.getElementById('user-pic');
-const userNameElement = document.getElementById('user-name');
-const signInButtonElement = document.getElementById('sign-in');
-const signOutButtonElement = document.getElementById('sign-out');
-const signInSnackbarElement = document.getElementById('must-signin-snackbar');
-const splashScreenElement = document.getElementById('signin-splashscreen');
-const signInSplashButtonElement = document.getElementById('sign-in-splash');
-const messagesCardContainerElement =
+/** @const */ const outerContainerElement =
+    document.getElementById('outer-container');
+/** @const */ const promoElement = document.getElementById('promo');
+/** @const */ const errorContainerElement =
+    document.getElementById('error-container');
+/** @const */ const errorLinkElement = document.getElementById('error-link');
+/** @const */ const messageListElement = document.getElementById('messages');
+/** @const */ const messageFormElement =
+    document.getElementById('message-form');
+/** @const */ const messageInputElement = document.getElementById('message');
+/** @const */ const submitButtonElement = document.getElementById('submit');
+/** @const */ const scienceButtonElement = document.getElementById('science');
+/** @const */ const artButtonElement = document.getElementById('art');
+/** @const */ const mapsButtonElement = document.getElementById('maps');
+/** @const */ const shipsButtonElement = document.getElementById('ships');
+/** @const */ const applauseButtonElement = document.getElementById('applause');
+/** @const */ const booButtonElement = document.getElementById('boo');
+/** @const */ const userPicElement = document.getElementById('user-pic');
+/** @const */ const userNameElement = document.getElementById('user-name');
+/** @const */ const signInButtonElement = document.getElementById('sign-in');
+/** @const */ const signOutButtonElement = document.getElementById('sign-out');
+/** @const */ const signInSnackbarElement =
+    document.getElementById('must-signin-snackbar');
+/** @const */ const splashScreenElement =
+    document.getElementById('signin-splashscreen');
+/** @const */ const signInSplashButtonElement =
+    document.getElementById('sign-in-splash');
+/** @const */ const messagesCardContainerElement =
     document.getElementById('messages-card-container');
-const youtubeStreamContainerElement =
+/** @const */ const youtubeStreamContainerElement =
     document.getElementById('youtube-stream-container');
-const youtubeVideoIframeElement = document.getElementById('youtube-video');
-const youtubeChatIframeElement = document.getElementById('youtube-chat');
+/** @const */ const youtubeVideoIframeElement =
+    document.getElementById('youtube-video');
+/** @const */ const youtubeChatIframeElement =
+    document.getElementById('youtube-chat');
 
-const scienceAudioElement = document.getElementById('science-audio');
-const artAudioElement = document.getElementById('art-audio');
-const mapsAudioElement = document.getElementById('maps-audio');
-const shipsAudioElement = document.getElementById('ships-audio');
-const applauseAudioElement = document.getElementById('applause-audio');
-const booAudioElement = document.getElementById('boo-audio');
+/** @const */ const scienceAudioElement =
+    document.getElementById('science-audio');
+/** @const */ const artAudioElement = document.getElementById('art-audio');
+/** @const */ const mapsAudioElement = document.getElementById('maps-audio');
+/** @const */ const shipsAudioElement = document.getElementById('ships-audio');
+/** @const */ const applauseAudioElement =
+    document.getElementById('applause-audio');
+/** @const */ const booAudioElement = document.getElementById('boo-audio');
 
-const scienceFormElement = document.getElementById('science-form');
-const artFormElement = document.getElementById('art-form');
-const mapsFormElement = document.getElementById('maps-form');
-const shipsFormElement = document.getElementById('ships-form');
-const applauseFormElement = document.getElementById('applause-form');
-const booFormElement = document.getElementById('boo-form');
+/** @const */ const scienceFormElement =
+    document.getElementById('science-form');
+/** @const */ const artFormElement = document.getElementById('art-form');
+/** @const */ const mapsFormElement = document.getElementById('maps-form');
+/** @const */ const shipsFormElement = document.getElementById('ships-form');
+/** @const */ const applauseFormElement =
+    document.getElementById('applause-form');
+/** @const */ const booFormElement = document.getElementById('boo-form');
 
-// Callbacks that we listen for.
+/**
+ * Callbacks that we listen for.
+ *
+ * @const
+ */
 const callbacks = [
   new Callback(
       'SCIENCE',
@@ -737,9 +914,9 @@ const callbacks = [
       scienceAudioElement),
   new Callback('ART', 'When there\'s some ART, click this button:', '🎨',
                [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ], artAudioElement),
-  new Callback('MAPS', 'Whenever you spot a MAP, this is your button:',
-               '🗺️', [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ],
-               mapsAudioElement),
+  new Callback('MAPS',
+               'Whenever you spot a MAP, this is your button:', '🗺️',
+               [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ], mapsAudioElement),
   new Callback(
       'SHIPS',
       'And how could we forget seafaring vessels - click here for SHIPS:', '🚢',
@@ -776,8 +953,14 @@ booFormElement.addEventListener('submit', onBooFormSubmit);
 messageInputElement.addEventListener('keyup', toggleButton);
 messageInputElement.addEventListener('change', toggleButton);
 
+// Checks that Firebase has been imported.
+checkSetup();
+
 // initialize Firebase
 initFirebaseAuth();
+
+// Load the configuration from Firestore
+loadConfiguration();
 
 // Start the onboarding once the messagesCardContainerElement is
 // visible.

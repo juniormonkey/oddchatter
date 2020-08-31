@@ -92,18 +92,20 @@ function saveMessage_(messageText) {
   checkForCallbacks_(messageText);
 
   // Add a new message entry to the database.
+  /* eslint-disable quote-props */
   return firebase.firestore()
       .collection('messages')
       .add({
-        uid: user.getUid(),
-        name: user.getUserName(),
-        text: messageText,
-        profilePicUrl: user.getProfilePicUrl(),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        'uid': user.getUid(),
+        'name': user.getUserName(),
+        'text': messageText,
+        'profilePicUrl': user.getProfilePicUrl(),
+        'timestamp': firebase.firestore.FieldValue.serverTimestamp(),
       })
       .catch((error) => {
         console.error('Error writing new message to database', error);
       });
+  /* eslint-enable quote-props */
 }
 
 /**

@@ -12,8 +12,6 @@ const user = goog.require('oddsalon.oddchatter.user');
 
 const Timestamp = firebase.firestore.Timestamp;
 
-/** @const @private */ const ONBOARDING_ID =
-    new ui.IncrementingId('onboarding-message-');
 /** @const @private */ const CALLBACK_ID =
     new ui.IncrementingId('callback-message-');
 
@@ -32,13 +30,15 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 /**
  * Updates the UI in response to a config change.
  *
- * @param {!config.Configuration} config
+ * @param {config.Configuration} config
  */
 function applyNewConfiguration(config) {
   // Show only the splash screen if the app is not enabled.
   if (!config.enabled) {
-    ui.outerContainerElement.setAttribute('hidden', true);
     ui.promoElement.removeAttribute('hidden');
+    ui.outerContainerElement.setAttribute('hidden', true);
+    ui.introContainerElement.setAttribute('hidden', true);
+    ui.errorContainerElement.setAttribute('hidden', true);
     logging.logEvent('screen_view', {screen_name: 'promo'});
     return;
   }
@@ -46,43 +46,48 @@ function applyNewConfiguration(config) {
   // If we've set a fallback URL, show the error screen with a link to that URL.
   if (config.fallback_url) {
     ui.errorContainerElement.removeAttribute('hidden');
+    ui.outerContainerElement.setAttribute('hidden', true);
+    ui.introContainerElement.setAttribute('hidden', true);
     ui.promoElement.setAttribute('hidden', true);
     ui.errorLinkElement.setAttribute('href', config.fallback_url);
     logging.logEvent('screen_view', {screen_name: 'error'});
     return;
   }
 
-  // Else, hide the splash screen and show the chat container.
-  if (ui.outerContainerElement.hasAttribute('hidden')) {
-    ui.outerContainerElement.removeAttribute('hidden');
+  if (config.intro_seen) {
+    showMainUi_(config);
+  } else {
+    ui.introContainerElement.removeAttribute('hidden');
     ui.promoElement.setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name: 'main'});
-  }
+    ui.errorContainerElement.setAttribute('hidden', true);
+    ui.outerContainerElement.setAttribute('hidden', true);
 
-  // If there's a YouTube stream ID, show the embedded player.
-  if (config.youtube_video) {
-    ui.youtubeVideoIframeElement.src =
-        `https://www.youtube.com/embed/${config.youtube_video}`;
-    ui.youtubeVideoIframeElement.removeAttribute('hidden');
-  } else {
-    ui.youtubeVideoIframeElement.setAttribute('hidden', true);
-  }
+    ui.introButtonElement.addEventListener('click', () => {
+      // Play all the sounds, at volume 0, for mobile browsers.
+      for (const callback of callbacks.CALLBACKS) {
+        const audio = callback.audioElement;
+        audio.volume = 0;
+        audio.muted = true;
+        audio.playbackRate = 2;
+        audio.onended = () => {
+          window.console.log('resetting element: ', audio);
+          audio.volume = 1;
+          audio.muted = false;
+          audio.playbackRate = 1;
+          audio.onended = null;
+        };
+        audio.play();
+        callback.enableButton();
+      }
+      config.intro_seen = true;
 
-  // If there's a YouTube chat ID, show the embedded chat widget.
-  if (config.youtube_chat) {
-    ui.youtubeChatIframeElement.src = `https://www.youtube.com/live_chat?v=${
-        config.youtube_chat}&embed_domain=${window.location.hostname}`;
-    ui.youtubeChatIframeElement.removeAttribute('hidden');
-  } else {
-    ui.youtubeChatIframeElement.setAttribute('hidden', true);
-  }
+      ui.messageInputElement.removeAttribute('disabled');
+      ui.messageInputElement.focus();
 
-  // If there's either a YouTube stream ID or chat ID, show the container that
-  // wraps both of these elements.
-  if (config.youtube_video || config.youtube_chat) {
-    ui.youtubeStreamContainerElement.removeAttribute('hidden');
-  } else {
-    ui.youtubeStreamContainerElement.setAttribute('hidden', true);
+      logging.logEvent('screen_view', {screen_name: 'chat'});
+
+      showMainUi_(config);
+    });
   }
 }
 
@@ -131,45 +136,6 @@ function applyNewAuthState(firebaseUser) {
     // Hide the messages UI
     ui.messagesCardContainerElement.setAttribute('hidden', 'true');
   }
-}
-
-/**
- * An onboarding script, to introduce the callbacks and initialize the
- * background audio.
- * @return {Promise}
- */
-async function onBoarding() {
-  logging.logEvent('screen_view', {screen_name: 'onboarding'});
-
-  // Use a artificially low timestamp so that all real messages appear after
-  // the onboarding.
-  let timestamp = 1;
-  await displayOnboardingMessage_(timestamp++,
-                                  'Welcome to the Odd Chatter room!');
-  await displayOnboardingMessage_(
-      timestamp++,
-      'This is not a quiet event - if enough folks shout the same callout ' +
-          'in chat, we\'ll all hear it.');
-  await displayOnboardingMessage_(timestamp++,
-                                  'Let me show you how it works...');
-  for (const callback of callbacks.CALLBACKS) {
-    await onboardCallback_(timestamp++, callback);
-  }
-  await displayOnboardingMessage_(
-      timestamp++, 'Remember, the chat is public - so don\'t share your bank ' +
-                       'account password.');
-  await displayOnboardingMessage_(
-      timestamp++, 'Now you\'re ready to learn something weird!');
-  waitFor_(250);
-
-  for (const callback of callbacks.CALLBACKS) {
-    callback.enableButton();
-  }
-  ui.messageInputElement.removeAttribute('disabled');
-  ui.messageInputElement.focus();
-
-  logging.logEvent('screen_view', {screen_name: 'chat'});
-  return waitFor_(1);
 }
 
 /**
@@ -225,7 +191,7 @@ function loadCallbacks() {
                   getTimestampMillis_(snapshot.docs[0].data());
               if (lastTimestampMillis > 0) {
                 callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
-                callback.display(lastTimestampMillis + 1);
+                displayCallback_(lastTimestampMillis + 1, callback);
                 logging.logEvent('screen_view',
                                  {screen_name: callback.getCollection()});
               }
@@ -235,6 +201,50 @@ function loadCallbacks() {
         (error) => {
           console.error('Error querying Firestore: ', error);
         });
+  }
+}
+
+/**
+ * Updates the main UI (assuming the splash screen, intro and error screen are
+ * not shown) in response to a config change.
+ *
+ * @param {!config.Configuration} config
+ * @private
+ */
+function showMainUi_(config) {
+  // Else, hide the splash screen and show the chat container.
+  if (ui.outerContainerElement.hasAttribute('hidden')) {
+    ui.outerContainerElement.removeAttribute('hidden');
+    ui.promoElement.setAttribute('hidden', true);
+    ui.errorContainerElement.setAttribute('hidden', true);
+    ui.introContainerElement.setAttribute('hidden', true);
+    logging.logEvent('screen_view', {screen_name: 'main'});
+  }
+
+  // If there's a YouTube stream ID, show the embedded player.
+  if (config.youtube_video) {
+    ui.youtubeVideoIframeElement.src =
+        `https://www.youtube.com/embed/${config.youtube_video}`;
+    ui.youtubeVideoIframeElement.removeAttribute('hidden');
+  } else {
+    ui.youtubeVideoIframeElement.setAttribute('hidden', true);
+  }
+
+  // If there's a YouTube chat ID, show the embedded chat widget.
+  if (config.youtube_chat) {
+    ui.youtubeChatIframeElement.src = `https://www.youtube.com/live_chat?v=${
+        config.youtube_chat}&embed_domain=${window.location.hostname}`;
+    ui.youtubeChatIframeElement.removeAttribute('hidden');
+  } else {
+    ui.youtubeChatIframeElement.setAttribute('hidden', true);
+  }
+
+  // If there's either a YouTube stream ID or chat ID, show the container that
+  // wraps both of these elements.
+  if (config.youtube_video || config.youtube_chat) {
+    ui.youtubeStreamContainerElement.removeAttribute('hidden');
+  } else {
+    ui.youtubeStreamContainerElement.setAttribute('hidden', true);
   }
 }
 
@@ -349,8 +359,7 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
   // messages.
   // (This ACL is also enforced by Firestore.)
   if (config.CONFIG.admin_users.includes(user.getUid()) &&
-      // Onboarding and callbacks aren't in the DB so they don't need this.
-      !id.startsWith('onboarding-message-') &&
+      // Callbacks aren't in the DB so they don't need this.
       !id.startsWith('callback-message-') &&
       // Don't add a duplicate admin div.
       !div.querySelector('.admin')) {
@@ -407,66 +416,6 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
 }
 
 /**
- * @param {number} delay A number of milliseconds to wait.
- * @return {Promise} A promise that will be resolved after the given delay.
- * @private
- */
-const waitFor_ = (delay) =>
-    new Promise((resolve) => setTimeout(resolve, delay));
-
-/**
- * @param {number} timestamp The timestamp to display, in milliseconds since
- *     epoch.
- * @param {string} buttonText The text to display on the button.
- * @param {function(function(), function(), Event)} clickHandler A function to
- *     handle clicks on the button, that takes as arguments the Promise's
- *     resolve and reject functions, and the click event.
- * @return {Promise} A promise that is resolved by the clickHandler.
- * @private
- */
-async function displayOnboardingButton_(timestamp, buttonText, clickHandler) {
-  const div = createAndInsertMessage_(ONBOARDING_ID.next(),
-                                      Timestamp.fromMillis(timestamp));
-
-  div.querySelector('.name').textContent = 'Harvey';
-  div.querySelector('.pic').style.backgroundImage =
-      `url(${addSizeToGoogleProfilePic_('images/adventureharvey.jpg')})`;
-  const messageElement = div.querySelector('.message');
-
-  const button = document.createElement('button');
-  button.className = 'mdl-button mdl-js-button mdl-button--raised';
-  button.textContent = buttonText;
-  messageElement.innerHTML = '';
-  messageElement.appendChild(button);
-
-  // Show the card fading-in and scroll to view the new message.
-  setTimeout(() => {
-    div.classList.add('visible');
-  }, 1);
-  ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
-  ui.messageInputElement.focus();
-
-  return new Promise((resolve, reject) => {
-    button.addEventListener('click',
-                            goog.partial(clickHandler, resolve, reject));
-  });
-}
-
-/**
- * Displays an onboarding message, in the same format as a regular chat
- * message.
- *
- * @param {number} timestamp A timestamp to use, in milliseconds since epoch.
- * @param {string} message The message to display.
- * @private
- */
-async function displayOnboardingMessage_(timestamp, message) {
-  displayMessage_(ONBOARDING_ID.next(), Timestamp.fromMillis(timestamp),
-                  'Harvey', message, 'images/adventureharvey.jpg', null);
-  await waitFor_(100);
-}
-
-/**
  * @param {number} timestamp The timestamp to display, in milliseconds since
  *     epoch.
  * @param {!callbacks.Callback} callback The callback to display.
@@ -480,23 +429,6 @@ function displayCallback_(timestamp, callback) {
                   callback.getByline(), '', 'images/adventureharvey.jpg',
                   video);
   callback.audioElement.play();
-}
-
-/**
- * @param {number} timestamp The timestamp to display, in milliseconds since
- *     epoch.
- * @param {!callbacks.Callback} callback The callback to onboard.
- * @private
- */
-async function onboardCallback_(timestamp, callback) {
-  await displayOnboardingMessage_(timestamp, callback.onboardingMessage);
-  await displayOnboardingButton_(timestamp, callback.buttonText,
-                                 /* eslint-disable-next-line no-unused-vars */
-                                 (resolve, _reject, _e) => {
-                                   displayCallback_(timestamp, callback);
-                                   resolve();
-                                 });
-  await waitFor_(callback.audioElement.duration * 1000);
 }
 
 /**
@@ -522,7 +454,6 @@ function getTimestampMillis_(data) {
 exports = {
   applyNewConfiguration,
   applyNewAuthState,
-  onBoarding,
   loadMessages,
   loadCallbacks,
 };

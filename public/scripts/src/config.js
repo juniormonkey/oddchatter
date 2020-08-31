@@ -14,6 +14,7 @@ const DEBUG_MODE = false;
 class Configuration {
   constructor() {
     this.enabled = false;
+    this.intro_seen = false;
     this.fallback_url = '';
     this.callback_window_ms = DEFAULT_CALLBACK_WINDOW_MS;
     this.callback_threshold = DEFAULT_CALLBACK_THRESHOLD;

@@ -33,6 +33,10 @@ exports = {IncrementingId};
 /** @const */ exports.errorContainerElement =
     document.getElementById('error-container');
 /** @const */ exports.errorLinkElement = document.getElementById('error-link');
+/** @const */ exports.introContainerElement =
+    document.getElementById('intro-container');
+/** @const */ exports.introButtonElement =
+    document.getElementById('intro-button');
 /** @const */ exports.messageListElement = document.getElementById('messages');
 /** @const */ exports.messageFormElement =
     document.getElementById('message-form');

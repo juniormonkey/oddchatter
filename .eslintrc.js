@@ -1,14 +1,18 @@
 module.exports = {
-  'env': {
-    'browser': true,
-    'es2020': true,
+  env: {
+    browser: true,
+    es2020: true,
   },
-  "extends": [
-    "closure-es6"
+  extends: [
+    'closure-es6'
   ],
-  'parserOptions': {
-    'ecmaVersion': 12,
+  parserOptions: {
+    ecmaVersion: 12,
   },
-  'rules': {
+  rules: {
+  },
+  globals: {
+    exports: 'readonly',
+    firebase: 'readonly',
   },
 };

@@ -8,17 +8,64 @@ A callback-enabled chat UI for use while watching Odd Salon.
 
 ----
 
-## How this works
-
 Odd Chatter is a Firebase project, https://firebase.google.com/docs. All data and configuration is stored in Cloud Firestore data, and the HTML/JS/CSS frontend is hosted on Firebase Hosting. 
+
+## Compiling and deploying
+
+### Prerequisites
 
 You'll need to install Firebase locally both to compile and deploy the code: `npm install --save firebase`.
 
 The client-side code is JS, using the [google-closure-library](https://github.com/google/closure-library) (install using `npm install --save google-closure-library`) and compiled using [google-closure-compiler](https://developers.google.com/closure/compiler) (install using `npm install --save google-closure-compiler`).
 
-To build the compiled output, run `compile.sh` or `compile.bat`.
-
 (TODO: set up [source maps](https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/), and set `--compilation_level=ADVANCED` in `compile.sh` and `compile.bat`.)
+
+### Compiling
+
+The correct magic incantation to google-closure-compiler is stored in  `compile.bat` (for Windows) and`compile.sh` (for Bash systems).
+
+### Running locally
+
+Firebase supports running a web app on localhost, against a hosted database. Make sure you're running against the dev environment by using the following commands:
+
+```sh
+$ firebase use dev
+$ firebase serve --only hosting
+```
+
+Then your app will be available at http://localhost:5000.
+
+### Deploying to dev environment
+
+A dev version of this app lives at https://odd-chatter-dev.web.app/. You can deploy the compiled code to this site using the following commands:
+
+```sh
+$ firebase use dev
+$ firebase deploy
+```
+
+or in one line:
+
+```sh
+$ firebase deploy -P dev
+```
+
+### Deploying to production
+
+The production link that we send to Odd Salon attendees is https://odd-chatter.web.app. You can deploy code to this site using the following commands:
+
+```sh
+$ firebase use release
+$ firebase deploy
+```
+
+or in one line:
+
+```sh
+$ firebase deploy -P release
+```
+
+## How this works
 
 ### Cloud Firestore data architecture
 

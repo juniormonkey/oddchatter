@@ -229,7 +229,7 @@ function loadMessages_() {
             deleteMessage_(change.doc.id);
           } else {
             const message = change.doc.data();
-            displayMessage_(change.doc.id, message['timestamp'],
+            displayMessage_(change.doc.id, message['timestamp'], message['uid'],
                             message['name'], message['text'],
                             message['profilePicUrl'], message['imageUrl']);
           }
@@ -364,13 +364,22 @@ function createAndInsertMessage_(id, timestamp) {
  * @param {string} id The ID of the message to display.
  * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
  *     message to display.
+ * @param {string} uid The UID of the author.
  * @param {string} name The name of the author.
  * @param {string|null} text The content of the message.
  * @param {string} picUrl The URL of the author's profile pic.
  * @param {string|null} videoUrl The URL of the callback video to play.
  * @private
  */
-function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
+function displayMessage_(id, timestamp, uid, name, text, picUrl, videoUrl) {
+  const scrollAfterDisplaying =
+      /* Scroll down after displaying if we're already at the bottom, or ... */
+      ui.messageListElement.scrollTop ===
+          (ui.messageListElement.scrollHeight -
+              ui.messageListElement.clientHeight) ||
+      /* ... if the author of the new message is the logged-in user. */
+     uid === user.getUid();
+
   const div =
       document.getElementById(id) || createAndInsertMessage_(id, timestamp);
 
@@ -420,7 +429,9 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
   } else if (videoUrl) { // If the message is a video.
     const video = document.createElement('video');
     video.addEventListener('load', () => {
-      ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      if (scrollAfterDisplaying) {
+        ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      }
     });
     video.playsInline = true;
     video.autoplay = true;
@@ -435,7 +446,9 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
     video.appendChild(mp4);
     video.appendChild(fallback);
     video.onloadedmetadata = () => {
-      ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      if (scrollAfterDisplaying) {
+        ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      }
     };
     messageElement.innerHTML = '';
     messageElement.appendChild(video);
@@ -444,7 +457,9 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
   setTimeout(() => {
     div.classList.add('visible');
   }, 1);
-  ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+  if (scrollAfterDisplaying) {
+    ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+  }
   ui.messageInputElement.focus();
 }
 
@@ -458,7 +473,7 @@ function displayCallback_(timestamp, callback) {
   const video = `video/${
       callback
           .videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
-  displayMessage_(CALLBACK_ID.next(), Timestamp.fromMillis(timestamp),
+  displayMessage_(CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
                   callback.getByline(), '', 'images/adventureharvey.jpg',
                   video);
   callback.audioElement.play();

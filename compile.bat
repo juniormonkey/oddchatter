@@ -14,4 +14,5 @@ npx google-closure-compiler ^
   --js='src\**.js' ^
   --js='!src\*externs.js' ^
   --dependency_mode=PRUNE ^
+  --compilation_level=ADVANCED_OPTIMIZATIONS ^
   --entry_point=goog:oddsalon.oddchatter

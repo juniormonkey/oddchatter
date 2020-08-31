@@ -29,15 +29,12 @@ function main() {
   config.CONFIG.addConfigurationChangeListener(view.applyNewConfiguration);
   config.CONFIG.loadFromFirestore();
 
-  // Start the onboarding once the messagesCardContainerElement is
-  // visible.
+  // Load the messages once the messagesCardContainerElement is visible.
   new MutationObserver(() => {
     if (!ui.outerContainerElement.hasAttribute('hidden') &&
         !ui.messagesCardContainerElement.hasAttribute('hidden')) {
-      view.onBoarding().then(() => {
-        view.loadCallbacks();
-        view.loadMessages();
-      });
+      view.loadCallbacks();
+      view.loadMessages();
     }
   }).observe(ui.outerContainerElement, {
     attributes: true,

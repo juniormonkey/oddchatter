@@ -21,8 +21,13 @@
   },
   "homepage": "https://github.com/juniormonkey/oddchatter#readme",
   "dependencies": {
-    "eslint": "^7.7.0",
+    "eslint-closure": "^0.1.1",
+    "eslint-plugin-closure": "^0.1.1",
     "firebase": "^7.19.0",
     "google-closure-library": "^20200719.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-google": "^0.14.0"
   }
 }

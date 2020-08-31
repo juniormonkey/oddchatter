@@ -32,7 +32,7 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 /**
  * Updates the UI in response to a config change.
  *
- * @param {config.Configuration} config
+ * @param {!config.Configuration} config
  */
 function applyNewConfiguration(config) {
   // Show only the splash screen if the app is not enabled.
@@ -153,7 +153,7 @@ async function onBoarding() {
   await displayOnboardingMessage_(timestamp++,
                                   'Let me show you how it works...');
   for (const callback of callbacks.CALLBACKS) {
-    await onboardCallback_(callback);
+    await onboardCallback_(timestamp++, callback);
   }
   await displayOnboardingMessage_(
       timestamp++, 'Remember, the chat is public - so don\'t share your bank ' +
@@ -319,7 +319,7 @@ function createAndInsertMessage_(id, timestamp) {
  * Displays a Message in the UI.
  *
  * @param {string} id The ID of the message to display.
- * @param {firebase.firestore.Timestamp} timestamp The timestamp of the
+ * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
  *     message to display.
  * @param {string} name The name of the author.
  * @param {string|null} text The content of the message.
@@ -469,7 +469,7 @@ async function displayOnboardingMessage_(timestamp, message) {
 /**
  * @param {number} timestamp The timestamp to display, in milliseconds since
  *     epoch.
- * @param {callbacks.Callback} callback The callback to display.
+ * @param {!callbacks.Callback} callback The callback to display.
  * @private
  */
 function displayCallback_(timestamp, callback) {
@@ -485,7 +485,7 @@ function displayCallback_(timestamp, callback) {
 /**
  * @param {number} timestamp The timestamp to display, in milliseconds since
  *     epoch.
- * @param {callbacks.Callback} callback The callback to onboard.
+ * @param {!callbacks.Callback} callback The callback to onboard.
  * @private
  */
 async function onboardCallback_(timestamp, callback) {

@@ -4,3 +4,4 @@ firebase-debug.log
 .firebase/*
 public/scripts/main.js
 node_modules/*
+public/scripts/main.js.map

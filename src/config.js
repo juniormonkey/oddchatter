@@ -40,35 +40,35 @@ class Configuration {
    */
   copyFromFirestoreData_(data) {
     this.enabled = data['enabled'] || DEBUG_MODE;
-    this.fallback_url = data.hasOwnProperty('fallback_url')
-                            ? data['fallback_url']
-                            : this.fallback_url;
-    this.callback_window_ms = data.hasOwnProperty('config')
-                                  ? data['callback_window_ms']
-                                  : this.callback_window_ms;
-    this.callback_threshold = data.hasOwnProperty('callback_threshold')
-                                  ? data['callback_threshold']
-                                  : this.callback_threshold;
-    this.admin_users = data.hasOwnProperty('admin_users') ? data['admin_users']
-                                                          : this.admin_users;
-    this.youtube_video = data.hasOwnProperty('youtube_video')
-                             ? data['youtube_video']
-                             : this.youtube_video;
-    this.youtube_chat = data.hasOwnProperty('youtube_chat')
-                            ? data['youtube_chat']
-                            : this.youtube_chat;
+    this.fallback_url = data.hasOwnProperty('fallback_url') ?
+                            data['fallback_url'] :
+                            this.fallback_url;
+    this.callback_window_ms = data.hasOwnProperty('config') ?
+                                  data['callback_window_ms'] :
+                                  this.callback_window_ms;
+    this.callback_threshold = data.hasOwnProperty('callback_threshold') ?
+                                  data['callback_threshold'] :
+                                  this.callback_threshold;
+    this.admin_users = data.hasOwnProperty('admin_users') ? data['admin_users'] :
+                                                          this.admin_users;
+    this.youtube_video = data.hasOwnProperty('youtube_video') ?
+                             data['youtube_video'] :
+                             this.youtube_video;
+    this.youtube_chat = data.hasOwnProperty('youtube_chat') ?
+                            data['youtube_chat'] :
+                            this.youtube_chat;
   }
 
   /**
    * Loads the configuration from Firestore, and listens for changes.
    */
   loadFromFirestore() {
-    let query = firebase.firestore()
+    const query = firebase.firestore()
                     .collection('configuration')
                     .orderBy('timestamp', 'desc')
                     .limit(1);
 
-    let config = this;
+    const config = this;
     query.onSnapshot(
         (snapshot) => {
           if (snapshot.size > 0) {
@@ -79,10 +79,12 @@ class Configuration {
             }
           }
         },
-        (error) => { console.error("Error querying Firestore: ", error); });
+        (error) => {
+          console.error('Error querying Firestore: ', error);
+        });
   }
 }
 
-exports = { Configuration, };
+exports = {Configuration};
 
 /** @const {Configuration} */ exports.CONFIG = new Configuration();

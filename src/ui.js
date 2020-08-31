@@ -19,10 +19,12 @@ class IncrementingId {
   /**
    * @return {string} The next ID in the sequence.
    */
-  next() { return this.text + this.index++; }
+  next() {
+    return this.text + this.index++;
+  }
 }
 
-exports = { IncrementingId };
+exports = {IncrementingId};
 
 // Shortcuts to DOM Elements.
 /** @const */ exports.outerContainerElement =

@@ -15,4 +15,4 @@ function logEvent(event_name, event_parameters) {
   }
 }
 
-exports = { logEvent };
+exports = {logEvent};

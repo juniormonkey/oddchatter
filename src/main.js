@@ -41,8 +41,8 @@ function main() {
       });
     }
   }).observe(ui.outerContainerElement, {
-    attributes : true,
-    attributeFilter : [ 'hidden' ]
+    attributes: true,
+    attributeFilter: ['hidden'],
   });
 }
 

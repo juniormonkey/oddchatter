@@ -46,7 +46,7 @@ function applyNewConfiguration(config) {
   if (!config.enabled) {
     ui.outerContainerElement.setAttribute('hidden', true);
     ui.promoElement.removeAttribute('hidden');
-    logging.logEvent('screen_view', {screen_name : 'promo'});
+    logging.logEvent('screen_view', {screen_name: 'promo'});
     return;
   }
 
@@ -55,7 +55,7 @@ function applyNewConfiguration(config) {
     ui.errorContainerElement.removeAttribute('hidden');
     ui.promoElement.setAttribute('hidden', true);
     ui.errorLinkElement.setAttribute('href', config.fallback_url);
-    logging.logEvent('screen_view', {screen_name : 'error'});
+    logging.logEvent('screen_view', {screen_name: 'error'});
     return;
   }
 
@@ -63,13 +63,13 @@ function applyNewConfiguration(config) {
   if (ui.outerContainerElement.hasAttribute('hidden')) {
     ui.outerContainerElement.removeAttribute('hidden');
     ui.promoElement.setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name : 'main'});
+    logging.logEvent('screen_view', {screen_name: 'main'});
   }
 
   // If there's a YouTube stream ID, show the embedded player.
   if (config.youtube_video) {
     ui.youtubeVideoIframeElement.src =
-        "https://www.youtube.com/embed/" + config.youtube_video;
+        `https://www.youtube.com/embed/${ config.youtube_video}`;
     ui.youtubeVideoIframeElement.removeAttribute('hidden');
   } else {
     ui.youtubeVideoIframeElement.setAttribute('hidden', true);
@@ -78,8 +78,8 @@ function applyNewConfiguration(config) {
   // If there's a YouTube chat ID, show the embedded chat widget.
   if (config.youtube_chat) {
     ui.youtubeChatIframeElement.src =
-        "https://www.youtube.com/live_chat?v=" + config.youtube_chat +
-        "&embed_domain=" + window.location.hostname;
+        `https://www.youtube.com/live_chat?v=${ config.youtube_chat
+        }&embed_domain=${ window.location.hostname}`;
     ui.youtubeChatIframeElement.removeAttribute('hidden');
   } else {
     ui.youtubeChatIframeElement.setAttribute('hidden', true);
@@ -103,12 +103,12 @@ function applyNewConfiguration(config) {
 function applyNewAuthState(firebaseUser) {
   if (firebaseUser) { // User is signed in!
     // Get the signed-in user's profile pic and name.
-    let profilePicUrl = user.getProfilePicUrl();
-    let userName = user.getUserName();
+    const profilePicUrl = user.getProfilePicUrl();
+    const userName = user.getUserName();
 
     // Set the user's profile pic and name.
     ui.userPicElement.style.backgroundImage =
-        'url(' + addSizeToGoogleProfilePic_(profilePicUrl) + ')';
+        `url(${ addSizeToGoogleProfilePic_(profilePicUrl) })`;
     ui.userNameElement.textContent = userName;
 
     // Show user's profile and sign-out button.
@@ -146,7 +146,7 @@ function applyNewAuthState(firebaseUser) {
  * background audio.
  */
 async function onBoarding() {
-  logging.logEvent('screen_view', {screen_name : 'onboarding'});
+  logging.logEvent('screen_view', {screen_name: 'onboarding'});
 
   // Use a artificially low timestamp so that all real messages appear after
   // the onboarding.
@@ -174,7 +174,7 @@ async function onBoarding() {
   ui.messageInputElement.removeAttribute('disabled');
   ui.messageInputElement.focus();
 
-  logging.logEvent('screen_view', {screen_name : 'chat'});
+  logging.logEvent('screen_view', {screen_name: 'chat'});
   return waitFor_(1);
 }
 
@@ -184,7 +184,7 @@ async function onBoarding() {
 function loadMessages() {
   // Create the query to load the last 12 messages and listen for new
   // ones.
-  let query = firebase.firestore()
+  const query = firebase.firestore()
                   .collection('messages')
                   .orderBy('timestamp', 'desc')
                   .limit(12);
@@ -196,14 +196,16 @@ function loadMessages() {
           if (change.type === 'removed') {
             deleteMessage_(change.doc.id);
           } else {
-            let message = change.doc.data();
+            const message = change.doc.data();
             displayMessage_(change.doc.id, message['timestamp'],
                             message['name'], message['text'],
                             message['profilePicUrl'], message['imageUrl']);
           }
         });
       },
-      (error) => { console.error("Error querying Firestore: ", error); });
+      (error) => {
+        console.error('Error querying Firestore: ', error);
+      });
 }
 
 /**
@@ -211,32 +213,34 @@ function loadMessages() {
  */
 function loadCallbacks() {
   for (const callback of callbacks.CALLBACKS) {
-    let voices = firebase.firestore()
+    const voices = firebase.firestore()
                      .collection(callback.getCollection())
                      .orderBy('timestamp', 'desc')
                      .limit(config.CONFIG.callback_threshold);
 
     voices.onSnapshot(
         (snapshot) => {
-          let callbackWindowStartMillis =
+          const callbackWindowStartMillis =
               Math.max(callback.lastCalledTimestampMillis,
                        Date.now() - config.CONFIG.callback_window_ms);
           if (snapshot.size >= config.CONFIG.callback_threshold) {
-            let firstTimestampMillis = getTimestampMillis_(
+            const firstTimestampMillis = getTimestampMillis_(
                 snapshot.docs[config.CONFIG.callback_threshold - 1].data());
             if (firstTimestampMillis > callbackWindowStartMillis) {
-              let lastTimestampMillis =
+              const lastTimestampMillis =
                   getTimestampMillis_(snapshot.docs[0].data());
               if (lastTimestampMillis > 0) {
                 callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
                 callback.display(lastTimestampMillis + 1);
                 logging.logEvent('screen_view',
-                                 {screen_name : callback.getCollection()});
+                                 {screen_name: callback.getCollection()});
               }
             }
           }
         },
-        (error) => { console.error("Error querying Firestore: ", error); });
+        (error) => {
+          console.error('Error querying Firestore: ', error);
+        });
   }
 }
 
@@ -249,7 +253,7 @@ function loadCallbacks() {
  */
 function addSizeToGoogleProfilePic_(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return url + '?sz=150';
+    return `${url }?sz=150`;
   }
   return url;
 }
@@ -261,7 +265,7 @@ function addSizeToGoogleProfilePic_(url) {
  * @private
  */
 function deleteMessage_(id) {
-  let div = document.getElementById(id);
+  const div = document.getElementById(id);
   // If an element for that message exists we delete it.
   if (div) {
     div.parentNode.removeChild(div);
@@ -284,7 +288,7 @@ function createAndInsertMessage_(id, timestamp) {
 
   // If timestamp is null, assume we've gotten a brand new message.
   // https://stackoverflow.com/a/47781432/4816918
-  let timestampMillis = timestamp ? timestamp.toMillis() : Date.now();
+  const timestampMillis = timestamp ? timestamp.toMillis() : Date.now();
   div.setAttribute('timestamp', timestampMillis);
 
   // figure out where to insert new message
@@ -329,22 +333,22 @@ function createAndInsertMessage_(id, timestamp) {
  * @private
  */
 function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
-  let div =
+  const div =
       document.getElementById(id) || createAndInsertMessage_(id, timestamp);
 
   // profile picture
   if (picUrl) {
     div.querySelector('.pic').style.backgroundImage =
-        'url(' + addSizeToGoogleProfilePic_(picUrl) + ')';
+        `url(${ addSizeToGoogleProfilePic_(picUrl) })`;
   }
 
   div.querySelector('.name').textContent = name;
   if (timestamp && timestamp.toMillis() > 10000) {
     div.querySelector('.timestamp').textContent =
-        timestamp.toDate().toLocaleDateString() + ' ' +
-        timestamp.toDate().toLocaleTimeString();
+        `${timestamp.toDate().toLocaleDateString() } ${
+        timestamp.toDate().toLocaleTimeString()}`;
   }
-  let messageElement = div.querySelector('.message');
+  const messageElement = div.querySelector('.message');
 
   // If the current user is an admin, add a delete link to all Firebase
   // messages.
@@ -355,17 +359,19 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
       !id.startsWith('callback-message-') &&
       // Don't add a duplicate admin div.
       !div.querySelector('.admin')) {
-    let deleteLine = document.createElement('a');
+    const deleteLine = document.createElement('a');
     deleteLine.className = 'admin';
     deleteLine.setAttribute('href', '#');
     deleteLine.textContent = 'delete';
     deleteLine.addEventListener('click', () => {
       firebase.firestore()
-          .collection("messages")
+          .collection('messages')
           .doc(id)
           .delete()
           .catch(
-              (error) => { console.error("Error removing message: ", error); });
+              (error) => {
+                console.error('Error removing message: ', error);
+              });
     });
     div.appendChild(deleteLine);
   }
@@ -375,7 +381,7 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
   } else if (videoUrl) { // If the message is a video.
-    let video = document.createElement('video');
+    const video = document.createElement('video');
     video.addEventListener('load', () => {
       ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
     });
@@ -383,10 +389,10 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
     video.autoplay = true;
     video.muted = true;
     video.className = 'callback-video';
-    let mp4 = document.createElement('source');
+    const mp4 = document.createElement('source');
     mp4.src = videoUrl;
     mp4.type = 'video/mp4';
-    let fallback =
+    const fallback =
         document.createTextNode('Your browser does not support the video tag.');
     video.innerHTML = '';
     video.appendChild(mp4);
@@ -398,7 +404,9 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
     messageElement.appendChild(video);
   }
   // Show the card fading-in and scroll to view the new message.
-  setTimeout(() => {div.classList.add('visible')}, 1);
+  setTimeout(() => {
+    div.classList.add('visible');
+  }, 1);
   ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
   ui.messageInputElement.focus();
 }
@@ -418,22 +426,24 @@ const waitFor_ = (delay) =>
  * @private
  */
 async function displayOnboardingButton_(timestamp, buttonText, clickHandler) {
-  let div = createAndInsertMessage_(ONBOARDING_ID.next(),
+  const div = createAndInsertMessage_(ONBOARDING_ID.next(),
                                     Timestamp.fromMillis(timestamp));
 
   div.querySelector('.name').textContent = 'Harvey';
   div.querySelector('.pic').style.backgroundImage =
-      'url(' + addSizeToGoogleProfilePic_('images/adventureharvey.jpg') + ')';
-  let messageElement = div.querySelector('.message');
+      `url(${ addSizeToGoogleProfilePic_('images/adventureharvey.jpg') })`;
+  const messageElement = div.querySelector('.message');
 
-  let button = document.createElement('button');
+  const button = document.createElement('button');
   button.className = 'mdl-button mdl-js-button mdl-button--raised';
   button.textContent = buttonText;
   messageElement.innerHTML = '';
   messageElement.appendChild(button);
 
   // Show the card fading-in and scroll to view the new message.
-  setTimeout(() => {div.classList.add('visible')}, 1);
+  setTimeout(() => {
+    div.classList.add('visible');
+  }, 1);
   ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
   ui.messageInputElement.focus();
 
@@ -464,9 +474,9 @@ async function displayOnboardingMessage_(timestamp, message) {
  * @private
  */
 function displayCallback_(timestamp, callback) {
-  let video =
-      'video/' +
-      callback.videoUrls[Math.floor(Math.random() * callback.videoUrls.length)];
+  const video =
+      `video/${
+      callback.videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
   displayMessage_(CALLBACK_ID.next(), Timestamp.fromMillis(timestamp),
                   callback.getByline(), '', 'images/adventureharvey.jpg',
                   video);

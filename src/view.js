@@ -30,13 +30,6 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '</div>';
 
 /**
- * A loading image URL.
- * @const
- * @private
- */
-const LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
-
-/**
  * Updates the UI in response to a config change.
  *
  * @param {config.Configuration} config
@@ -69,7 +62,7 @@ function applyNewConfiguration(config) {
   // If there's a YouTube stream ID, show the embedded player.
   if (config.youtube_video) {
     ui.youtubeVideoIframeElement.src =
-        `https://www.youtube.com/embed/${ config.youtube_video}`;
+        `https://www.youtube.com/embed/${config.youtube_video}`;
     ui.youtubeVideoIframeElement.removeAttribute('hidden');
   } else {
     ui.youtubeVideoIframeElement.setAttribute('hidden', true);
@@ -77,9 +70,8 @@ function applyNewConfiguration(config) {
 
   // If there's a YouTube chat ID, show the embedded chat widget.
   if (config.youtube_chat) {
-    ui.youtubeChatIframeElement.src =
-        `https://www.youtube.com/live_chat?v=${ config.youtube_chat
-        }&embed_domain=${ window.location.hostname}`;
+    ui.youtubeChatIframeElement.src = `https://www.youtube.com/live_chat?v=${
+        config.youtube_chat}&embed_domain=${window.location.hostname}`;
     ui.youtubeChatIframeElement.removeAttribute('hidden');
   } else {
     ui.youtubeChatIframeElement.setAttribute('hidden', true);
@@ -108,7 +100,7 @@ function applyNewAuthState(firebaseUser) {
 
     // Set the user's profile pic and name.
     ui.userPicElement.style.backgroundImage =
-        `url(${ addSizeToGoogleProfilePic_(profilePicUrl) })`;
+        `url(${addSizeToGoogleProfilePic_(profilePicUrl)})`;
     ui.userNameElement.textContent = userName;
 
     // Show user's profile and sign-out button.
@@ -144,6 +136,7 @@ function applyNewAuthState(firebaseUser) {
 /**
  * An onboarding script, to introduce the callbacks and initialize the
  * background audio.
+ * @return {Promise}
  */
 async function onBoarding() {
   logging.logEvent('screen_view', {screen_name: 'onboarding'});
@@ -155,15 +148,16 @@ async function onBoarding() {
                                   'Welcome to the Odd Chatter room!');
   await displayOnboardingMessage_(
       timestamp++,
-      'This is not a quiet event - if enough folks shout the same callout in chat, we\'ll all hear it.');
+      'This is not a quiet event - if enough folks shout the same callout ' +
+          'in chat, we\'ll all hear it.');
   await displayOnboardingMessage_(timestamp++,
                                   'Let me show you how it works...');
   for (const callback of callbacks.CALLBACKS) {
     await onboardCallback_(callback);
   }
   await displayOnboardingMessage_(
-      timestamp++,
-      'Remember, the chat is public - so don\'t share your bank account password.');
+      timestamp++, 'Remember, the chat is public - so don\'t share your bank ' +
+                       'account password.');
   await displayOnboardingMessage_(
       timestamp++, 'Now you\'re ready to learn something weird!');
   waitFor_(250);
@@ -185,9 +179,9 @@ function loadMessages() {
   // Create the query to load the last 12 messages and listen for new
   // ones.
   const query = firebase.firestore()
-                  .collection('messages')
-                  .orderBy('timestamp', 'desc')
-                  .limit(12);
+                    .collection('messages')
+                    .orderBy('timestamp', 'desc')
+                    .limit(12);
 
   // Start listening to the query.
   query.onSnapshot(
@@ -214,9 +208,9 @@ function loadMessages() {
 function loadCallbacks() {
   for (const callback of callbacks.CALLBACKS) {
     const voices = firebase.firestore()
-                     .collection(callback.getCollection())
-                     .orderBy('timestamp', 'desc')
-                     .limit(config.CONFIG.callback_threshold);
+                       .collection(callback.getCollection())
+                       .orderBy('timestamp', 'desc')
+                       .limit(config.CONFIG.callback_threshold);
 
     voices.onSnapshot(
         (snapshot) => {
@@ -253,7 +247,7 @@ function loadCallbacks() {
  */
 function addSizeToGoogleProfilePic_(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return `${url }?sz=150`;
+    return `${url}?sz=150`;
   }
   return url;
 }
@@ -278,6 +272,7 @@ function deleteMessage_(id) {
  * @param {string} id The ID of the message to create.
  * @param {firebase.firestore.Timestamp|undefined} timestamp The timestamp of
  *     the existing message, or undefined if it's a brand new message.
+ * @return {Element} The new message element.
  * @private
  */
 function createAndInsertMessage_(id, timestamp) {
@@ -339,14 +334,14 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
   // profile picture
   if (picUrl) {
     div.querySelector('.pic').style.backgroundImage =
-        `url(${ addSizeToGoogleProfilePic_(picUrl) })`;
+        `url(${addSizeToGoogleProfilePic_(picUrl)})`;
   }
 
   div.querySelector('.name').textContent = name;
   if (timestamp && timestamp.toMillis() > 10000) {
     div.querySelector('.timestamp').textContent =
-        `${timestamp.toDate().toLocaleDateString() } ${
-        timestamp.toDate().toLocaleTimeString()}`;
+        `${timestamp.toDate().toLocaleDateString()} ${
+            timestamp.toDate().toLocaleTimeString()}`;
   }
   const messageElement = div.querySelector('.message');
 
@@ -411,7 +406,11 @@ function displayMessage_(id, timestamp, name, text, picUrl, videoUrl) {
   ui.messageInputElement.focus();
 }
 
-/** @private */
+/**
+ * @param {number} delay A number of milliseconds to wait.
+ * @return {Promise} A promise that will be resolved after the given delay.
+ * @private
+ */
 const waitFor_ = (delay) =>
     new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -427,11 +426,11 @@ const waitFor_ = (delay) =>
  */
 async function displayOnboardingButton_(timestamp, buttonText, clickHandler) {
   const div = createAndInsertMessage_(ONBOARDING_ID.next(),
-                                    Timestamp.fromMillis(timestamp));
+                                      Timestamp.fromMillis(timestamp));
 
   div.querySelector('.name').textContent = 'Harvey';
   div.querySelector('.pic').style.backgroundImage =
-      `url(${ addSizeToGoogleProfilePic_('images/adventureharvey.jpg') })`;
+      `url(${addSizeToGoogleProfilePic_('images/adventureharvey.jpg')})`;
   const messageElement = div.querySelector('.message');
 
   const button = document.createElement('button');
@@ -474,9 +473,9 @@ async function displayOnboardingMessage_(timestamp, message) {
  * @private
  */
 function displayCallback_(timestamp, callback) {
-  const video =
-      `video/${
-      callback.videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
+  const video = `video/${
+      callback
+          .videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
   displayMessage_(CALLBACK_ID.next(), Timestamp.fromMillis(timestamp),
                   callback.getByline(), '', 'images/adventureharvey.jpg',
                   video);
@@ -492,7 +491,8 @@ function displayCallback_(timestamp, callback) {
 async function onboardCallback_(timestamp, callback) {
   await displayOnboardingMessage_(timestamp, callback.onboardingMessage);
   await displayOnboardingButton_(timestamp, callback.buttonText,
-                                 (resolve, reject, e) => {
+                                 /* eslint-disable-next-line no-unused-vars */
+                                 (resolve, _reject, _e) => {
                                    displayCallback_(timestamp, callback);
                                    resolve();
                                  });
@@ -501,6 +501,7 @@ async function onboardCallback_(timestamp, callback) {
 
 /**
  * Safely get the timestamp from a Firestore data object.
+ * @param {Object} data An object retrieved from Firestore.
  * @return {number} The value of the object's 'timestamp' field, in
  *     milliseconds since epoch
  * @private

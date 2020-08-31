@@ -3,7 +3,7 @@
  */
 goog.module('oddsalon.oddchatter.config');
 
-var DEBUG_MODE = false;
+const DEBUG_MODE = false;
 
 /** @const */ const DEFAULT_CALLBACK_WINDOW_MS = 10000;
 /** @const */ const DEFAULT_CALLBACK_THRESHOLD = 3;
@@ -49,8 +49,9 @@ class Configuration {
     this.callback_threshold = data.hasOwnProperty('callback_threshold') ?
                                   data['callback_threshold'] :
                                   this.callback_threshold;
-    this.admin_users = data.hasOwnProperty('admin_users') ? data['admin_users'] :
-                                                          this.admin_users;
+    this.admin_users = data.hasOwnProperty('admin_users') ?
+      data['admin_users'] :
+      this.admin_users;
     this.youtube_video = data.hasOwnProperty('youtube_video') ?
                              data['youtube_video'] :
                              this.youtube_video;

@@ -4,14 +4,14 @@
 goog.module('oddsalon.oddchatter.logging');
 
 /**
- * @param {string} event_name
- * @param {Object} event_parameters
+ * @param {string} eventName
+ * @param {Object} eventParameters
  */
-function logEvent(event_name, event_parameters) {
+function logEvent(eventName, eventParameters) {
   // DO nothing if analytics is not defined, eg because of an ad blocker or
   // something.
   if (typeof analytics !== 'undefined') {
-    analytics.logEvent(event_name, event_parameters);
+    analytics.logEvent(eventName, eventParameters);
   }
 }
 

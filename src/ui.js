@@ -42,12 +42,14 @@ exports = {IncrementingId};
 /** @const */ exports.artButtonElement = document.getElementById('art');
 /** @const */ exports.mapsButtonElement = document.getElementById('maps');
 /** @const */ exports.shipsButtonElement = document.getElementById('ships');
-/** @const */ exports.applauseButtonElement = document.getElementById('applause');
+/** @const */ exports.applauseButtonElement =
+    document.getElementById('applause');
 /** @const */ exports.booButtonElement = document.getElementById('boo');
 /** @const */ exports.userPicElement = document.getElementById('user-pic');
 /** @const */ exports.userNameElement = document.getElementById('user-name');
 /** @const */ exports.signInButtonElement = document.getElementById('sign-in');
-/** @const */ exports.signOutButtonElement = document.getElementById('sign-out');
+/** @const */ exports.signOutButtonElement =
+    document.getElementById('sign-out');
 /** @const */ exports.signInSnackbarElement =
     document.getElementById('must-signin-snackbar');
 /** @const */ exports.splashScreenElement =
@@ -67,7 +69,8 @@ exports = {IncrementingId};
     document.getElementById('science-audio');
 /** @const */ exports.artAudioElement = document.getElementById('art-audio');
 /** @const */ exports.mapsAudioElement = document.getElementById('maps-audio');
-/** @const */ exports.shipsAudioElement = document.getElementById('ships-audio');
+/** @const */ exports.shipsAudioElement =
+    document.getElementById('ships-audio');
 /** @const */ exports.applauseAudioElement =
     document.getElementById('applause-audio');
 /** @const */ exports.booAudioElement = document.getElementById('boo-audio');
@@ -80,4 +83,3 @@ exports = {IncrementingId};
 /** @const */ exports.applauseFormElement =
     document.getElementById('applause-form');
 /** @const */ exports.booFormElement = document.getElementById('boo-form');
-

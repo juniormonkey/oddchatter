@@ -20,7 +20,8 @@ function init() {
   ui.signInSplashButtonElement.addEventListener('click', signIn_);
 
   for (const callback of callbacks.CALLBACKS) {
-    callback.formElement.addEventListener('submit', goog.partial(onCallbackFormSubmit_, callback));
+    callback.formElement.addEventListener(
+        'submit', goog.partial(onCallbackFormSubmit_, callback));
   }
 
   // Toggle for the button.
@@ -84,6 +85,7 @@ function checkForCallbacks_(text) {
  * Saves a new message on the Firebase DB.
  *
  * @param {string} messageText The message text to save.
+ * @return {Promise} A promise that is resolved when the message is saved.
  * @private
  */
 function saveMessage_(messageText) {
@@ -124,8 +126,11 @@ function onMessageFormSubmit_(e) {
  */
 function onCallbackFormSubmit_(callback, e) {
   e.preventDefault();
-  logging.logEvent(
-      'share', {method: 'chat', content_type: callback.getCollection(), content_id: ''});
+  logging.logEvent('share', {
+    method: 'chat',
+    content_type: callback.getCollection(),
+    content_id: '',
+  });
   onMessageSubmitted_(callback.getMessage());
   callback.buttonElement.setAttribute('disabled', 'true');
   setTimeout(() => callback.enableButton(), 1000);
@@ -148,7 +153,8 @@ function onMessageSubmitted_(message) {
 }
 
 /**
- * Returns true if user is signed-in. Otherwise false and displays a message.
+ * @return {boolean} true if user is signed-in. Otherwise false and displays a
+ *     message.
  * @private
  */
 function checkSignedInWithMessage_() {

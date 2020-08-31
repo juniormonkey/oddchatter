@@ -10,8 +10,17 @@ module.exports = {
     ecmaVersion: 12,
   },
   rules: {
+    'no-console': [
+      'error',
+      {
+        allow: [
+          'error',
+        ]
+      },
+    ],
   },
   globals: {
+    analytics: 'readonly',
     exports: 'readonly',
     firebase: 'readonly',
   },

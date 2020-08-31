@@ -3,7 +3,6 @@
  */
 goog.module('oddsalon.oddchatter');
 
-const callbacks = goog.require('oddsalon.oddchatter.callbacks');
 const config = goog.require('oddsalon.oddchatter.config');
 const controller = goog.require('oddsalon.oddchatter.controller');
 const ui = goog.require('oddsalon.oddchatter.ui');

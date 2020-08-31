@@ -2,6 +2,7 @@
  * @fileoverview externs for odd chatter.
  * @externs
  */
+/* eslint-disable no-unused-vars */
 
 /**
  * @interface

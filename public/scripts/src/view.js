@@ -37,7 +37,6 @@ function applyNewConfiguration(config) {
   if (!config.enabled) {
     ui.promoElement.removeAttribute('hidden');
     ui.outerContainerElement.setAttribute('hidden', true);
-    ui.introContainerElement.setAttribute('hidden', true);
     ui.errorContainerElement.setAttribute('hidden', true);
     logging.logEvent('screen_view', {screen_name: 'promo'});
     return;
@@ -47,177 +46,17 @@ function applyNewConfiguration(config) {
   if (config.fallback_url) {
     ui.errorContainerElement.removeAttribute('hidden');
     ui.outerContainerElement.setAttribute('hidden', true);
-    ui.introContainerElement.setAttribute('hidden', true);
     ui.promoElement.setAttribute('hidden', true);
     ui.errorLinkElement.setAttribute('href', config.fallback_url);
     logging.logEvent('screen_view', {screen_name: 'error'});
     return;
   }
 
-  if (config.intro_seen) {
-    showMainUi_(config);
-  } else {
-    ui.introContainerElement.removeAttribute('hidden');
-    ui.promoElement.setAttribute('hidden', true);
-    ui.errorContainerElement.setAttribute('hidden', true);
-    ui.outerContainerElement.setAttribute('hidden', true);
-
-    ui.introButtonElement.addEventListener('click', () => {
-      // Play all the sounds, at volume 0, for mobile browsers.
-      for (const callback of callbacks.CALLBACKS) {
-        const audio = callback.audioElement;
-        audio.volume = 0;
-        audio.muted = true;
-        audio.playbackRate = 2;
-        audio.onended = () => {
-          window.console.log('resetting element: ', audio);
-          audio.volume = 1;
-          audio.muted = false;
-          audio.playbackRate = 1;
-          audio.onended = null;
-        };
-        audio.play();
-        callback.enableButton();
-      }
-      config.intro_seen = true;
-
-      ui.messageInputElement.removeAttribute('disabled');
-      ui.messageInputElement.focus();
-
-      logging.logEvent('screen_view', {screen_name: 'chat'});
-
-      showMainUi_(config);
-    });
-  }
-}
-
-/**
- * Updates the UI in response to an auth state change, for instance when the
- * user signs-in or signs-out.
- *
- * @param {firebase.User} firebaseUser
- */
-function applyNewAuthState(firebaseUser) {
-  if (firebaseUser) { // User is signed in!
-    // Get the signed-in user's profile pic and name.
-    const profilePicUrl = user.getProfilePicUrl();
-    const userName = user.getUserName();
-
-    // Set the user's profile pic and name.
-    ui.userPicElement.style.backgroundImage =
-        `url(${addSizeToGoogleProfilePic_(profilePicUrl)})`;
-    ui.userNameElement.textContent = userName;
-
-    // Show user's profile and sign-out button.
-    ui.userNameElement.removeAttribute('hidden');
-    ui.userPicElement.removeAttribute('hidden');
-    ui.signOutButtonElement.removeAttribute('hidden');
-
-    // Hide sign-in button.
-    ui.signInButtonElement.setAttribute('hidden', 'true');
-
-    // Hide the sign-in UI
-    ui.splashScreenElement.setAttribute('hidden', 'true');
-
-    // Show the messages UI
-    ui.messagesCardContainerElement.removeAttribute('hidden');
-  } else { // User is signed out!
-    // Hide user's profile and sign-out button.
-    ui.userNameElement.setAttribute('hidden', 'true');
-    ui.userPicElement.setAttribute('hidden', 'true');
-    ui.signOutButtonElement.setAttribute('hidden', 'true');
-
-    // Show sign-in button.
-    ui.signInButtonElement.removeAttribute('hidden');
-
-    // Show the sign-in UI
-    ui.splashScreenElement.removeAttribute('hidden');
-
-    // Hide the messages UI
-    ui.messagesCardContainerElement.setAttribute('hidden', 'true');
-  }
-}
-
-/**
- * Loads chat messages history and listens for upcoming ones.
- */
-function loadMessages() {
-  // Create the query to load the last 12 messages and listen for new
-  // ones.
-  const query = firebase.firestore()
-                    .collection('messages')
-                    .orderBy('timestamp', 'desc')
-                    .limit(12);
-
-  // Start listening to the query.
-  query.onSnapshot(
-      (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === 'removed') {
-            deleteMessage_(change.doc.id);
-          } else {
-            const message = change.doc.data();
-            displayMessage_(change.doc.id, message['timestamp'],
-                            message['name'], message['text'],
-                            message['profilePicUrl'], message['imageUrl']);
-          }
-        });
-      },
-      (error) => {
-        console.error('Error querying Firestore: ', error);
-      });
-}
-
-/**
- * Loads callback timestamps and listens for upcoming ones.
- */
-function loadCallbacks() {
-  for (const callback of callbacks.CALLBACKS) {
-    const voices = firebase.firestore()
-                       .collection(callback.getCollection())
-                       .orderBy('timestamp', 'desc')
-                       .limit(config.CONFIG.callback_threshold);
-
-    voices.onSnapshot(
-        (snapshot) => {
-          const callbackWindowStartMillis =
-              Math.max(callback.lastCalledTimestampMillis,
-                       Date.now() - config.CONFIG.callback_window_ms);
-          if (snapshot.size >= config.CONFIG.callback_threshold) {
-            const firstTimestampMillis = getTimestampMillis_(
-                snapshot.docs[config.CONFIG.callback_threshold - 1].data());
-            if (firstTimestampMillis > callbackWindowStartMillis) {
-              const lastTimestampMillis =
-                  getTimestampMillis_(snapshot.docs[0].data());
-              if (lastTimestampMillis > 0) {
-                callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
-                displayCallback_(lastTimestampMillis + 1, callback);
-                logging.logEvent('screen_view',
-                                 {screen_name: callback.getCollection()});
-              }
-            }
-          }
-        },
-        (error) => {
-          console.error('Error querying Firestore: ', error);
-        });
-  }
-}
-
-/**
- * Updates the main UI (assuming the splash screen, intro and error screen are
- * not shown) in response to a config change.
- *
- * @param {!config.Configuration} config
- * @private
- */
-function showMainUi_(config) {
   // Else, hide the splash screen and show the chat container.
   if (ui.outerContainerElement.hasAttribute('hidden')) {
     ui.outerContainerElement.removeAttribute('hidden');
     ui.promoElement.setAttribute('hidden', true);
     ui.errorContainerElement.setAttribute('hidden', true);
-    ui.introContainerElement.setAttribute('hidden', true);
     logging.logEvent('screen_view', {screen_name: 'main'});
   }
 
@@ -245,6 +84,200 @@ function showMainUi_(config) {
     ui.youtubeStreamContainerElement.removeAttribute('hidden');
   } else {
     ui.youtubeStreamContainerElement.setAttribute('hidden', true);
+  }
+}
+
+/**
+ * Updates the UI in response to an auth state change, for instance when the
+ * user signs-in or signs-out.
+ *
+ * @param {firebase.User} firebaseUser
+ */
+async function applyNewAuthState(firebaseUser) {
+  if (firebaseUser) { // User is signed in!
+    // Get the signed-in user's profile pic and name.
+    const profilePicUrl = user.getProfilePicUrl();
+    const userName = user.getUserName();
+
+    // Set the user's profile pic and name.
+    ui.userPicElement.style.backgroundImage =
+        `url(${addSizeToGoogleProfilePic_(profilePicUrl)})`;
+    ui.userNameElement.textContent = userName;
+
+    // Show user's profile and sign-out button.
+    ui.userNameElement.removeAttribute('hidden');
+    ui.userPicElement.removeAttribute('hidden');
+    ui.signOutButtonElement.removeAttribute('hidden');
+
+    // Hide sign-in button.
+    ui.signInButtonElement.setAttribute('hidden', 'true');
+
+    // Hide the sign-in UI
+    ui.splashScreenElement.setAttribute('hidden', 'true');
+
+    // Show the messages UI, or the introduction if it hasn't been seen yet
+    if (config.CONFIG.intro_seen) {
+      showMessagesCard_();
+    } else {
+      await showIntroduction_();
+      showMessagesCard_();
+    }
+  } else { // User is signed out!
+    // Hide user's profile and sign-out button.
+    ui.userNameElement.setAttribute('hidden', 'true');
+    ui.userPicElement.setAttribute('hidden', 'true');
+    ui.signOutButtonElement.setAttribute('hidden', 'true');
+
+    // Show sign-in button.
+    ui.signInButtonElement.removeAttribute('hidden');
+
+    // Show the sign-in UI
+    ui.splashScreenElement.removeAttribute('hidden');
+
+    // Hide the messages UI
+    ui.messagesCardContainerElement.setAttribute('hidden', 'true');
+
+    // Remove the firestore snapshot listeners.
+    for (const callback of callbacks.CALLBACKS) {
+      if (callback.unsubscribeFromFirestore) {
+        callback.unsubscribeFromFirestore();
+        callback.unsubscribeFromFirestore = null;
+      }
+    }
+    if (unsubscribeMessages_) {
+      unsubscribeMessages_();
+      unsubscribeMessages_ = null;
+    }
+  }
+}
+
+/**
+ * @private
+ */
+function showMessagesCard_() {
+  ui.messagesCardContainerElement.removeAttribute('hidden');
+  ui.introContainerElement.setAttribute('hidden', true);
+
+  ui.messageInputElement.removeAttribute('disabled');
+  ui.messageInputElement.focus();
+
+  // Load the messages.
+  loadCallbacks_();
+  loadMessages_();
+
+  logging.logEvent('screen_view', {screen_name: 'chat'});
+}
+
+/**
+ * @return {Promise} A promise that is resolved by the intro click handler.
+ *
+ * @private
+ */
+function showIntroduction_() {
+  ui.introContainerElement.removeAttribute('hidden');
+  ui.messagesCardContainerElement.setAttribute('hidden', true);
+  logging.logEvent('screen_view', {screen_name: 'introduction'});
+
+  /* eslint-disable-next-line no-unused-vars */
+  return new Promise((resolve, reject) => {
+    ui.introButtonElement.addEventListener('click', () => {
+      // Play all the sounds, at volume 0, for mobile browsers.
+      for (const callback of callbacks.CALLBACKS) {
+        const audio = callback.audioElement;
+        audio.volume = 0;
+        audio.muted = true;
+        audio.playbackRate = 2;
+        audio.onended = () => {
+          window.console.log('resetting element: ', audio);
+          audio.volume = 1;
+          audio.muted = false;
+          audio.playbackRate = 1;
+          audio.onended = null;
+        };
+        audio.play();
+        callback.enableButton();
+      }
+      config.CONFIG.intro_seen = true;
+      resolve();
+    });
+  });
+}
+
+/**
+ * @private {function()|null}
+ */
+let unsubscribeMessages_ = null;
+
+/**
+ * Loads chat messages history and listens for upcoming ones.
+ * @private
+ */
+function loadMessages_() {
+  // Create the query to load the last 12 messages and listen for new
+  // ones.
+  const query = firebase.firestore()
+                    .collection('messages')
+                    .orderBy('timestamp', 'desc')
+                    .limit(12);
+
+  // Start listening to the query.
+  if (!unsubscribeMessages_) {
+    unsubscribeMessages_ = query.onSnapshot(
+      (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'removed') {
+            deleteMessage_(change.doc.id);
+          } else {
+            const message = change.doc.data();
+            displayMessage_(change.doc.id, message['timestamp'],
+                            message['name'], message['text'],
+                            message['profilePicUrl'], message['imageUrl']);
+          }
+        });
+      },
+      (error) => {
+        console.error('Error querying Firestore: ', error);
+      });
+  }
+}
+
+/**
+ * Loads callback timestamps and listens for upcoming ones.
+ * @private
+ */
+function loadCallbacks_() {
+  for (const callback of callbacks.CALLBACKS) {
+    const voices = firebase.firestore()
+                       .collection(callback.getCollection())
+                       .orderBy('timestamp', 'desc')
+                       .limit(config.CONFIG.callback_threshold);
+
+    if (!callback.unsubscribeFromFirestore) {
+
+      callback.unsubscribeFromFirestore = voices.onSnapshot(
+        (snapshot) => {
+          const callbackWindowStartMillis =
+              Math.max(callback.lastCalledTimestampMillis,
+                       Date.now() - config.CONFIG.callback_window_ms);
+          if (snapshot.size >= config.CONFIG.callback_threshold) {
+            const firstTimestampMillis = getTimestampMillis_(
+                snapshot.docs[config.CONFIG.callback_threshold - 1].data());
+            if (firstTimestampMillis > callbackWindowStartMillis) {
+              const lastTimestampMillis =
+                  getTimestampMillis_(snapshot.docs[0].data());
+              if (lastTimestampMillis > 0) {
+                callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
+                displayCallback_(lastTimestampMillis + 1, callback);
+                logging.logEvent('screen_view',
+                                 {screen_name: callback.getCollection()});
+              }
+            }
+          }
+        },
+        (error) => {
+          console.error('Error querying Firestore: ', error);
+        });
+    }
   }
 }
 
@@ -454,6 +487,4 @@ function getTimestampMillis_(data) {
 exports = {
   applyNewConfiguration,
   applyNewAuthState,
-  loadMessages,
-  loadCallbacks,
 };

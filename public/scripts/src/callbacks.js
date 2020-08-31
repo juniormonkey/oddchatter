@@ -7,17 +7,30 @@ const config = goog.require('oddsalon.oddchatter.config');
 const ui = goog.require('oddsalon.oddchatter.ui');
 
 class Callback {
-  constructor(text, onboardingMessage, buttonText, videoUrls, formElement,
+  /**
+   * @param {string} text The text to listen for in chat.
+   * @param {string} buttonText The text to display on the button.
+   * @param {Array<string>} videoUrls
+   *     A list of URLs of videos to play when the callback is triggered.
+   * @param {Element} formElement
+   *     The HTML form that submits the callback chat message.
+   * @param {Element} buttonElement The HTML button that submits the form.
+   * @param {Element} audioElement
+   *     The HTML audio element to play when the callback is triggered.
+   */
+  constructor(text, buttonText, videoUrls, formElement,
               buttonElement, audioElement) {
     this.text = text;
-    this.onboardingMessage = onboardingMessage;
     this.buttonText = buttonText;
     this.videoUrls = videoUrls;
     this.formElement = formElement;
     this.buttonElement = buttonElement;
     this.audioElement = audioElement;
+    /** @type {number} */
     this.lastCalledTimestampMillis =
         Date.now() - config.CONFIG.callback_window_ms;
+    /** @type {function()|null} */
+    this.unsubscribeFromFirestore = null;
   }
 
   /**
@@ -78,8 +91,6 @@ exports = {Callback};
  */
 exports.CALLBACKS = [
   new Callback('SCIENCE',
-               'When you hear or see some SCIENCE, ' +
-                   'click this button to make some noise:',
                '🔬',
     [
       'science1.mp4',
@@ -92,15 +103,15 @@ exports.CALLBACKS = [
     ],
                ui.scienceFormElement, ui.scienceButtonElement,
                ui.scienceAudioElement),
-  new Callback('ART', 'When there\'s some ART, click this button:', '🎨',
+  new Callback('ART', '🎨',
                ['art1.mp4', 'art2.mp4', 'art3.mp4'], ui.artFormElement,
                ui.artButtonElement, ui.artAudioElement),
-  new Callback('MAPS', 'Whenever you spot a MAP, this is your button:',
+  new Callback('MAPS',
                '🗺️', ['maps1.mp4', 'maps2.mp4', 'maps3.mp4'],
                ui.mapsFormElement, ui.mapsButtonElement, ui.mapsAudioElement),
   new Callback(
       'SHIPS',
-      'And how could we forget seafaring vessels - click here for SHIPS:', '🚢',
+      '🚢',
     [
       'ships1.mp4',
       'ships2.mp4',
@@ -111,14 +122,10 @@ exports.CALLBACKS = [
     ],
       ui.shipsFormElement, ui.shipsButtonElement, ui.shipsAudioElement),
   new Callback('👏',
-               'Our speakers live for the applause - ' +
-                   'click here to make affirming noises:',
                '👏', ['applause1.mp4', 'applause2.mp4', 'applause3.mp4'],
                ui.applauseFormElement, ui.applauseButtonElement,
                ui.applauseAudioElement),
   new Callback('👎',
-               'Finally - sosome things deserve to be booed. ' +
-                   'Click here to express disapproval:',
                '👎', ['boo1.mp4', 'boo2.mp4', 'boo3.mp4'], ui.booFormElement,
                ui.booButtonElement, ui.booAudioElement),
 ];

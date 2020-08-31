@@ -5,7 +5,6 @@ goog.module('oddsalon.oddchatter');
 
 const config = goog.require('oddsalon.oddchatter.config');
 const controller = goog.require('oddsalon.oddchatter.controller');
-const ui = goog.require('oddsalon.oddchatter.ui');
 const view = goog.require('oddsalon.oddchatter.view');
 
 function main() {
@@ -22,24 +21,12 @@ function main() {
   // Initialize the UI controller
   controller.init();
 
-  // initialize Firebase
+  // initialize Firebase and load the messages
   firebase.auth().onAuthStateChanged(view.applyNewAuthState);
 
   // Load the configuration from Firestore
   config.CONFIG.addConfigurationChangeListener(view.applyNewConfiguration);
   config.CONFIG.loadFromFirestore();
-
-  // Load the messages once the messagesCardContainerElement is visible.
-  new MutationObserver(() => {
-    if (!ui.outerContainerElement.hasAttribute('hidden') &&
-        !ui.messagesCardContainerElement.hasAttribute('hidden')) {
-      view.loadCallbacks();
-      view.loadMessages();
-    }
-  }).observe(ui.outerContainerElement, {
-    attributes: true,
-    attributeFilter: ['hidden'],
-  });
 }
 
 main();

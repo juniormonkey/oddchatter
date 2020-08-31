@@ -30,7 +30,7 @@ Firebase supports running a web app on localhost, against a hosted database. Mak
 
 ```sh
 $ firebase use dev
-$ firebase serve --only hosting
+$ firebase serve --only hosting:dev
 ```
 
 Then your app will be available at http://localhost:5000.
@@ -52,18 +52,34 @@ $ firebase deploy -P dev
 
 ### Deploying to production
 
-The production link that we send to Odd Salon attendees is https://odd-chatter.web.app. You can deploy code to this site using the following commands:
+The production link that we send to Odd Salon attendees is https://odd-chatter.web.app. To release to production, follow these steps:
 
-```sh
-$ firebase use release
-$ firebase deploy
-```
+1. Copy the compiled HTML/JS/CSS from `public/` to `release/`:
 
-or in one line:
+   ```sh
+   $ rm -rf release/*
+   $ cp -r public/* release/*
+   ```
 
-```sh
-$ firebase deploy -P release
-```
+2. Run a local instance of the prod code against the dev database, to verify that everything looks good:
+
+   ```sh
+   $ firebase serve -P dev --only hosting:release
+   ```
+
+3. If everything looks good, run a local instance of the prod code against the prod database, and make sure everything is OK:
+
+   ```sh
+   $ firebase serve -P release --only hosting:release
+   ```
+
+4. If this looks good too, deploy everything:
+
+   ```sh
+   $ firebase deploy -P release
+   ```
+
+5. Commit the new contents of the `release/` directory into version control, for posterity.
 
 ## How this works
 

@@ -2,8 +2,20 @@
   "firestore": {
     "rules": "firestore.rules"
   },
-  "hosting": {
+  "hosting": [ {
     "site": "odd-chatter",
+    "target": "release",
+    "public": "./release",
+    "headers": [ {
+      "source" : "**/*.@(js|html)",
+      "headers" : [ {
+        "key" : "Cache-Control",
+        "value" : "max-age=0"
+      } ]
+    } ]
+  }, {
+    "site": "odd-chatter-dev",
+    "target": "dev",
     "public": "./public",
     "headers": [{
       "source" : "**/*.@(js|html)",
@@ -11,6 +23,6 @@
         "key" : "Cache-Control",
         "value" : "max-age=0"
       } ]
-    }]
-  }
+    } ]
+  } ]
 }

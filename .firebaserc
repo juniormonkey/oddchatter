@@ -2,5 +2,17 @@
   "projects": {
     "release": "odd-salon-callbacks",
     "dev": "odd-salon-callbacks-dev"
+  },
+  "targets": {
+    "odd-salon-callbacks-dev": {
+      "hosting": {
+        "release": [
+          "odd-chatter"
+        ],
+        "dev": [
+          "odd-chatter-dev"
+        ]
+      }
+    }
   }
 }

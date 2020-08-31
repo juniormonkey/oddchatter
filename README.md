@@ -18,8 +18,6 @@ You'll need to install Firebase locally both to compile and deploy the code: `np
 
 The client-side code is JS, using the [google-closure-library](https://github.com/google/closure-library) (install using `npm install --save google-closure-library`) and compiled using [google-closure-compiler](https://developers.google.com/closure/compiler) (install using `npm install --save google-closure-compiler`).
 
-(TODO: set up [source maps](https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/), and set `--compilation_level=ADVANCED` in `compile.sh` and `compile.bat`.)
-
 ### Compiling
 
 The correct magic incantation to google-closure-compiler is stored in  `compile.bat` (for Windows) and`compile.sh` (for Bash systems).
@@ -88,11 +86,11 @@ The production link that we send to Odd Salon attendees is https://odd-chatter.w
 ##### `messages`: a list of documents representing one message each.
 
    * id: automatically generated.
-* `name`, string: the display name of the user.
-* `profilePicUrl`, string: the profile photo to display.
-* `text`, string: the text of the message.
-* `timestamp`, firebase.firestore.Timestamp: the time the message was sent.
-* `uid`, string: the UID of the user.
+   * `name`, string: the display name of the user.
+   * `profilePicUrl`, string: the profile photo to display.
+   * `text`, string: the text of the message.
+   * `timestamp`, firebase.firestore.Timestamp: the time the message was sent.
+   * `uid`, string: the UID of the user.
 
 ##### `SHIPS`, `MAPS`, etc (one per callback): a list of documents representing the last time a user said the callback.
 
@@ -102,13 +100,13 @@ The production link that we send to Odd Salon attendees is https://odd-chatter.w
 ##### `configuration`: a bunch of configuration values, allowing the app to readjust on the fly.
 
    * `timestamp`, firebase.firestore.Timestamp: the app always uses the most recent document.
-* `admin_users`, array of string: UIDs of users who should see a 'delete' link next to each message (this should correspond to the uids in the ACLs in firestore.rules.)
-* `callback_threshold`, number: the minimum number of users who need to say the same callback within `callback_window_ms` milliseconds for the video to play.
-* `callback_window_ms`, number: the length of the window in milliseconds within which `callback_threshold` users need to say the same callback for the video to play.
-* `enabled`, boolean: when this is false, the app stays displaying the splash screen. This allows us to enable and disable the app before and after an Odd Salon.
-* `fallback_url`, string: a URL to fall back to in an emergency. If this is non-empty, the app shows an error screen with a link to this URL.
-* `youtube_chat`, string: the video ID of a YouTube live stream. If this is non-empty, the right half of the desktop UI will embed the YouTube chat widget for that stream. If `youtube_video` is also set, the chat will appear below the embedded video.
-* `youtube_video`, string: the video ID of a YouTube live stream. If this is non-empty, the right half of the desktop UI will embed the YouTube video of that stream. If `youtube_chat` is also set, the embedded video will appear above the chat.
+   * `admin_users`, array of string: UIDs of users who should see a 'delete' link next to each message (this should correspond to the uids in the ACLs in firestore.rules.)
+   * `callback_threshold`, number: the minimum number of users who need to say the same callback within `callback_window_ms` milliseconds for the video to play.
+   * `callback_window_ms`, number: the length of the window in milliseconds within which `callback_threshold` users need to say the same callback for the video to play.
+   * `enabled`, boolean: when this is false, the app stays displaying the splash screen. This allows us to enable and disable the app before and after an Odd Salon.
+   * `fallback_url`, string: a URL to fall back to in an emergency. If this is non-empty, the app shows an error screen with a link to this URL.
+   * `youtube_chat`, string: the video ID of a YouTube live stream. If this is non-empty, the right half of the desktop UI will embed the YouTube chat widget for that stream. If `youtube_video` is also set, the chat will appear below the embedded video.
+   * `youtube_video`, string: the video ID of a YouTube live stream. If this is non-empty, the right half of the desktop UI will embed the YouTube video of that stream. If `youtube_chat` is also set, the embedded video will appear above the chat.
 
 ### JS client architecture
 
@@ -128,7 +126,7 @@ The script installs a Firestore query listener for each callback in `oddsalon.od
 
 ### Onboarding
 
-Some browsers (iOS Safari *cough cough*) have auto-play policies that demand that a user interaction happen before you can play the sound. So before anything works, we need the user to click on a button to explicitly trigger the sound; then we can later play the sound at will. (See: https://rosswintle.uk/2019/01/skirting-the-ios-safari-audio-auto-play-policy-for-ui-sound-effects/) To ~~force~~ encourage our users to actually click the buttons, you need to go through a onboarding tutorial (implemented in `oddsalon.oddchatter.view.onBoarding()` ) that shows you each button in turn and requires you to click it and thus trigger the video & sound.
+Some browsers (iOS Safari *cough cough*) have auto-play policies that demand that a user interaction happen before you can play the sound. So before anything works, we need the user to click on a button to explicitly trigger the sound; then we can later play the sound at will. (See: https://rosswintle.uk/2019/01/skirting-the-ios-safari-audio-auto-play-policy-for-ui-sound-effects/) To ~~force~~ encourage our users to actually click the buttons, we show a splash screen explaining the callbacks and asking the users to agree to the Odd Salon Code of Conduct. The "agree" button plays all the callback sounds, muted and at double speed, before unmuting the audio elements again for later use in the chat.
 
 ### Configuration
 

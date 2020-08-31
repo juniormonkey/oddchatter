@@ -1,5 +1,6 @@
 {
   "projects": {
-    "staging": "odd-salon-callbacks"
+    "release": "odd-salon-callbacks",
+    "dev": "odd-salon-callbacks-dev"
   }
 }

@@ -6,11 +6,20 @@
     "site": "odd-chatter",
     "target": "release",
     "public": "./release",
+    "ignore": [
+      "release/scripts/src"
+    ],
     "headers": [ {
-      "source" : "**/*.@(js|html)",
+      "source" : "**/*.@(js|css|html)",
       "headers" : [ {
         "key" : "Cache-Control",
         "value" : "max-age=0"
+      } ]
+    }, {
+      "source" : "**/*.@(js)",
+      "headers" : [ {
+        "key"  : "SourceMap",
+        "value" : "/scripts/main.js.map"
       } ]
     } ]
   }, {
@@ -22,6 +31,12 @@
       "headers" : [ {
         "key" : "Cache-Control",
         "value" : "max-age=0"
+      } ]
+    }, {
+      "source" : "**/*.@(js)",
+      "headers" : [ {
+        "key"  : "SourceMap",
+        "value" : "/scripts/main.js.map"
       } ]
     } ]
   } ]

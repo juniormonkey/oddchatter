@@ -136,6 +136,18 @@ async function applyNewAuthState(firebaseUser) {
 
     // Hide the messages UI
     ui.messagesCardContainerElement.setAttribute('hidden', 'true');
+
+    // Remove the firestore snapshot listeners.
+    for (const callback of callbacks.CALLBACKS) {
+      if (callback.unsubscribeFromFirestore) {
+        callback.unsubscribeFromFirestore();
+        callback.unsubscribeFromFirestore = null;
+      }
+    }
+    if (unsubscribeMessages_) {
+      unsubscribeMessages_();
+      unsubscribeMessages_ = null;
+    }
   }
 }
 

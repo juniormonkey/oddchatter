@@ -272,7 +272,7 @@ function deleteMessage_(id) {
  * @param {string} id The ID of the message to create.
  * @param {firebase.firestore.Timestamp|undefined} timestamp The timestamp of
  *     the existing message, or undefined if it's a brand new message.
- * @return {Element} The new message element.
+ * @return {Node} The new message element.
  * @private
  */
 function createAndInsertMessage_(id, timestamp) {

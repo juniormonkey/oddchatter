@@ -4,7 +4,7 @@ module.exports = {
     'es2020': true,
   },
   "extends": [
-    "closure"
+    "closure-es6"
   ],
   'parserOptions': {
     'ecmaVersion': 12,

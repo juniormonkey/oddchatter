@@ -295,12 +295,10 @@ h3 {
 }
 #intro-container {
   color: #FFF;
-  position: absolute;
-  height: 100%;
-  width: 100%;
   z-index: 100;
 }
 #intro {
+  background-color: rgba(0,0,0,0.8);
   width: 75%;
   margin: 15% auto;
 }

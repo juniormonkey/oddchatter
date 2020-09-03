@@ -197,10 +197,6 @@ class Message {
 
     return div;
   }
-
-  //  displayMessage_(CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
-  //                  callback.getByline(), '', 'images/adventureharvey.jpg',
-  //                  video);
 }
 
 /**

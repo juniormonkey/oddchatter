@@ -7,6 +7,7 @@ goog.module('oddsalon.oddchatter.view');
 const callbacks = goog.require('oddsalon.oddchatter.callbacks');
 const config = goog.require('oddsalon.oddchatter.config');
 const logging = goog.require('oddsalon.oddchatter.logging');
+const messages = goog.require('oddsalon.oddchatter.messages');
 const ui = goog.require('oddsalon.oddchatter.ui');
 const user = goog.require('oddsalon.oddchatter.user');
 
@@ -14,18 +15,6 @@ const Timestamp = firebase.firestore.Timestamp;
 
 /** @const @private */ const CALLBACK_ID =
     new ui.IncrementingId('callback-message-');
-
-/**
- * Template for messages.
- * @const
- * @private
- */
-const MESSAGE_TEMPLATE = '<div class="message-container">' +
-                         '<div class="spacing"><div class="pic"></div></div>' +
-                         '<div class="message"></div>' +
-                         '<div class="name"></div>' +
-                         '<div class="timestamp"></div>' +
-                         '</div>';
 
 /**
  * Updates the UI in response to a config change.
@@ -101,7 +90,7 @@ async function applyNewAuthState(firebaseUser) {
 
     // Set the user's profile pic and name.
     ui.userPicElement.style.backgroundImage =
-        `url(${addSizeToGoogleProfilePic_(profilePicUrl)})`;
+        `url(${ui.addSizeToGoogleProfilePic(profilePicUrl)})`;
     ui.userNameElement.textContent = userName;
 
     // Show user's profile and sign-out button.
@@ -144,10 +133,7 @@ async function applyNewAuthState(firebaseUser) {
         callback.unsubscribeFromFirestore = null;
       }
     }
-    if (unsubscribeMessages_) {
-      unsubscribeMessages_();
-      unsubscribeMessages_ = null;
-    }
+    messages.unload();
   }
 }
 
@@ -163,7 +149,7 @@ function showMessagesCard_() {
 
   // Load the messages.
   loadCallbacks_();
-  loadMessages_();
+  messages.load();
 
   logging.logEvent('screen_view', {screen_name: 'chat'});
 }
@@ -204,44 +190,6 @@ function showIntroduction_() {
 }
 
 /**
- * @private {function()|null}
- */
-let unsubscribeMessages_ = null;
-
-/**
- * Loads chat messages history and listens for upcoming ones.
- * @private
- */
-function loadMessages_() {
-  // Create the query to load the last 12 messages and listen for new
-  // ones.
-  const query = firebase.firestore()
-                    .collection('messages')
-                    .orderBy('timestamp', 'desc')
-                    .limit(12);
-
-  // Start listening to the query.
-  if (!unsubscribeMessages_) {
-    unsubscribeMessages_ = query.onSnapshot(
-      (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === 'removed') {
-            deleteMessage_(change.doc.id);
-          } else {
-            const message = change.doc.data();
-            displayMessage_(change.doc.id, message['timestamp'], message['uid'],
-                            message['name'], message['text'],
-                            message['profilePicUrl'], message['imageUrl']);
-          }
-        });
-      },
-      (error) => {
-        console.error('Error querying Firestore: ', error);
-      });
-  }
-}
-
-/**
  * Loads callback timestamps and listens for upcoming ones.
  * @private
  */
@@ -255,212 +203,31 @@ function loadCallbacks_() {
     if (!callback.unsubscribeFromFirestore) {
 
       callback.unsubscribeFromFirestore = voices.onSnapshot(
-        (snapshot) => {
-          const callbackWindowStartMillis =
-              Math.max(callback.lastCalledTimestampMillis,
-                       Date.now() - config.CONFIG.callback_window_ms);
-          if (snapshot.size >= config.CONFIG.callback_threshold) {
-            const firstTimestampMillis = getTimestampMillis_(
-                snapshot.docs[config.CONFIG.callback_threshold - 1].data());
-            if (firstTimestampMillis > callbackWindowStartMillis) {
-              const lastTimestampMillis =
-                  getTimestampMillis_(snapshot.docs[0].data());
-              if (lastTimestampMillis > 0) {
-                callback.lastCalledTimestampMillis = lastTimestampMillis + 1000;
-                displayCallback_(lastTimestampMillis + 1, callback);
-                logging.logEvent('screen_view',
-                                 {screen_name: callback.getCollection()});
+          (snapshot) => {
+            const callbackWindowStartMillis =
+                Math.max(callback.lastCalledTimestampMillis,
+                         Date.now() - config.CONFIG.callback_window_ms);
+            if (snapshot.size >= config.CONFIG.callback_threshold) {
+              const firstTimestampMillis = getTimestampMillis_(
+                  snapshot.docs[config.CONFIG.callback_threshold - 1].data());
+              if (firstTimestampMillis > callbackWindowStartMillis) {
+                const lastTimestampMillis =
+                    getTimestampMillis_(snapshot.docs[0].data());
+                if (lastTimestampMillis > 0) {
+                  callback.lastCalledTimestampMillis =
+                      lastTimestampMillis + 1000;
+                  displayCallback_(lastTimestampMillis + 1, callback);
+                  logging.logEvent('screen_view',
+                                   {screen_name: callback.getCollection()});
+                }
               }
             }
-          }
-        },
-        (error) => {
-          console.error('Error querying Firestore: ', error);
-        });
+          },
+          (error) => {
+            console.error('Error querying Firestore: ', error);
+          });
     }
   }
-}
-
-/**
- * Adds a size to Google Profile pics URLs.
- *
- * @param {string} url The profile pic URL to edit.
- * @return {string} A new profile pic URL with the size param added.
- * @private
- */
-function addSizeToGoogleProfilePic_(url) {
-  if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return `${url}?sz=150`;
-  }
-  return url;
-}
-
-/**
- * Delete a Message from the UI.
- *
- * @param {string} id The ID of the message to delete.
- * @private
- */
-function deleteMessage_(id) {
-  const div = document.getElementById(id);
-  // If an element for that message exists we delete it.
-  if (div) {
-    div.parentNode.removeChild(div);
-  }
-}
-
-/**
- * Creates a new Message in the UI.
- *
- * @param {string} id The ID of the message to create.
- * @param {firebase.firestore.Timestamp|undefined} timestamp The timestamp of
- *     the existing message, or undefined if it's a brand new message.
- * @return {Node} The new message element.
- * @private
- */
-function createAndInsertMessage_(id, timestamp) {
-  /** @const */ const container = document.createElement('div');
-  container.innerHTML = MESSAGE_TEMPLATE;
-  /** @const */ const div = container.firstChild;
-  div.setAttribute('id', id);
-
-  // If timestamp is null, assume we've gotten a brand new message.
-  // https://stackoverflow.com/a/47781432/4816918
-  const timestampMillis = timestamp ? timestamp.toMillis() : Date.now();
-  div.setAttribute('timestamp', timestampMillis);
-
-  // figure out where to insert new message
-  /** @const */ const existingMessages = ui.messageListElement.children;
-  if (existingMessages.length === 0) {
-    ui.messageListElement.appendChild(div);
-  } else {
-    let messageListNode = existingMessages[0];
-
-    while (messageListNode) {
-      /** @const */ const messageListNodeTime =
-          messageListNode.getAttribute('timestamp');
-
-      if (!messageListNodeTime) {
-        throw new Error(
-            `Child ${messageListNode.id} has no 'timestamp' attribute`);
-      }
-
-      if (messageListNodeTime > timestampMillis) {
-        break;
-      }
-
-      messageListNode = messageListNode.nextSibling;
-    }
-
-    ui.messageListElement.insertBefore(div, messageListNode);
-  }
-
-  return div;
-}
-
-/**
- * Displays a Message in the UI.
- *
- * @param {string} id The ID of the message to display.
- * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
- *     message to display.
- * @param {string} uid The UID of the author.
- * @param {string} name The name of the author.
- * @param {string|null} text The content of the message.
- * @param {string} picUrl The URL of the author's profile pic.
- * @param {string|null} videoUrl The URL of the callback video to play.
- * @private
- */
-function displayMessage_(id, timestamp, uid, name, text, picUrl, videoUrl) {
-  const scrollAfterDisplaying =
-      /* Scroll down after displaying if we're already at the bottom, or ... */
-      ui.messageListElement.scrollTop ===
-          (ui.messageListElement.scrollHeight -
-              ui.messageListElement.clientHeight) ||
-      /* ... if the author of the new message is the logged-in user. */
-     uid === user.getUid();
-
-  const div =
-      document.getElementById(id) || createAndInsertMessage_(id, timestamp);
-
-  // profile picture
-  if (picUrl) {
-    div.querySelector('.pic').style.backgroundImage =
-        `url(${addSizeToGoogleProfilePic_(picUrl)})`;
-  }
-
-  div.querySelector('.name').textContent = name;
-  if (timestamp && timestamp.toMillis() > 10000) {
-    div.querySelector('.timestamp').textContent =
-        `${timestamp.toDate().toLocaleDateString()} ${
-            timestamp.toDate().toLocaleTimeString()}`;
-  }
-  const messageElement = div.querySelector('.message');
-
-  // If the current user is an admin, add a delete link to all Firebase
-  // messages.
-  // (This ACL is also enforced by Firestore.)
-  if (config.CONFIG.admin_users.includes(user.getUid()) &&
-      // Callbacks aren't in the DB so they don't need this.
-      !id.startsWith('callback-message-') &&
-      // Don't add a duplicate admin div.
-      !div.querySelector('.admin')) {
-    const deleteLine = document.createElement('a');
-    deleteLine.className = 'admin';
-    deleteLine.setAttribute('href', '#');
-    deleteLine.textContent = 'delete';
-    deleteLine.addEventListener('click', () => {
-      firebase.firestore()
-          .collection('messages')
-          .doc(id)
-          .delete()
-          .catch(
-              (error) => {
-                console.error('Error removing message: ', error);
-              });
-    });
-    div.appendChild(deleteLine);
-  }
-
-  if (text) { // If the message is text.
-    messageElement.textContent = text;
-    // Replace all line breaks by <br>.
-    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  } else if (videoUrl) { // If the message is a video.
-    const video = document.createElement('video');
-    video.addEventListener('load', () => {
-      if (scrollAfterDisplaying) {
-        ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
-      }
-    });
-    video.playsInline = true;
-    video.autoplay = true;
-    video.muted = true;
-    video.className = 'callback-video';
-    const mp4 = document.createElement('source');
-    mp4.src = videoUrl;
-    mp4.type = 'video/mp4';
-    const fallback =
-        document.createTextNode('Your browser does not support the video tag.');
-    video.innerHTML = '';
-    video.appendChild(mp4);
-    video.appendChild(fallback);
-    video.onloadedmetadata = () => {
-      if (scrollAfterDisplaying) {
-        ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
-      }
-    };
-    messageElement.innerHTML = '';
-    messageElement.appendChild(video);
-  }
-  // Show the card fading-in and scroll to view the new message.
-  setTimeout(() => {
-    div.classList.add('visible');
-  }, 1);
-  if (scrollAfterDisplaying) {
-    ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
-  }
-  ui.messageInputElement.focus();
 }
 
 /**
@@ -473,9 +240,10 @@ function displayCallback_(timestamp, callback) {
   const video = `video/${
       callback
           .videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
-  displayMessage_(CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
-                  callback.getByline(), '', 'images/adventureharvey.jpg',
-                  video);
+  const message = new messages.Message(
+      CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
+      callback.getByline(), 'images/adventureharvey.jpg', '', video);
+  message.display();
   callback.audioElement.play();
 }
 

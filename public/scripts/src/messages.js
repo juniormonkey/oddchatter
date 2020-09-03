@@ -59,13 +59,15 @@ class Message {
     const div =
         document.getElementById(this.id) || this.createAndInsertElement_();
 
+    // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
-         * Scroll down after displaying if we're already at the bottom, or ...
+         * ... if we're already within one message of the bottom, or ...
          */
-        ui.messageListElement.scrollTop ===
+        ui.messageListElement.scrollTop >=
             (ui.messageListElement.scrollHeight -
-             ui.messageListElement.clientHeight) ||
+             ui.messageListElement.clientHeight -
+             div.clientHeight) ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
@@ -210,15 +212,28 @@ const messages = new Map();
 let unsubscribe_ = [];
 
 /**
- * Loads chat messages history and listens for upcoming ones.
+ * Loads chat messages history and listens for upcoming ones. If oldestTimestamp
+ * is passed, only loads messages since that timestamp; if newestTimestamp is
+ * also passed, only loads messages between those two timestamps, and loads them
+ * in ascending rather than descending timestamp order.
+ *
+ * @param {firebase.firestore.Timestamp=} oldestTimestamp
+ * @param {firebase.firestore.Timestamp=} newestTimestamp
  */
-function load() {
+function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
   // ones.
-  const query = firebase.firestore()
-                    .collection('messages')
-                    .orderBy('timestamp', 'desc')
-                    .limit(12);
+  let query = firebase.firestore().collection('messages').limit(8);
+
+  if (oldestTimestamp) {
+    query = query.where('timestamp', '>', oldestTimestamp);
+  }
+  if (newestTimestamp) {
+    query = query.where('timestamp', '<', newestTimestamp)
+                .orderBy('timestamp', 'asc');
+  } else {
+    query = query.orderBy('timestamp', 'desc');
+  }
 
   // Start listening to the query.
   if (unsubscribe_.length == 0) {

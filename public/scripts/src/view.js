@@ -149,7 +149,7 @@ function showMessagesCard_() {
 
   // Load the messages.
   loadCallbacks_();
-  messages.load();
+  messages.load(config.CONFIG.event_start);
 
   logging.logEvent('screen_view', {screen_name: 'chat'});
 }

@@ -14,6 +14,7 @@ const DEBUG_MODE = false;
 class Configuration {
   constructor() {
     this.enabled = false;
+    this.event_start = null;
     this.intro_seen = false;
     this.fallback_url = '';
     this.callback_window_ms = DEFAULT_CALLBACK_WINDOW_MS;
@@ -41,6 +42,9 @@ class Configuration {
    */
   copyFromFirestoreData_(data) {
     this.enabled = data['enabled'] || DEBUG_MODE;
+    this.event_start = data.hasOwnProperty('event_start') ?
+                           data['event_start'] :
+                           this.event_start;
     this.fallback_url = data.hasOwnProperty('fallback_url') ?
                             data['fallback_url'] :
                             this.fallback_url;
@@ -51,8 +55,8 @@ class Configuration {
                                   data['callback_threshold'] :
                                   this.callback_threshold;
     this.admin_users = data.hasOwnProperty('admin_users') ?
-      data['admin_users'] :
-      this.admin_users;
+                           data['admin_users'] :
+                           this.admin_users;
     this.youtube_video = data.hasOwnProperty('youtube_video') ?
                              data['youtube_video'] :
                              this.youtube_video;
@@ -66,9 +70,9 @@ class Configuration {
    */
   loadFromFirestore() {
     const query = firebase.firestore()
-                    .collection('configuration')
-                    .orderBy('timestamp', 'desc')
-                    .limit(1);
+                      .collection('configuration')
+                      .orderBy('timestamp', 'desc')
+                      .limit(1);
 
     const config = this;
     query.onSnapshot(

@@ -174,7 +174,6 @@ function showIntroduction_() {
         audio.muted = true;
         audio.playbackRate = 2;
         audio.onended = () => {
-          window.console.log('resetting element: ', audio);
           audio.volume = 1;
           audio.muted = false;
           audio.playbackRate = 1;

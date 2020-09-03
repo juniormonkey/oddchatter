@@ -56,17 +56,20 @@ class Message {
    * Displays the message in the UI.
    */
   display() {
+    const div =
+        document.getElementById(this.id) || this.createAndInsertElement_();
+
     const scrollAfterDisplaying =
-        /* Scroll down after displaying if we're already at the bottom, or ...
+        /*
+         * Scroll down after displaying if we're already at the bottom, or ...
          */
         ui.messageListElement.scrollTop ===
             (ui.messageListElement.scrollHeight -
              ui.messageListElement.clientHeight) ||
-        /* ... if the author of the new message is the logged-in user. */
-        this.authorUid === user.getUid();
-
-    const div =
-        document.getElementById(this.id) || this.createAndInsertElement_();
+        /*
+         * ... if it's the newest message, and the author is the logged-in user.
+         */
+        (div.nextElementSibling === null && this.authorUid === user.getUid());
 
     // profile picture
     if (this.authorPic) {
@@ -206,9 +209,9 @@ class Message {
 const messages = new Map();
 
 /**
- * @type {function()|null}
+ * @type {!Array<function()>}
  */
-let unsubscribe_ = null;
+let unsubscribe_ = [];
 
 /**
  * Loads chat messages history and listens for upcoming ones.
@@ -222,37 +225,55 @@ function load() {
                     .limit(12);
 
   // Start listening to the query.
-  if (!unsubscribe_) {
-    unsubscribe_ = query.onSnapshot(
-        (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === 'removed') {
-              messages.get(change.doc.id).remove();
-            } else {
-              const message = change.doc.data();
-              messages.set(change.doc.id,
-                           new Message(change.doc.id, message['timestamp'],
-                                       message['uid'], message['name'],
-                                       message['profilePicUrl'],
-                                       message['text'], message['videoUrl']));
-              messages.get(change.doc.id).display();
-            }
-          });
-        },
-        (error) => {
-          console.error('Error querying Firestore: ', error);
-        });
+  if (unsubscribe_.length == 0) {
+    unsubscribe_.push(
+        query.onSnapshot(handleMessagePageSnapshot_, handleFirebaseError_));
   }
+}
+
+/**
+ * Handles a Firebase QuerySnapshot for one page of messages.
+ * @param {firebase.firestore.QuerySnapshot} snapshot
+ * @private
+ */
+function handleMessagePageSnapshot_(snapshot) {
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === 'removed') {
+      messages.get(change.doc.id).remove();
+    } else {
+      const message = change.doc.data();
+      messages.set(change.doc.id,
+                   new Message(change.doc.id, message['timestamp'],
+                               message['uid'], message['name'],
+                               message['profilePicUrl'], message['text'],
+                               message['videoUrl']));
+      messages.get(change.doc.id).display();
+    }
+  });
+  if (!snapshot.empty) {
+    unsubscribe_.push(
+        snapshot.query.startAfter(snapshot.docs[snapshot.size - 1])
+            .onSnapshot(handleMessagePageSnapshot_, handleFirebaseError_));
+  }
+}
+
+/**
+ * Handles a Firebase error.
+ * @param {Error} error
+ * @private
+ */
+function handleFirebaseError_(error) {
+  console.error('Error querying Firestore: ', error);
 }
 
 /**
  * Cleans up the firestore messages listener.
  */
 function unload() {
-  if (unsubscribe_) {
-    unsubscribe_();
-    unsubscribe_ = null;
+  for (const unsubscribe of unsubscribe_) {
+    unsubscribe();
   }
+  unsubscribe_ = [];
 }
 
 exports = {

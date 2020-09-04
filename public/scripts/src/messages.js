@@ -3,6 +3,8 @@
  */
 goog.module('oddsalon.oddchatter.messages');
 
+goog.require('goog.array');
+
 const config = goog.require('oddsalon.oddchatter.config');
 const ui = goog.require('oddsalon.oddchatter.ui');
 const user = goog.require('oddsalon.oddchatter.user');
@@ -30,7 +32,8 @@ class Message {
    * @param {string} authorPic The URL of the author's profile pic.
    * @param {string|null} text The content of the message.
    * @param {string|null} videoUrl The URL of the callback video to play.
-   * */
+   * @protected
+   */
   constructor(id, timestamp, authorUid, authorName, authorPic, text, videoUrl) {
     this.id = id;
     this.timestamp = timestamp;
@@ -66,8 +69,7 @@ class Message {
          */
         ui.messageListElement.scrollTop >=
             (ui.messageListElement.scrollHeight -
-             ui.messageListElement.clientHeight -
-             div.clientHeight) ||
+             ui.messageListElement.clientHeight - div.clientHeight) ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
@@ -160,9 +162,9 @@ class Message {
    * @private
    */
   createAndInsertElement_() {
-    /** @const */ const container = document.createElement('div');
+    const container = document.createElement('div');
     container.innerHTML = MESSAGE_TEMPLATE;
-    /** @const */ const div = container.firstChild;
+    const div = container.firstChild;
     div.setAttribute('id', this.id);
 
     // If timestamp is null, assume we've gotten a brand new message.
@@ -172,29 +174,35 @@ class Message {
     div.setAttribute('timestamp', timestampMillis);
 
     // figure out where to insert new message
-    /** @const */ const existingMessages = ui.messageListElement.children;
+    const existingMessages = ui.messageListElement.children;
     if (existingMessages.length === 0) {
       ui.messageListElement.appendChild(div);
     } else {
-      let messageListNode = existingMessages[0];
+      const insertionPoint = goog.array.binarySearch(
+          existingMessages, timestampMillis, (targetTime, node) => {
+            const nodeTime = node.getAttribute('timestamp');
 
-      while (messageListNode) {
-        /** @const */ const messageListNodeTime =
-            messageListNode.getAttribute('timestamp');
+            if (!nodeTime) {
+              throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
+            }
+            return targetTime - nodeTime;
+          });
 
-        if (!messageListNodeTime) {
-          throw new Error(
-              `Child ${messageListNode.id} has no 'timestamp' attribute`);
-        }
-
-        if (messageListNodeTime > timestampMillis) {
-          break;
-        }
-
-        messageListNode = messageListNode.nextSibling;
+      if (insertionPoint >= existingMessages.length) {
+        // The message is newer than all existing messages.
+        ui.messageListElement.appendChild(div);
+      } else if (insertionPoint > 0) {
+        // Found a message with the same timestamp as the new message; insert
+        // the new message after it.
+        ui.messageListElement.insertBefore(
+            div, existingMessages[insertionPoint + 1]);
+      } else {
+        // goog.array.binarySearch() returns a negative index if the timestamp
+        // was not matched; the absolute value of this index provides the
+        // right place to insert the new message.
+        ui.messageListElement.insertBefore(
+            div, existingMessages[-(insertionPoint + 1)]);
       }
-
-      ui.messageListElement.insertBefore(div, messageListNode);
     }
 
     return div;
@@ -243,6 +251,27 @@ function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
 }
 
 /**
+ * Creates a new Message object, and stores it in the map and list caches.
+ *
+ * @param {string} id A unique string ID.
+ * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
+ *     message.
+ * @param {string} authorUid The UID of the message author.
+ * @param {string} authorName The name of the message author.
+ * @param {string} authorPic The URL of the author's profile pic.
+ * @param {string|null} text The content of the message.
+ * @param {string|null} videoUrl The URL of the callback video to play.
+ * @return {Message} the newly created message.
+ */
+function createMessage(id, timestamp, authorUid, authorName, authorPic, text,
+                       videoUrl) {
+  const message = new Message(id, timestamp, authorUid, authorName, authorPic,
+                              text, videoUrl);
+  messages.set(id, message);
+  return message;
+}
+
+/**
  * Handles a Firebase QuerySnapshot for one page of messages.
  * @param {firebase.firestore.QuerySnapshot} snapshot
  * @private
@@ -252,13 +281,13 @@ function handleMessagePageSnapshot_(snapshot) {
     if (change.type === 'removed') {
       messages.get(change.doc.id).remove();
     } else {
-      const message = change.doc.data();
-      messages.set(change.doc.id,
-                   new Message(change.doc.id, message['timestamp'],
-                               message['uid'], message['name'],
-                               message['profilePicUrl'], message['text'],
-                               message['videoUrl']));
-      messages.get(change.doc.id).display();
+      const firebaseData = change.doc.data();
+      const message = createMessage(
+          change.doc.id, firebaseData['timestamp'], firebaseData['uid'],
+          firebaseData['name'], firebaseData['profilePicUrl'],
+          firebaseData['text'], firebaseData['videoUrl']);
+      // TODO: the callback construction will need this too.
+      message.display();
     }
   });
   if (!snapshot.empty) {
@@ -289,6 +318,7 @@ function unload() {
 
 exports = {
   Message,
+  createMessage,
   load,
   unload,
 };

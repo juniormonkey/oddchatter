@@ -239,7 +239,7 @@ function displayCallback_(timestamp, callback) {
   const video = `video/${
       callback
           .videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
-  const message = new messages.Message(
+  const message = messages.createMessage(
       CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
       callback.getByline(), 'images/adventureharvey.jpg', '', video);
   message.display();

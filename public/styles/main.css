@@ -231,33 +231,89 @@ h3 {
   position:  absolute;
   height: 100%;
   width: 100%;
-  background-image: url('/images/screenshot.png');
+  background-image: url('/images/background.jpeg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 10;
 }
+#promo-container {
+	position: relative;
+  top: calc(50% - 335px);
+  width: 1000px;
+  display: block;
+	margin: auto;
+}
 #promo-image {
-  background-image: url('/images/magic.jpg');
+  background-image: url('/images/shock.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-	position: relative;
-  top: calc(50% - 250px);
 	height: 500px;
-  width: 889px;
+  width: 1000px;
   display: block;
-	margin: auto;
+}
+#promo-social, #promo-action {
+  background-color: black;
+  color: white;
+  width: 1000px;
+  display: block;
+  margin:auto;
+  padding: 20px 0;
+  text-align: center;
+  font-size: xx-large;
+  font-weight: bold;
+  font-variant-caps: small-caps;
+}
+#promo-facebook {
+  display: inline-block;
+  background-image: url('/images/facebook.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50px;
+  width: 27%;
+  margin: 0 10%;
+  text-decoration: none;
+  vertical-align: middle;
+}
+#promo-eventbrite {
+  display: inline-block;
+  background-image: url('/images/eventbrite.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 67px;
+  width: 34%;
+  margin: 0 8%;
+  text-decoration: none;
+  vertical-align: middle;
 }
 @media screen and (max-width: 610px) {
   #promo {
     background-image: url('/images/screenshot-mobile.png');
   }
-  #promo-image {
-    background-image: url('/images/magic-mobile.jpg');
-    height: 225px;
+  #promo-container {
+    top: calc(50% - 146px);
     width: 300px;
-    top: calc(50% - 112px);
+    position: relative;
+    display: block;
+    margin: auto;
+  }
+  #promo-image {
+    background-image: url('/images/shock.jpg');
+    height: 150px;
+    width: 300px;
+  }
+  #promo-social, #promo-action {
+    font-size: large;
+    width: 300px;
+  }
+  #promo-facebook {
+    height: 15px;
+  }
+  #promo-eventbrite {
+    height: 20px;
   }
 }
 #error-container {

@@ -24,7 +24,23 @@ class IncrementingId {
   }
 }
 
-exports = {IncrementingId};
+/**
+ * Adds a size to Google Profile pics URLs.
+ *
+ * @param {string} url The profile pic URL to edit.
+ * @return {string} A new profile pic URL with the size param added.
+ */
+function addSizeToGoogleProfilePic(url) {
+  if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
+    return `${url}?sz=150`;
+  }
+  return url;
+}
+
+exports = {
+  IncrementingId,
+  addSizeToGoogleProfilePic,
+};
 
 // Shortcuts to DOM Elements.
 /** @const */ exports.outerContainerElement =

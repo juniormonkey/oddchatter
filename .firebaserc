@@ -6,11 +6,21 @@
   "targets": {
     "odd-salon-callbacks-dev": {
       "hosting": {
-        "release": [
-          "odd-chatter"
-        ],
         "dev": [
           "odd-chatter-dev"
+        ],
+        "release": [
+          "odd-chatter"
+        ]
+      }
+    },
+    "odd-salon-callbacks": {
+      "hosting": {
+        "dev": [
+          "odd-chatter-dev"
+        ],
+        "release": [
+          "odd-chatter"
         ]
       }
     }

@@ -314,7 +314,7 @@ export class Message {
       } else if (insertionPoint >= 0) {
         // Found a message with the same timestamp as the new message; insert
         // the new message after it.
-        return existingMessages[insertionPoint];
+        return existingMessages[insertionPoint + 1];
       } else {
         // goog.array.binarySearch() returns a negative index if the timestamp
         // was not matched; '-(index + 1)' provides the right place to insert

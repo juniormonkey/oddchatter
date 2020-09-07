@@ -1,12 +1,11 @@
 /**
  * @fileoverview A model of the UI, for interacting with DOM elements.
  */
-goog.module('oddsalon.oddchatter.ui');
 
 /**
  * A utility class to keep generating the next ID in an incrementing sequence.
  */
-class IncrementingId {
+export class IncrementingId {
   /**
    * @param {string} text Some prefix text to use in the ID.
 
@@ -30,76 +29,84 @@ class IncrementingId {
  * @param {string} url The profile pic URL to edit.
  * @return {string} A new profile pic URL with the size param added.
  */
-function addSizeToGoogleProfilePic(url) {
+export function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
     return `${url}?sz=150`;
   }
   return url;
 }
 
-exports = {
-  IncrementingId,
-  addSizeToGoogleProfilePic,
-};
-
 // Shortcuts to DOM Elements.
-/** @const */ exports.outerContainerElement =
+/** @const */ export const outerContainerElement =
     document.getElementById('outer-container');
-/** @const */ exports.promoElement = document.getElementById('promo');
-/** @const */ exports.errorContainerElement =
+/** @const */ export const promoElement = document.getElementById('promo');
+/** @const */ export const errorContainerElement =
     document.getElementById('error-container');
-/** @const */ exports.errorLinkElement = document.getElementById('error-link');
-/** @const */ exports.introContainerElement =
+/** @const */ export const errorLinkElement =
+    document.getElementById('error-link');
+/** @const */ export const introContainerElement =
     document.getElementById('intro-container');
-/** @const */ exports.introButtonElement =
+/** @const */ export const introButtonElement =
     document.getElementById('intro-button');
-/** @const */ exports.messageListElement = document.getElementById('messages');
-/** @const */ exports.messageFormElement =
+/** @const */ export const messageListElement =
+    document.getElementById('messages');
+/** @const */ export const messageFormElement =
     document.getElementById('message-form');
-/** @const */ exports.messageInputElement = document.getElementById('message');
-/** @const */ exports.submitButtonElement = document.getElementById('submit');
-/** @const */ exports.scienceButtonElement = document.getElementById('science');
-/** @const */ exports.artButtonElement = document.getElementById('art');
-/** @const */ exports.mapsButtonElement = document.getElementById('maps');
-/** @const */ exports.shipsButtonElement = document.getElementById('ships');
-/** @const */ exports.applauseButtonElement =
+/** @const */ export const messageInputElement =
+    document.getElementById('message');
+/** @const */ export const submitButtonElement =
+    document.getElementById('submit');
+/** @const */ export const scienceButtonElement =
+    document.getElementById('science');
+/** @const */ export const artButtonElement = document.getElementById('art');
+/** @const */ export const mapsButtonElement = document.getElementById('maps');
+/** @const */ export const shipsButtonElement =
+    document.getElementById('ships');
+/** @const */ export const applauseButtonElement =
     document.getElementById('applause');
-/** @const */ exports.booButtonElement = document.getElementById('boo');
-/** @const */ exports.userPicElement = document.getElementById('user-pic');
-/** @const */ exports.userNameElement = document.getElementById('user-name');
-/** @const */ exports.signInButtonElement = document.getElementById('sign-in');
-/** @const */ exports.signOutButtonElement =
+/** @const */ export const booButtonElement = document.getElementById('boo');
+/** @const */ export const userPicElement = document.getElementById('user-pic');
+/** @const */ export const userNameElement =
+    document.getElementById('user-name');
+/** @const */ export const signInButtonElement =
+    document.getElementById('sign-in');
+/** @const */ export const signOutButtonElement =
     document.getElementById('sign-out');
-/** @const */ exports.signInSnackbarElement =
+/** @const */ export const signInSnackbarElement =
     document.getElementById('must-signin-snackbar');
-/** @const */ exports.splashScreenElement =
+/** @const */ export const splashScreenElement =
     document.getElementById('signin-splashscreen');
-/** @const */ exports.signInSplashButtonElement =
+/** @const */ export const signInSplashButtonElement =
     document.getElementById('sign-in-splash');
-/** @const */ exports.messagesCardContainerElement =
+/** @const */ export const messagesCardContainerElement =
     document.getElementById('messages-card-container');
-/** @const */ exports.youtubeStreamContainerElement =
+/** @const */ export const youtubeStreamContainerElement =
     document.getElementById('youtube-stream-container');
-/** @const */ exports.youtubeVideoIframeElement =
+/** @const */ export const youtubeVideoIframeElement =
     document.getElementById('youtube-video');
-/** @const */ exports.youtubeChatIframeElement =
+/** @const */ export const youtubeChatIframeElement =
     document.getElementById('youtube-chat');
 
-/** @const */ exports.scienceAudioElement =
+/** @const */ export const scienceAudioElement =
     document.getElementById('science-audio');
-/** @const */ exports.artAudioElement = document.getElementById('art-audio');
-/** @const */ exports.mapsAudioElement = document.getElementById('maps-audio');
-/** @const */ exports.shipsAudioElement =
+/** @const */ export const artAudioElement =
+    document.getElementById('art-audio');
+/** @const */ export const mapsAudioElement =
+    document.getElementById('maps-audio');
+/** @const */ export const shipsAudioElement =
     document.getElementById('ships-audio');
-/** @const */ exports.applauseAudioElement =
+/** @const */ export const applauseAudioElement =
     document.getElementById('applause-audio');
-/** @const */ exports.booAudioElement = document.getElementById('boo-audio');
+/** @const */ export const booAudioElement =
+    document.getElementById('boo-audio');
 
-/** @const */ exports.scienceFormElement =
+/** @const */ export const scienceFormElement =
     document.getElementById('science-form');
-/** @const */ exports.artFormElement = document.getElementById('art-form');
-/** @const */ exports.mapsFormElement = document.getElementById('maps-form');
-/** @const */ exports.shipsFormElement = document.getElementById('ships-form');
-/** @const */ exports.applauseFormElement =
+/** @const */ export const artFormElement = document.getElementById('art-form');
+/** @const */ export const mapsFormElement =
+    document.getElementById('maps-form');
+/** @const */ export const shipsFormElement =
+    document.getElementById('ships-form');
+/** @const */ export const applauseFormElement =
     document.getElementById('applause-form');
-/** @const */ exports.booFormElement = document.getElementById('boo-form');
+/** @const */ export const booFormElement = document.getElementById('boo-form');

@@ -2,17 +2,16 @@
  * @fileoverview UI code for handling interaction with the UI. If we consider
  * this app as a MVC, this is the Controller.
  */
-goog.module('oddsalon.oddchatter.controller');
 
-const callbacks = goog.require('oddsalon.oddchatter.callbacks');
-const logging = goog.require('oddsalon.oddchatter.logging');
-const ui = goog.require('oddsalon.oddchatter.ui');
-const user = goog.require('oddsalon.oddchatter.user');
+import * as callbacks from './callbacks.js';
+import * as logging from './logging.js';
+import * as ui from './ui.js';
+import * as user from './user.js';
 
 /**
  * Initializes all the event listeners.
  */
-function init() {
+export function init() {
   // Saves message on form submit.
   ui.messageFormElement.addEventListener('submit', onMessageFormSubmit_);
   ui.signOutButtonElement.addEventListener('click', signOut_);
@@ -193,5 +192,3 @@ function toggleButton_() {
     ui.submitButtonElement.setAttribute('disabled', 'true');
   }
 }
-
-exports = {init};

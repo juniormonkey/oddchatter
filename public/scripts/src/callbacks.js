@@ -1,12 +1,11 @@
 /**
  * @fileoverview The callbacks we listen for.
  */
-goog.module('oddsalon.oddchatter.callbacks');
 
-const config = goog.require('oddsalon.oddchatter.config');
-const ui = goog.require('oddsalon.oddchatter.ui');
+import * as config from './config.js';
+import * as ui from './ui.js';
 
-class Callback {
+export class Callback {
   /**
    * @param {string} text The text to listen for in chat.
    * @param {string} buttonText The text to display on the button.
@@ -82,14 +81,12 @@ function randomNumberBetween_(from, to) {
   return from + Math.floor(Math.random() * (to - from + 1));
 }
 
-exports = {Callback};
-
 /**
  * Callbacks that we listen for.
  *
  * @const
  */
-exports.CALLBACKS = [
+export const CALLBACKS = [
   new Callback('SCIENCE',
                '🔬',
     [

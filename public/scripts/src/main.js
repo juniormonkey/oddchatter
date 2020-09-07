@@ -1,11 +1,10 @@
 /**
  * @fileoverview Main JS code for the Odd Chatter page.
  */
-goog.module('oddsalon.oddchatter');
 
-const config = goog.require('oddsalon.oddchatter.config');
-const controller = goog.require('oddsalon.oddchatter.controller');
-const view = goog.require('oddsalon.oddchatter.view');
+import * as config from './config.js';
+import * as controller from './controller.js';
+import * as view from './view.js';
 
 function main() {
   /** Checks that the Firebase SDK has been correctly setup and configured. */

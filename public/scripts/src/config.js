@@ -1,9 +1,8 @@
 /**
  * @fileoverview Configuration for the Odd Chatter app.
  */
-goog.module('oddsalon.oddchatter.config');
 
-const DEBUG_MODE = false;
+export const DEBUG_MODE = true;
 
 /** @const */ const DEFAULT_CALLBACK_WINDOW_MS = 10000;
 /** @const */ const DEFAULT_CALLBACK_THRESHOLD = 3;
@@ -11,7 +10,7 @@ const DEBUG_MODE = false;
 /**
  * Holds the configuration for the Odd Chatter app.
  */
-class Configuration {
+export class Configuration {
   constructor() {
     this.enabled = false;
     this.event_start = null;
@@ -91,6 +90,4 @@ class Configuration {
   }
 }
 
-exports = {Configuration};
-
-/** @const {Configuration} */ exports.CONFIG = new Configuration();
+/** @const {Configuration} */ export const CONFIG = new Configuration();

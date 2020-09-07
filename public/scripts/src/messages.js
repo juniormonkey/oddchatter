@@ -1,13 +1,13 @@
 /**
  * @fileoverview Code for handling messages in chat.
  */
-goog.module('oddsalon.oddchatter.messages');
 
 goog.require('goog.array');
 
-const config = goog.require('oddsalon.oddchatter.config');
-const ui = goog.require('oddsalon.oddchatter.ui');
-const user = goog.require('oddsalon.oddchatter.user');
+import * as callbacks from './callbacks.js';
+import * as config from './config.js';
+import * as ui from './ui.js';
+import * as user from './user.js';
 
 /**
  * Template for messages.
@@ -21,7 +21,10 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '<div class="timestamp"></div>' +
                          '</div>';
 
-class Message {
+const CALLBACK_STRINGS =
+    callbacks.CALLBACKS.map(callback => callback.getMessage());
+
+export class Message {
 
   /**
    * @param {string} id A unique string ID.
@@ -59,6 +62,72 @@ class Message {
    * Displays the message in the UI.
    */
   display() {
+    if (CALLBACK_STRINGS.includes(this.text)) {
+      this.displayAsCallback_();
+    } else {
+      this.displayAsMessage_();
+    }
+  }
+
+  /**
+   * Displays the message as one of a collection of calls in the UI.
+   * @private
+   */
+  displayAsCallback_() {
+    const div = this.findOrCreateCallbackElement_();
+
+    // Scroll down after displaying...
+    const scrollAfterDisplaying =
+        /*
+         * ... if we're already within one message of the bottom, or ...
+         */
+        ui.messageListElement.scrollTop >=
+            (ui.messageListElement.scrollHeight -
+             ui.messageListElement.clientHeight - div.clientHeight) ||
+        /*
+         * ... if it's the newest message, and the author is the logged-in user.
+         */
+        (div.nextElementSibling === null && this.authorUid === user.getUid());
+
+    div.querySelector('.pic').style.backgroundImage =
+        `url(${ui.addSizeToGoogleProfilePic('images/adventureharvey.jpg')})`;
+
+    div.querySelector('.name').textContent = this.text;
+    if (this.timestamp && this.timestamp.toMillis() > 10000) {
+      div.querySelector('.timestamp').textContent =
+          `${this.timestamp.toDate().toLocaleDateString()} ${
+              this.timestamp.toDate().toLocaleTimeString()}`;
+    }
+    const messageElement = div.querySelector('.message');
+
+    // TODO: a progress bar or something.
+    // maybe use a big emoji for the author image, and small author images in
+    // place of the text? maybe even a slightly different template?
+    // TODO: somehow this makes a few too many entries when a new message comes
+    // in.
+    if (messageElement.textContent.endsWith('!!')) {
+      messageElement.textContent = messageElement.textContent.concat(' ');
+    }
+    messageElement.textContent = messageElement.textContent.concat(this.text);
+
+    // Remove all line breaks.
+    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '');
+
+    // Show the card fading-in and scroll to view the new message.
+    setTimeout(() => {
+      div.classList.add('visible');
+    }, 1);
+    if (scrollAfterDisplaying) {
+      ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+    }
+    ui.messageInputElement.focus();
+  }
+
+  /**
+   * Displays the message as an individual message in the UI.
+   * @private
+   */
+  displayAsMessage_() {
     const div =
         document.getElementById(this.id) || this.createAndInsertElement_();
 
@@ -156,6 +225,56 @@ class Message {
   }
 
   /**
+   * Finds the current callback message element in the UI, or creates it if it
+   * doesn't exit.
+   *
+   * @return {Node} The message element.
+   * @private
+   */
+  findOrCreateCallbackElement_() {
+    // If timestamp is null, assume we've gotten a brand new message.
+    // https://stackoverflow.com/a/47781432/4816918
+    const timestampMillis =
+        this.timestamp ? this.timestamp.toMillis() : Date.now();
+
+    // Figure out where to insert new callback.
+    const existingMessages = ui.messageListElement.children;
+    const insertionPoint = goog.array.binarySearch(
+        existingMessages, timestampMillis, (targetTime, node) => {
+          const nodeTime = node.getAttribute('timestamp');
+
+          if (!nodeTime) {
+            throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
+          }
+          return targetTime - nodeTime;
+        });
+
+    let div = null;
+    if (insertionPoint >= existingMessages.length ||
+        insertionPoint < -(existingMessages.length)) {
+      // The callback is newer than all existing messages.
+      div = existingMessages[existingMessages.length - 1];
+    } else if (insertionPoint >= 0) {
+      // Found a message with the same timestamp as the new callback.
+      div = existingMessages[insertionPoint];
+    } else if (insertionPoint < 0) {
+      // goog.array.binarySearch() returns a negative index if the timestamp
+      // was not matched; the absolute value of this index provides the
+      // right place to insert the new callback.
+      div = existingMessages[-(insertionPoint)];
+    }
+    if (!div || div.getAttribute('callback') != this.text) {
+      console.log('no element found, text=', this.text, ', div=', div,
+                  ', insertionPoint=', insertionPoint,
+                  ', length=', existingMessages.length);
+      div = this.createAndInsertElement_();
+      div.setAttribute('callback', this.text);
+    }
+
+    return div;
+  }
+
+  /**
    * Creates a new Message in the UI.
    *
    * @return {Node} The new message element.
@@ -188,20 +307,21 @@ class Message {
             return targetTime - nodeTime;
           });
 
-      if (insertionPoint >= existingMessages.length) {
+      if (insertionPoint >= existingMessages.length ||
+          insertionPoint < -(existingMessages.length)) {
         // The message is newer than all existing messages.
         ui.messageListElement.appendChild(div);
-      } else if (insertionPoint > 0) {
+      } else if (insertionPoint >= 0) {
         // Found a message with the same timestamp as the new message; insert
         // the new message after it.
-        ui.messageListElement.insertBefore(
-            div, existingMessages[insertionPoint + 1]);
+        ui.messageListElement.insertBefore(div,
+                                           existingMessages[insertionPoint]);
       } else {
         // goog.array.binarySearch() returns a negative index if the timestamp
         // was not matched; the absolute value of this index provides the
         // right place to insert the new message.
-        ui.messageListElement.insertBefore(
-            div, existingMessages[-(insertionPoint + 1)]);
+        ui.messageListElement.insertBefore(div,
+                                           existingMessages[-(insertionPoint)]);
       }
     }
 
@@ -228,7 +348,7 @@ let unsubscribe_ = [];
  * @param {firebase.firestore.Timestamp=} oldestTimestamp
  * @param {firebase.firestore.Timestamp=} newestTimestamp
  */
-function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
+export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
   // ones.
   let query = firebase.firestore().collection('messages').limit(8);
@@ -263,8 +383,8 @@ function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
  * @param {string|null} videoUrl The URL of the callback video to play.
  * @return {Message} the newly created message.
  */
-function createMessage(id, timestamp, authorUid, authorName, authorPic, text,
-                       videoUrl) {
+export function createMessage(id, timestamp, authorUid, authorName, authorPic,
+                              text, videoUrl) {
   const message = new Message(id, timestamp, authorUid, authorName, authorPic,
                               text, videoUrl);
   messages.set(id, message);
@@ -286,7 +406,6 @@ function handleMessagePageSnapshot_(snapshot) {
           change.doc.id, firebaseData['timestamp'], firebaseData['uid'],
           firebaseData['name'], firebaseData['profilePicUrl'],
           firebaseData['text'], firebaseData['videoUrl']);
-      // TODO: the callback construction will need this too.
       message.display();
     }
   });
@@ -309,16 +428,9 @@ function handleFirebaseError_(error) {
 /**
  * Cleans up the firestore messages listener.
  */
-function unload() {
+export function unload() {
   for (const unsubscribe of unsubscribe_) {
     unsubscribe();
   }
   unsubscribe_ = [];
 }
-
-exports = {
-  Message,
-  createMessage,
-  load,
-  unload,
-};

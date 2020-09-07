@@ -2,14 +2,13 @@
  * @fileoverview UI code for displaying data in the DOM. If we consider this app
  * as a MVC, then this is the View.
  */
-goog.module('oddsalon.oddchatter.view');
 
-const callbacks = goog.require('oddsalon.oddchatter.callbacks');
-const config = goog.require('oddsalon.oddchatter.config');
-const logging = goog.require('oddsalon.oddchatter.logging');
-const messages = goog.require('oddsalon.oddchatter.messages');
-const ui = goog.require('oddsalon.oddchatter.ui');
-const user = goog.require('oddsalon.oddchatter.user');
+import * as callbacks from './callbacks.js';
+import * as config from './config.js';
+import * as logging from './logging.js';
+import * as messages from './messages.js';
+import * as ui from './ui.js';
+import * as user from './user.js';
 
 const Timestamp = firebase.firestore.Timestamp;
 
@@ -21,7 +20,7 @@ const Timestamp = firebase.firestore.Timestamp;
  *
  * @param {config.Configuration} config
  */
-function applyNewConfiguration(config) {
+export function applyNewConfiguration(config) {
   // Show only the splash screen if the app is not enabled.
   if (!config.enabled) {
     ui.promoElement.removeAttribute('hidden');
@@ -82,7 +81,7 @@ function applyNewConfiguration(config) {
  *
  * @param {firebase.User} firebaseUser
  */
-async function applyNewAuthState(firebaseUser) {
+export async function applyNewAuthState(firebaseUser) {
   if (firebaseUser) { // User is signed in!
     // Get the signed-in user's profile pic and name.
     const profilePicUrl = user.getProfilePicUrl();
@@ -265,8 +264,3 @@ function getTimestampMillis_(data) {
   }
   return data['timestamp'].toMillis();
 }
-
-exports = {
-  applyNewConfiguration,
-  applyNewAuthState,
-};

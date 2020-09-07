@@ -6,20 +6,20 @@
  * @return {string} The signed-in user's UID.
  */
 export function getUid() {
-  return firebase.auth().currentUser.uid;
+  return window.firebase.auth().currentUser.uid;
 }
 
 /**
  * @return {string|null} The signed-in user's display name.
  */
 export function getUserName() {
-  return firebase.auth().currentUser.displayName;
+  return window.firebase.auth().currentUser.displayName;
 }
 
 /**
  * @return {string} The signed-in user's profile Pic URL.
  */
 export function getProfilePicUrl() {
-  return firebase.auth().currentUser.photoURL ||
+  return window.firebase.auth().currentUser.photoURL ||
          '/images/profile_placeholder.png';
 }

@@ -81,9 +81,9 @@ export class Message {
         /*
          * ... if we're already within one message of the bottom, or ...
          */
-        ui.messageListElement.scrollTop >=
-            (ui.messageListElement.scrollHeight -
-             ui.messageListElement.clientHeight - div.clientHeight) ||
+        ui.messageListElement().scrollTop >=
+            (ui.messageListElement().scrollHeight -
+             ui.messageListElement().clientHeight - div.clientHeight) ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
@@ -118,9 +118,9 @@ export class Message {
       div.classList.add('visible');
     }, 1);
     if (scrollAfterDisplaying) {
-      ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
-    ui.messageInputElement.focus();
+    ui.messageInputElement().focus();
   }
 
   /**
@@ -136,9 +136,9 @@ export class Message {
         /*
          * ... if we're already within one message of the bottom, or ...
          */
-        ui.messageListElement.scrollTop >=
-            (ui.messageListElement.scrollHeight -
-             ui.messageListElement.clientHeight - div.clientHeight) ||
+        ui.messageListElement().scrollTop >=
+            (ui.messageListElement().scrollHeight -
+             ui.messageListElement().clientHeight - div.clientHeight) ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
@@ -191,7 +191,7 @@ export class Message {
       const video = document.createElement('video');
       video.addEventListener('load', () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+          ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
         }
       });
       video.playsInline = true;
@@ -208,7 +208,7 @@ export class Message {
       video.appendChild(fallback);
       video.onloadedmetadata = () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+          ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
         }
       };
       messageElement.innerHTML = '';
@@ -219,9 +219,9 @@ export class Message {
       div.classList.add('visible');
     }, 1);
     if (scrollAfterDisplaying) {
-      ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
-    ui.messageInputElement.focus();
+    ui.messageInputElement().focus();
   }
 
   /**
@@ -238,7 +238,7 @@ export class Message {
         this.timestamp ? this.timestamp.toMillis() : Date.now();
 
     // Figure out where to insert new callback.
-    const existingMessages = ui.messageListElement.children;
+    const existingMessages = ui.messageListElement().children;
     const insertionPoint = goog.array.binarySearch(
         existingMessages, timestampMillis, (targetTime, node) => {
           const nodeTime = node.getAttribute('timestamp');
@@ -293,9 +293,9 @@ export class Message {
     div.setAttribute('timestamp', timestampMillis);
 
     // figure out where to insert new message
-    const existingMessages = ui.messageListElement.children;
+    const existingMessages = ui.messageListElement().children;
     if (existingMessages.length === 0) {
-      ui.messageListElement.appendChild(div);
+      ui.messageListElement().appendChild(div);
     } else {
       const insertionPoint = goog.array.binarySearch(
           existingMessages, timestampMillis, (targetTime, node) => {
@@ -310,17 +310,17 @@ export class Message {
       if (insertionPoint >= existingMessages.length ||
           insertionPoint < -(existingMessages.length)) {
         // The message is newer than all existing messages.
-        ui.messageListElement.appendChild(div);
+        ui.messageListElement().appendChild(div);
       } else if (insertionPoint >= 0) {
         // Found a message with the same timestamp as the new message; insert
         // the new message after it.
-        ui.messageListElement.insertBefore(div,
+        ui.messageListElement().insertBefore(div,
                                            existingMessages[insertionPoint]);
       } else {
         // goog.array.binarySearch() returns a negative index if the timestamp
         // was not matched; the absolute value of this index provides the
         // right place to insert the new message.
-        ui.messageListElement.insertBefore(div,
+        ui.messageListElement().insertBefore(div,
                                            existingMessages[-(insertionPoint)]);
       }
     }

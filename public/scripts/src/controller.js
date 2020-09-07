@@ -13,10 +13,10 @@ import * as user from './user.js';
  */
 export function init() {
   // Saves message on form submit.
-  ui.messageFormElement.addEventListener('submit', onMessageFormSubmit_);
-  ui.signOutButtonElement.addEventListener('click', signOut_);
-  ui.signInButtonElement.addEventListener('click', signIn_);
-  ui.signInSplashButtonElement.addEventListener('click', signIn_);
+  ui.messageFormElement().addEventListener('submit', onMessageFormSubmit_);
+  ui.signOutButtonElement().addEventListener('click', signOut_);
+  ui.signInButtonElement().addEventListener('click', signIn_);
+  ui.signInSplashButtonElement().addEventListener('click', signIn_);
 
   for (const callback of callbacks.CALLBACKS) {
     callback.formElement.addEventListener(
@@ -24,8 +24,8 @@ export function init() {
   }
 
   // Toggle for the button.
-  ui.messageInputElement.addEventListener('keyup', toggleButton_);
-  ui.messageInputElement.addEventListener('change', toggleButton_);
+  ui.messageInputElement().addEventListener('keyup', toggleButton_);
+  ui.messageInputElement().addEventListener('change', toggleButton_);
 }
 
 /**
@@ -116,7 +116,7 @@ function onMessageFormSubmit_(e) {
   e.preventDefault();
   logging.logEvent(
       'share', {method: 'chat', content_type: 'freeform', content_id: ''});
-  onMessageSubmitted_(ui.messageInputElement.value);
+  onMessageSubmitted_(ui.messageInputElement().value);
 }
 
 /**
@@ -147,7 +147,7 @@ function onMessageSubmitted_(message) {
   if (message && checkSignedInWithMessage_()) {
     saveMessage_(message).then(() => {
       // Clear message text field and re-enable the SEND button.
-      resetMaterialTextfield_(ui.messageInputElement);
+      resetMaterialTextfield_(ui.messageInputElement());
       toggleButton_();
     });
   }
@@ -166,7 +166,7 @@ function checkSignedInWithMessage_() {
 
   // Display a message to the user using a Toast.
   const data = {message: 'You must sign-in first', timeout: 2000};
-  ui.signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
+  ui.signInSnackbarElement().MaterialSnackbar.showSnackbar(data);
   return false;
 }
 
@@ -186,9 +186,9 @@ function resetMaterialTextfield_(element) {
  * @private
  */
 function toggleButton_() {
-  if (ui.messageInputElement.value) {
-    ui.submitButtonElement.removeAttribute('disabled');
+  if (ui.messageInputElement().value) {
+    ui.submitButtonElement().removeAttribute('disabled');
   } else {
-    ui.submitButtonElement.setAttribute('disabled', 'true');
+    ui.submitButtonElement().setAttribute('disabled', 'true');
   }
 }

@@ -23,55 +23,55 @@ const Timestamp = firebase.firestore.Timestamp;
 export function applyNewConfiguration(config) {
   // Show only the splash screen if the app is not enabled.
   if (!config.enabled) {
-    ui.promoElement.removeAttribute('hidden');
-    ui.outerContainerElement.setAttribute('hidden', true);
-    ui.errorContainerElement.setAttribute('hidden', true);
+    ui.promoElement().removeAttribute('hidden');
+    ui.outerContainerElement().setAttribute('hidden', true);
+    ui.errorContainerElement().setAttribute('hidden', true);
     logging.logEvent('screen_view', {screen_name: 'promo'});
     return;
   }
 
   // If we've set a fallback URL, show the error screen with a link to that URL.
   if (config.fallback_url) {
-    ui.errorContainerElement.removeAttribute('hidden');
-    ui.outerContainerElement.setAttribute('hidden', true);
-    ui.promoElement.setAttribute('hidden', true);
-    ui.errorLinkElement.setAttribute('href', config.fallback_url);
+    ui.errorContainerElement().removeAttribute('hidden');
+    ui.outerContainerElement().setAttribute('hidden', true);
+    ui.promoElement().setAttribute('hidden', true);
+    ui.errorLinkElement().setAttribute('href', config.fallback_url);
     logging.logEvent('screen_view', {screen_name: 'error'});
     return;
   }
 
   // Else, hide the splash screen and show the chat container.
-  if (ui.outerContainerElement.hasAttribute('hidden')) {
-    ui.outerContainerElement.removeAttribute('hidden');
-    ui.promoElement.setAttribute('hidden', true);
-    ui.errorContainerElement.setAttribute('hidden', true);
+  if (ui.outerContainerElement().hasAttribute('hidden')) {
+    ui.outerContainerElement().removeAttribute('hidden');
+    ui.promoElement().setAttribute('hidden', true);
+    ui.errorContainerElement().setAttribute('hidden', true);
     logging.logEvent('screen_view', {screen_name: 'main'});
   }
 
   // If there's a YouTube stream ID, show the embedded player.
   if (config.youtube_video) {
-    ui.youtubeVideoIframeElement.src =
+    ui.youtubeVideoIframeElement().src =
         `https://www.youtube.com/embed/${config.youtube_video}`;
-    ui.youtubeVideoIframeElement.removeAttribute('hidden');
+    ui.youtubeVideoIframeElement().removeAttribute('hidden');
   } else {
-    ui.youtubeVideoIframeElement.setAttribute('hidden', true);
+    ui.youtubeVideoIframeElement().setAttribute('hidden', true);
   }
 
   // If there's a YouTube chat ID, show the embedded chat widget.
   if (config.youtube_chat) {
-    ui.youtubeChatIframeElement.src = `https://www.youtube.com/live_chat?v=${
+    ui.youtubeChatIframeElement().src = `https://www.youtube.com/live_chat?v=${
         config.youtube_chat}&embed_domain=${window.location.hostname}`;
-    ui.youtubeChatIframeElement.removeAttribute('hidden');
+    ui.youtubeChatIframeElement().removeAttribute('hidden');
   } else {
-    ui.youtubeChatIframeElement.setAttribute('hidden', true);
+    ui.youtubeChatIframeElement().setAttribute('hidden', true);
   }
 
   // If there's either a YouTube stream ID or chat ID, show the container that
   // wraps both of these elements.
   if (config.youtube_video || config.youtube_chat) {
-    ui.youtubeStreamContainerElement.removeAttribute('hidden');
+    ui.youtubeStreamContainerElement().removeAttribute('hidden');
   } else {
-    ui.youtubeStreamContainerElement.setAttribute('hidden', true);
+    ui.youtubeStreamContainerElement().setAttribute('hidden', true);
   }
 }
 
@@ -88,20 +88,20 @@ export async function applyNewAuthState(firebaseUser) {
     const userName = user.getUserName();
 
     // Set the user's profile pic and name.
-    ui.userPicElement.style.backgroundImage =
+    ui.userPicElement().style.backgroundImage =
         `url(${ui.addSizeToGoogleProfilePic(profilePicUrl)})`;
-    ui.userNameElement.textContent = userName;
+    ui.userNameElement().textContent = userName;
 
     // Show user's profile and sign-out button.
-    ui.userNameElement.removeAttribute('hidden');
-    ui.userPicElement.removeAttribute('hidden');
-    ui.signOutButtonElement.removeAttribute('hidden');
+    ui.userNameElement().removeAttribute('hidden');
+    ui.userPicElement().removeAttribute('hidden');
+    ui.signOutButtonElement().removeAttribute('hidden');
 
     // Hide sign-in button.
-    ui.signInButtonElement.setAttribute('hidden', 'true');
+    ui.signInButtonElement().setAttribute('hidden', 'true');
 
     // Hide the sign-in UI
-    ui.splashScreenElement.setAttribute('hidden', 'true');
+    ui.splashScreenElement().setAttribute('hidden', 'true');
 
     // Show the messages UI, or the introduction if it hasn't been seen yet
     if (config.CONFIG.intro_seen) {
@@ -112,18 +112,18 @@ export async function applyNewAuthState(firebaseUser) {
     }
   } else { // User is signed out!
     // Hide user's profile and sign-out button.
-    ui.userNameElement.setAttribute('hidden', 'true');
-    ui.userPicElement.setAttribute('hidden', 'true');
-    ui.signOutButtonElement.setAttribute('hidden', 'true');
+    ui.userNameElement().setAttribute('hidden', 'true');
+    ui.userPicElement().setAttribute('hidden', 'true');
+    ui.signOutButtonElement().setAttribute('hidden', 'true');
 
     // Show sign-in button.
-    ui.signInButtonElement.removeAttribute('hidden');
+    ui.signInButtonElement().removeAttribute('hidden');
 
     // Show the sign-in UI
-    ui.splashScreenElement.removeAttribute('hidden');
+    ui.splashScreenElement().removeAttribute('hidden');
 
     // Hide the messages UI
-    ui.messagesCardContainerElement.setAttribute('hidden', 'true');
+    ui.messagesCardContainerElement().setAttribute('hidden', 'true');
 
     // Remove the firestore snapshot listeners.
     for (const callback of callbacks.CALLBACKS) {
@@ -140,11 +140,11 @@ export async function applyNewAuthState(firebaseUser) {
  * @private
  */
 function showMessagesCard_() {
-  ui.messagesCardContainerElement.removeAttribute('hidden');
-  ui.introContainerElement.setAttribute('hidden', true);
+  ui.messagesCardContainerElement().removeAttribute('hidden');
+  ui.introContainerElement().setAttribute('hidden', true);
 
-  ui.messageInputElement.removeAttribute('disabled');
-  ui.messageInputElement.focus();
+  ui.messageInputElement().removeAttribute('disabled');
+  ui.messageInputElement().focus();
 
   // Load the messages.
   loadCallbacks_();
@@ -159,13 +159,13 @@ function showMessagesCard_() {
  * @private
  */
 function showIntroduction_() {
-  ui.introContainerElement.removeAttribute('hidden');
-  ui.messagesCardContainerElement.setAttribute('hidden', true);
+  ui.introContainerElement().removeAttribute('hidden');
+  ui.messagesCardContainerElement().setAttribute('hidden', true);
   logging.logEvent('screen_view', {screen_name: 'introduction'});
 
   /* eslint-disable-next-line no-unused-vars */
   return new Promise((resolve, reject) => {
-    ui.introButtonElement.addEventListener('click', () => {
+    ui.introButtonElement().addEventListener('click', () => {
       // Play all the sounds, at volume 0, for mobile browsers.
       for (const callback of callbacks.CALLBACKS) {
         const audio = callback.audioElement;
@@ -242,7 +242,7 @@ function displayCallback_(timestamp, callback) {
       CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
       callback.getByline(), 'images/adventureharvey.jpg', '', video);
   message.display();
-  callback.audioElement.play();
+  callback.audioElement().play();
 }
 
 /**

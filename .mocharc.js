@@ -6,6 +6,7 @@ module.exports = {
     'firebase-mock',
     'google-closure-library',
     'jsdom-global/register',
+    'mockdate',
     'should'
   ],
 }

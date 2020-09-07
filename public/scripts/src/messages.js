@@ -114,9 +114,7 @@ export class Message {
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '');
 
     // Show the card fading-in and scroll to view the new message.
-    setTimeout(() => {
-      div.classList.add('visible');
-    }, 1);
+    setTimeout(() => { div.classList.add('visible'); }, 1);
     if (scrollAfterDisplaying) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
@@ -191,7 +189,8 @@ export class Message {
       const video = document.createElement('video');
       video.addEventListener('load', () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
+          ui.messageListElement().scrollTop =
+              ui.messageListElement().scrollHeight;
         }
       });
       video.playsInline = true;
@@ -208,16 +207,15 @@ export class Message {
       video.appendChild(fallback);
       video.onloadedmetadata = () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
+          ui.messageListElement().scrollTop =
+              ui.messageListElement().scrollHeight;
         }
       };
       messageElement.innerHTML = '';
       messageElement.appendChild(video);
     }
     // Show the card fading-in and scroll to view the new message.
-    setTimeout(() => {
-      div.classList.add('visible');
-    }, 1);
+    setTimeout(() => { div.classList.add('visible'); }, 1);
     if (scrollAfterDisplaying) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
@@ -238,31 +236,7 @@ export class Message {
         this.timestamp ? this.timestamp.toMillis() : Date.now();
 
     // Figure out where to insert new callback.
-    const existingMessages = ui.messageListElement().children;
-    const insertionPoint = goog.array.binarySearch(
-        existingMessages, timestampMillis, (targetTime, node) => {
-          const nodeTime = node.getAttribute('timestamp');
-
-          if (!nodeTime) {
-            throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
-          }
-          return targetTime - nodeTime;
-        });
-
-    let div = null;
-    if (insertionPoint >= existingMessages.length ||
-        insertionPoint < -(existingMessages.length)) {
-      // The callback is newer than all existing messages.
-      div = existingMessages[existingMessages.length - 1];
-    } else if (insertionPoint >= 0) {
-      // Found a message with the same timestamp as the new callback.
-      div = existingMessages[insertionPoint];
-    } else if (insertionPoint < 0) {
-      // goog.array.binarySearch() returns a negative index if the timestamp
-      // was not matched; the absolute value of this index provides the
-      // right place to insert the new callback.
-      div = existingMessages[-(insertionPoint)];
-    }
+    const div = this.findDivToInsertBefore().previousElementSibling();
     if (!div || div.getAttribute('callback') != this.text) {
       console.log('no element found, text=', this.text, ', div=', div,
                   ', insertionPoint=', insertionPoint,
@@ -286,20 +260,46 @@ export class Message {
     const div = container.firstChild;
     div.setAttribute('id', this.id);
 
+    div.setAttribute('timestamp', this.timestampMillis_());
+
+    // Figure out where to insert new message.
+    const nextDiv = this.findDivToInsertBefore();
+    if (nextDiv) {
+      ui.messageListElement().insertBefore(div, nextDiv);
+    } else {
+      ui.messageListElement().appendChild(div);
+    }
+
+    return div;
+  }
+
+  /**
+   * @return {number} The timestamp of the message, in milliseconds since epoch.
+   * @private
+   */
+  timestampMillis_() {
     // If timestamp is null, assume we've gotten a brand new message.
     // https://stackoverflow.com/a/47781432/4816918
-    const timestampMillis =
-        this.timestamp ? this.timestamp.toMillis() : Date.now();
-    div.setAttribute('timestamp', timestampMillis);
+    if (!this.timestamp) {
+      this.timestamp = Timestamp.now();
+    }
+    return this.timestamp.toMillis();
+  }
 
-    // figure out where to insert new message
+  /**
+   * Finds the right place to insert a new message to keep the message list
+   * sorted by timestamp.
+   * @return {Element} The element before which to insert the new message, or
+   *     null if the new message should be appended at the end of the list.
+   */
+  findDivToInsertBefore() {
     const existingMessages = ui.messageListElement().children;
     if (existingMessages.length === 0) {
-      ui.messageListElement().appendChild(div);
+      return null;
     } else {
       const insertionPoint = goog.array.binarySearch(
-          existingMessages, timestampMillis, (targetTime, node) => {
-            const nodeTime = node.getAttribute('timestamp');
+          existingMessages, this.timestampMillis_(), (targetTime, node) => {
+            const nodeTime = parseInt(node.getAttribute('timestamp'), 10);
 
             if (!nodeTime) {
               throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
@@ -310,22 +310,18 @@ export class Message {
       if (insertionPoint >= existingMessages.length ||
           insertionPoint < -(existingMessages.length)) {
         // The message is newer than all existing messages.
-        ui.messageListElement().appendChild(div);
+        return null;
       } else if (insertionPoint >= 0) {
         // Found a message with the same timestamp as the new message; insert
         // the new message after it.
-        ui.messageListElement().insertBefore(div,
-                                           existingMessages[insertionPoint]);
+        return existingMessages[insertionPoint];
       } else {
         // goog.array.binarySearch() returns a negative index if the timestamp
-        // was not matched; the absolute value of this index provides the
-        // right place to insert the new message.
-        ui.messageListElement().insertBefore(div,
-                                           existingMessages[-(insertionPoint)]);
+        // was not matched; '-(index + 1)' provides the right place to insert
+        // the new message.
+        return existingMessages[-(insertionPoint + 1)];
       }
     }
-
-    return div;
   }
 }
 
@@ -340,10 +336,11 @@ const messages = new Map();
 let unsubscribe_ = [];
 
 /**
- * Loads chat messages history and listens for upcoming ones. If oldestTimestamp
- * is passed, only loads messages since that timestamp; if newestTimestamp is
- * also passed, only loads messages between those two timestamps, and loads them
- * in ascending rather than descending timestamp order.
+ * Loads chat messages history and listens for upcoming ones. If
+ * oldestTimestamp is passed, only loads messages since that timestamp; if
+ * newestTimestamp is also passed, only loads messages between those two
+ * timestamps, and loads them in ascending rather than descending timestamp
+ * order.
  *
  * @param {firebase.firestore.Timestamp=} oldestTimestamp
  * @param {firebase.firestore.Timestamp=} newestTimestamp

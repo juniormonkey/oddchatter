@@ -26,7 +26,8 @@
     "eslint-plugin-closure": "^0.1.1",
     "firebase": "^7.19.0",
     "google-closure-compiler-java": "^20200719.0.0",
-    "google-closure-library": "^20200719.0.0"
+    "google-closure-library": "^20200719.0.0",
+    "mockdate": "^3.0.2"
   },
   "devDependencies": {
     "eslint": "^7.7.0",

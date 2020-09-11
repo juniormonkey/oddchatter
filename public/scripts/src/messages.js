@@ -2,8 +2,6 @@
  * @fileoverview Code for handling messages in chat.
  */
 
-goog.require('goog.array');
-
 import * as callbacks from './callbacks.js';
 import * as config from './config.js';
 import * as ui from './ui.js';
@@ -59,76 +57,15 @@ export class Message {
   }
 
   /**
-   * Displays the message in the UI.
+   * Displays the message in the UI. Does nothing if the message matches one of
+   * the CALLBACK_STRINGS; these are handled in aggregate by callback_ui.js.
    */
   display() {
     if (CALLBACK_STRINGS.includes(this.text)) {
-      this.displayAsCallback_();
-    } else {
-      this.displayAsMessage_();
+      return;
     }
-  }
-
-  /**
-   * Displays the message as one of a collection of calls in the UI.
-   * @private
-   */
-  displayAsCallback_() {
-    const div = this.findOrCreateCallbackElement_();
-
-    // Scroll down after displaying...
-    const scrollAfterDisplaying =
-        /*
-         * ... if we're already within one message of the bottom, or ...
-         */
-        ui.messageListElement().scrollTop >=
-            (ui.messageListElement().scrollHeight -
-             ui.messageListElement().clientHeight - div.clientHeight) ||
-        /*
-         * ... if it's the newest message, and the author is the logged-in user.
-         */
-        (div.nextElementSibling === null && this.authorUid === user.getUid());
-
-    div.querySelector('.pic').style.backgroundImage =
-        `url(${ui.addSizeToGoogleProfilePic('images/adventureharvey.jpg')})`;
-
-    div.querySelector('.name').textContent = this.text;
-    if (this.timestamp && this.timestamp.toMillis() > 10000) {
-      div.querySelector('.timestamp').textContent =
-          `${this.timestamp.toDate().toLocaleDateString()} ${
-              this.timestamp.toDate().toLocaleTimeString()}`;
-    }
-    const messageElement = div.querySelector('.message');
-
-    // TODO: a progress bar or something.
-    // maybe use a big emoji for the author image, and small author images in
-    // place of the text? maybe even a slightly different template?
-    // TODO: somehow this makes a few too many entries when a new message comes
-    // in.
-    if (messageElement.textContent.endsWith('!!')) {
-      messageElement.textContent = messageElement.textContent.concat(' ');
-    }
-    messageElement.textContent = messageElement.textContent.concat(this.text);
-
-    // Remove all line breaks.
-    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '');
-
-    // Show the card fading-in and scroll to view the new message.
-    setTimeout(() => { div.classList.add('visible'); }, 1);
-    if (scrollAfterDisplaying) {
-      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
-    }
-    ui.messageInputElement().focus();
-  }
-
-  /**
-   * Displays the message as an individual message in the UI.
-   * @private
-   */
-  displayAsMessage_() {
     const div =
         document.getElementById(this.id) || this.createAndInsertElement_();
-
     // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
@@ -169,7 +106,7 @@ export class Message {
       deleteLine.setAttribute('href', '#');
       deleteLine.textContent = 'delete';
       deleteLine.addEventListener('click', () => {
-        firebase.firestore()
+        window.firebase.firestore()
             .collection('messages')
             .doc(this.id)
             .delete()
@@ -223,32 +160,6 @@ export class Message {
   }
 
   /**
-   * Finds the current callback message element in the UI, or creates it if it
-   * doesn't exit.
-   *
-   * @return {Node} The message element.
-   * @private
-   */
-  findOrCreateCallbackElement_() {
-    // If timestamp is null, assume we've gotten a brand new message.
-    // https://stackoverflow.com/a/47781432/4816918
-    const timestampMillis =
-        this.timestamp ? this.timestamp.toMillis() : Date.now();
-
-    // Figure out where to insert new callback.
-    const div = this.findDivToInsertBefore().previousElementSibling();
-    if (!div || div.getAttribute('callback') != this.text) {
-      console.log('no element found, text=', this.text, ', div=', div,
-                  ', insertionPoint=', insertionPoint,
-                  ', length=', existingMessages.length);
-      div = this.createAndInsertElement_();
-      div.setAttribute('callback', this.text);
-    }
-
-    return div;
-  }
-
-  /**
    * Creates a new Message in the UI.
    *
    * @return {Node} The new message element.
@@ -263,7 +174,7 @@ export class Message {
     div.setAttribute('timestamp', this.timestampMillis_());
 
     // Figure out where to insert new message.
-    const nextDiv = this.findDivToInsertBefore();
+    const nextDiv = ui.findDivToInsertBefore(this.timestampMillis_());
     if (nextDiv) {
       ui.messageListElement().insertBefore(div, nextDiv);
     } else {
@@ -281,47 +192,9 @@ export class Message {
     // If timestamp is null, assume we've gotten a brand new message.
     // https://stackoverflow.com/a/47781432/4816918
     if (!this.timestamp) {
-      this.timestamp = Timestamp.now();
+      this.timestamp = firebase.firestore.Timestamp.now();
     }
     return this.timestamp.toMillis();
-  }
-
-  /**
-   * Finds the right place to insert a new message to keep the message list
-   * sorted by timestamp.
-   * @return {Element} The element before which to insert the new message, or
-   *     null if the new message should be appended at the end of the list.
-   */
-  findDivToInsertBefore() {
-    const existingMessages = ui.messageListElement().children;
-    if (existingMessages.length === 0) {
-      return null;
-    } else {
-      const insertionPoint = goog.array.binarySearch(
-          existingMessages, this.timestampMillis_(), (targetTime, node) => {
-            const nodeTime = parseInt(node.getAttribute('timestamp'), 10);
-
-            if (!nodeTime) {
-              throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
-            }
-            return targetTime - nodeTime;
-          });
-
-      if (insertionPoint >= existingMessages.length ||
-          insertionPoint < -(existingMessages.length)) {
-        // The message is newer than all existing messages.
-        return null;
-      } else if (insertionPoint >= 0) {
-        // Found a message with the same timestamp as the new message; insert
-        // the new message after it.
-        return existingMessages[insertionPoint + 1];
-      } else {
-        // goog.array.binarySearch() returns a negative index if the timestamp
-        // was not matched; '-(index + 1)' provides the right place to insert
-        // the new message.
-        return existingMessages[-(insertionPoint + 1)];
-      }
-    }
   }
 }
 
@@ -348,7 +221,7 @@ let unsubscribe_ = [];
 export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
   // ones.
-  let query = firebase.firestore().collection('messages').limit(8);
+  let query = window.firebase.firestore().collection('messages').limit(8);
 
   if (oldestTimestamp) {
     query = query.where('timestamp', '>', oldestTimestamp);
@@ -394,6 +267,10 @@ export function createMessage(id, timestamp, authorUid, authorName, authorPic,
  * @private
  */
 function handleMessagePageSnapshot_(snapshot) {
+  // QuerySnapshot.docChanges is not available in tests. :(
+  if (!snapshot.docChanges) {
+    return;
+  }
   snapshot.docChanges().forEach((change) => {
     if (change.type === 'removed') {
       messages.get(change.doc.id).remove();

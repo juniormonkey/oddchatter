@@ -36,7 +36,7 @@ function signIn_() {
   // Sign in Firebase with credential from the Google user.
   /** @const */ const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
-  logging.logEvent('login', {method: ''});
+  logging.logEvent('login', {method : ''});
 }
 
 /**
@@ -52,9 +52,7 @@ function signOut_() {
  * @return {boolean} true if a user is signed-in.
  * @private
  */
-function isUserSignedIn_() {
-  return !!firebase.auth().currentUser;
-}
+function isUserSignedIn_() { return !!firebase.auth().currentUser; }
 
 /**
  * Compares the given message text against all the registered callbacks,
@@ -73,7 +71,10 @@ function checkForCallbacks_(text) {
     firebase.firestore()
         .collection(callback.getCollection())
         .doc(user.getUid())
-        .set({timestamp: firebase.firestore.FieldValue.serverTimestamp()})
+        .set({
+          'profilePicUrl' : user.getProfilePicUrl(),
+          'timestamp' : firebase.firestore.FieldValue.serverTimestamp()
+        })
         .catch((error) => {
           console.error('Error writing new message to database', error);
         });
@@ -95,11 +96,11 @@ function saveMessage_(messageText) {
   return firebase.firestore()
       .collection('messages')
       .add({
-        'uid': user.getUid(),
-        'name': user.getUserName(),
-        'text': messageText,
-        'profilePicUrl': user.getProfilePicUrl(),
-        'timestamp': firebase.firestore.FieldValue.serverTimestamp(),
+        'uid' : user.getUid(),
+        'name' : user.getUserName(),
+        'text' : messageText,
+        'profilePicUrl' : user.getProfilePicUrl(),
+        'timestamp' : firebase.firestore.FieldValue.serverTimestamp(),
       })
       .catch((error) => {
         console.error('Error writing new message to database', error);
@@ -115,7 +116,7 @@ function saveMessage_(messageText) {
 function onMessageFormSubmit_(e) {
   e.preventDefault();
   logging.logEvent(
-      'share', {method: 'chat', content_type: 'freeform', content_id: ''});
+      'share', {method : 'chat', content_type : 'freeform', content_id : ''});
   onMessageSubmitted_(ui.messageInputElement().value);
 }
 
@@ -128,9 +129,9 @@ function onMessageFormSubmit_(e) {
 function onCallbackFormSubmit_(callback, e) {
   e.preventDefault();
   logging.logEvent('share', {
-    method: 'chat',
-    content_type: callback.getCollection(),
-    content_id: '',
+    method : 'chat',
+    content_type : callback.getCollection(),
+    content_id : '',
   });
   onMessageSubmitted_(callback.getMessage());
   callback.buttonElement.setAttribute('disabled', 'true');
@@ -165,7 +166,7 @@ function checkSignedInWithMessage_() {
   }
 
   // Display a message to the user using a Toast.
-  const data = {message: 'You must sign-in first', timeout: 2000};
+  const data = {message : 'You must sign-in first', timeout : 2000};
   ui.signInSnackbarElement().MaterialSnackbar.showSnackbar(data);
   return false;
 }

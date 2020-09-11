@@ -2,6 +2,8 @@
  * @fileoverview A model of the UI, for interacting with DOM elements.
  */
 
+goog.require('goog.array');
+
 /**
  * A utility class to keep generating the next ID in an incrementing sequence.
  */
@@ -32,6 +34,46 @@ export function addSizeToGoogleProfilePic(url) {
     return `${url}?sz=150`;
   }
   return url;
+}
+
+/**
+ * Finds the right place to insert a new message to keep the message list
+ * sorted by timestamp.
+ * @param {number} timestamp The timestamp of the message to insert, in
+ *     milliseconds since epoch.
+ * @return {Element} The element before which to insert the new message, or
+ *     null if the new message should be appended at the end of the list.
+ */
+export function findDivToInsertBefore(timestamp) {
+  const existingMessages = messageListElement().children;
+  if (existingMessages.length === 0) {
+    return null;
+  } else {
+    const insertionPoint = goog.array.binarySearch(
+        existingMessages, timestamp, (targetTime, node) => {
+          const nodeTime = parseInt(node.getAttribute('timestamp'), 10);
+
+          if (!nodeTime) {
+            throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
+          }
+          return targetTime - nodeTime;
+        });
+
+    if (insertionPoint >= existingMessages.length ||
+        insertionPoint < -(existingMessages.length)) {
+      // The message is newer than all existing messages.
+      return null;
+    } else if (insertionPoint >= 0) {
+      // Found a message with the same timestamp as the new message; insert
+      // the new message after it.
+      return existingMessages[insertionPoint + 1];
+    } else {
+      // goog.array.binarySearch() returns a negative index if the timestamp
+      // was not matched; '-(index + 1)' provides the right place to insert
+      // the new message.
+      return existingMessages[-(insertionPoint + 1)];
+    }
+  }
 }
 
 // Shortcuts to DOM Elements.

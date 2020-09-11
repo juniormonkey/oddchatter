@@ -4,16 +4,12 @@
  */
 
 import * as callbacks from './callbacks.js';
+import * as callback_ui from './callback_ui.js';
 import * as config from './config.js';
 import * as logging from './logging.js';
 import * as messages from './messages.js';
 import * as ui from './ui.js';
 import * as user from './user.js';
-
-const Timestamp = firebase.firestore.Timestamp;
-
-/** @const @private */ const CALLBACK_ID =
-    new ui.IncrementingId('callback-message-');
 
 /**
  * Updates the UI in response to a config change.
@@ -26,7 +22,7 @@ export function applyNewConfiguration(config) {
     ui.promoElement().removeAttribute('hidden');
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.errorContainerElement().setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name: 'promo'});
+    logging.logEvent('screen_view', {screen_name : 'promo'});
     return;
   }
 
@@ -36,7 +32,7 @@ export function applyNewConfiguration(config) {
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.promoElement().setAttribute('hidden', true);
     ui.errorLinkElement().setAttribute('href', config.fallback_url);
-    logging.logEvent('screen_view', {screen_name: 'error'});
+    logging.logEvent('screen_view', {screen_name : 'error'});
     return;
   }
 
@@ -45,7 +41,7 @@ export function applyNewConfiguration(config) {
     ui.outerContainerElement().removeAttribute('hidden');
     ui.promoElement().setAttribute('hidden', true);
     ui.errorContainerElement().setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name: 'main'});
+    logging.logEvent('screen_view', {screen_name : 'main'});
   }
 
   // If there's a YouTube stream ID, show the embedded player.
@@ -126,7 +122,7 @@ export async function applyNewAuthState(firebaseUser) {
     ui.messagesCardContainerElement().setAttribute('hidden', 'true');
 
     // Remove the firestore snapshot listeners.
-    for (const callback of callbacks.CALLBACKS) {
+    for (const callback of callback_ui.CALLBACKS) {
       if (callback.unsubscribeFromFirestore) {
         callback.unsubscribeFromFirestore();
         callback.unsubscribeFromFirestore = null;
@@ -150,7 +146,7 @@ function showMessagesCard_() {
   loadCallbacks_();
   messages.load(config.CONFIG.event_start);
 
-  logging.logEvent('screen_view', {screen_name: 'chat'});
+  logging.logEvent('screen_view', {screen_name : 'chat'});
 }
 
 /**
@@ -161,7 +157,7 @@ function showMessagesCard_() {
 function showIntroduction_() {
   ui.introContainerElement().removeAttribute('hidden');
   ui.messagesCardContainerElement().setAttribute('hidden', true);
-  logging.logEvent('screen_view', {screen_name: 'introduction'});
+  logging.logEvent('screen_view', {screen_name : 'introduction'});
 
   /* eslint-disable-next-line no-unused-vars */
   return new Promise((resolve, reject) => {
@@ -192,75 +188,16 @@ function showIntroduction_() {
  * @private
  */
 function loadCallbacks_() {
-  for (const callback of callbacks.CALLBACKS) {
-    const voices = firebase.firestore()
-                       .collection(callback.getCollection())
-                       .orderBy('timestamp', 'desc')
-                       .limit(config.CONFIG.callback_threshold);
+  for (const callback of callback_ui.CALLBACKS) {
+    const query = window.firebase.firestore()
+                      .collection(callback.callback.getCollection())
+                      .orderBy('timestamp', 'desc')
+                      .limit(config.CONFIG.callback_threshold);
 
     if (!callback.unsubscribeFromFirestore) {
-
-      callback.unsubscribeFromFirestore = voices.onSnapshot(
-          (snapshot) => {
-            const callbackWindowStartMillis =
-                Math.max(callback.lastCalledTimestampMillis,
-                         Date.now() - config.CONFIG.callback_window_ms);
-            if (snapshot.size >= config.CONFIG.callback_threshold) {
-              const firstTimestampMillis = getTimestampMillis_(
-                  snapshot.docs[config.CONFIG.callback_threshold - 1].data());
-              if (firstTimestampMillis > callbackWindowStartMillis) {
-                const lastTimestampMillis =
-                    getTimestampMillis_(snapshot.docs[0].data());
-                if (lastTimestampMillis > 0) {
-                  callback.lastCalledTimestampMillis =
-                      lastTimestampMillis + 1000;
-                  displayCallback_(lastTimestampMillis + 1, callback);
-                  logging.logEvent('screen_view',
-                                   {screen_name: callback.getCollection()});
-                }
-              }
-            }
-          },
-          (error) => {
-            console.error('Error querying Firestore: ', error);
-          });
+      callback.unsubscribeFromFirestore = query.onSnapshot(
+          (snapshot) => { callback.handleFirestoreSnapshot(snapshot.docs); },
+          (error) => { console.error('Error querying Firestore: ', error); });
     }
   }
-}
-
-/**
- * @param {number} timestamp The timestamp to display, in milliseconds since
- *     epoch.
- * @param {!callbacks.Callback} callback The callback to display.
- * @private
- */
-function displayCallback_(timestamp, callback) {
-  const video = `video/${
-      callback
-          .videoUrls[Math.floor(Math.random() * callback.videoUrls.length)]}`;
-  const message = messages.createMessage(
-      CALLBACK_ID.next(), Timestamp.fromMillis(timestamp), '',
-      callback.getByline(), 'images/adventureharvey.jpg', '', video);
-  message.display();
-  callback.audioElement().play();
-}
-
-/**
- * Safely get the timestamp from a Firestore data object.
- * @param {Object} data An object retrieved from Firestore.
- * @return {number} The value of the object's 'timestamp' field, in
- *     milliseconds since epoch
- * @private
- */
-function getTimestampMillis_(data) {
-  if (!data) {
-    return -1;
-  }
-  if (!data['timestamp']) {
-    return -1;
-  }
-  if (!data['timestamp'].toMillis) {
-    return -1;
-  }
-  return data['timestamp'].toMillis();
 }

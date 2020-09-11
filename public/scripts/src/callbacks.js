@@ -3,6 +3,7 @@
  */
 
 import * as config from './config.js';
+import * as logging from './logging.js';
 import * as ui from './ui.js';
 
 export class Callback {
@@ -17,8 +18,8 @@ export class Callback {
    * @param {Element} audioElement
    *     The HTML audio element to play when the callback is triggered.
    */
-  constructor(text, buttonText, videoUrls, formElement,
-              buttonElement, audioElement) {
+  constructor(text, buttonText, videoUrls, formElement, buttonElement,
+              audioElement) {
     this.text = text;
     this.buttonText = buttonText;
     this.videoUrls = videoUrls;
@@ -28,16 +29,12 @@ export class Callback {
     /** @type {number} */
     this.lastCalledTimestampMillis =
         Date.now() - config.CONFIG.callback_window_ms;
-    /** @type {function()|null} */
-    this.unsubscribeFromFirestore = null;
   }
 
   /**
    * Enables the button to allow this callback to be used in chat.
    */
-  enableButton() {
-    this.buttonElement.removeAttribute('disabled');
-  }
+  enableButton() { this.buttonElement.removeAttribute('disabled'); }
 
   getByline() {
     if (this.text === '👏' || this.text === '👎') {
@@ -87,42 +84,39 @@ function randomNumberBetween_(from, to) {
  * @const
  */
 export const CALLBACKS = [
-  new Callback('SCIENCE',
-               '🔬',
-    [
-      'science1.mp4',
-      'science2.mp4',
-      'science3.mp4',
-      'science4.mp4',
-      'science5.mp4',
-      'science6.mp4',
-      'science7.mp4',
-    ],
+  new Callback('SCIENCE', '🔬',
+               [
+                 'science1.mp4',
+                 'science2.mp4',
+                 'science3.mp4',
+                 'science4.mp4',
+                 'science5.mp4',
+                 'science6.mp4',
+                 'science7.mp4',
+               ],
                ui.scienceFormElement(), ui.scienceButtonElement(),
                ui.scienceAudioElement()),
-  new Callback('ART', '🎨',
-               ['art1.mp4', 'art2.mp4', 'art3.mp4'], ui.artFormElement(),
-               ui.artButtonElement(), ui.artAudioElement()),
-  new Callback('MAPS',
-               '🗺️', ['maps1.mp4', 'maps2.mp4', 'maps3.mp4'],
-               ui.mapsFormElement(), ui.mapsButtonElement(), ui.mapsAudioElement()),
-  new Callback(
-      'SHIPS',
-      '🚢',
-    [
-      'ships1.mp4',
-      'ships2.mp4',
-      'ships3.mp4',
-      'ships4.mp4',
-      'ships5.mp4',
-      'ships6.mp4',
-    ],
-      ui.shipsFormElement(), ui.shipsButtonElement(), ui.shipsAudioElement()),
-  new Callback('👏',
-               '👏', ['applause1.mp4', 'applause2.mp4', 'applause3.mp4'],
+  new Callback('ART', '🎨', [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ],
+               ui.artFormElement(), ui.artButtonElement(),
+               ui.artAudioElement()),
+  new Callback('MAPS', '🗺️', [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ],
+               ui.mapsFormElement(), ui.mapsButtonElement(),
+               ui.mapsAudioElement()),
+  new Callback('SHIPS', '🚢',
+               [
+                 'ships1.mp4',
+                 'ships2.mp4',
+                 'ships3.mp4',
+                 'ships4.mp4',
+                 'ships5.mp4',
+                 'ships6.mp4',
+               ],
+               ui.shipsFormElement(), ui.shipsButtonElement(),
+               ui.shipsAudioElement()),
+  new Callback('👏', '👏', [ 'applause1.mp4', 'applause2.mp4', 'applause3.mp4' ],
                ui.applauseFormElement(), ui.applauseButtonElement(),
                ui.applauseAudioElement()),
-  new Callback('👎',
-               '👎', ['boo1.mp4', 'boo2.mp4', 'boo3.mp4'], ui.booFormElement(),
-               ui.booButtonElement(), ui.booAudioElement()),
+  new Callback('👎', '👎', [ 'boo1.mp4', 'boo2.mp4', 'boo3.mp4' ],
+               ui.booFormElement(), ui.booButtonElement(),
+               ui.booAudioElement()),
 ];

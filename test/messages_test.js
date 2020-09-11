@@ -3,25 +3,13 @@ import firebase from 'firebase';
 import MockDate from 'mockdate';
 import should from 'should';
 
-import {Message} from '../public/scripts/src/messages.js';
+import {
+  Message
+} from '../public/scripts/src/messages.js';
 
 const firebasemock = require('firebase-mock');
 
 const Timestamp = firebase.firestore.Timestamp;
-
-const mockauth = new firebasemock.MockAuthentication();
-const mockfirestore = new firebasemock.MockFirestore();
-window.firebase = new firebasemock.MockFirebaseSdk(
-    // use null if your code does not use RTDB
-    null,
-    // use null if your code does not use AUTHENTICATION
-    () => { return mockauth; },
-    // use null if your code does not use FIRESTORE
-    () => { return mockfirestore; },
-    // use null if your code does not use STORAGE
-    null,
-    // use null if your code does not use MESSAGING
-    null);
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, Timestamp.now(), uid, 'Author Name', 'authorPic.png',
@@ -66,6 +54,20 @@ describe('messages', function() {
 
     mockScrolling();
 
+    const mockauth = new firebasemock.MockAuthentication();
+    const mockfirestore = new firebasemock.MockFirestore();
+    window.firebase = new firebasemock.MockFirebaseSdk(
+        // use null if your code does not use RTDB
+        null,
+        // use null if your code does not use AUTHENTICATION
+        () => { return mockauth; },
+        // use null if your code does not use FIRESTORE
+        () => { return mockfirestore; },
+        // use null if your code does not use STORAGE
+        null,
+        // use null if your code does not use MESSAGING
+        null);
+
     mockauth.changeAuthState({
       uid : 'testUid',
       provider : 'google',
@@ -78,50 +80,6 @@ describe('messages', function() {
   afterEach(function() {
     document.body.innerHTML = '';
     MockDate.reset();
-  });
-
-  it('finds the right place to insert a new message', function() {
-    MockDate.set(100000);
-    createMessage('A', 'message A').display();
-    MockDate.set(200000);
-    createMessage('B', 'message B').display();
-    MockDate.set(300000);
-    createMessage('C', 'message C').display();
-    MockDate.set(400000);
-    createMessage('D', 'message D').display();
-
-    MockDate.set(50000);
-    const message1 = createMessage('one', 'before A');
-
-    MockDate.set(150000);
-    const message2 = createMessage('two', 'between A and B');
-
-    MockDate.set(200000);
-    const message3 = createMessage('three', 'same timestamp as B');
-
-    MockDate.set(400000);
-    const message4 = createMessage('four', 'same timestamp as D')
-
-    MockDate.set(500000);
-    const message5 = createMessage('five', 'newer than all other messages')
-
-    const insertion1 = message1.findDivToInsertBefore();
-    should.exist(insertion1);
-    insertion1.id.should.equal('A');
-
-    const insertion2 = message2.findDivToInsertBefore();
-    should.exist(insertion2);
-    insertion2.id.should.equal('B');
-
-    const insertion3 = message3.findDivToInsertBefore();
-    should.exist(insertion3);
-    insertion3.id.should.equal('C');
-
-    const insertion4 = message4.findDivToInsertBefore();
-    should.not.exist(insertion4);
-
-    const insertion5 = message5.findDivToInsertBefore();
-    should.not.exist(insertion5);
   });
 
   it('inserts text messages in order', function() {
@@ -223,4 +181,32 @@ describe('messages', function() {
   });
 
   // TODO: collapse callback messages
+  // Callback strings are handled by callbacks.js.
+  it('hides messages that match a callback string', function() {
+    MockDate.set(100000);
+    createMessage('A', 'message A').display();
+    MockDate.set(200000);
+    createMessage('B', 'message B').display();
+    MockDate.set(300000);
+    createMessage('C', 'message C').display();
+    MockDate.set(400000);
+    createMessage('D', 'message D').display();
+
+    document.getElementById('messages').children.length.should.equal(4);
+
+    MockDate.set(350000);
+    createMessage('1', 'message one').display();
+
+    document.getElementById('messages').children.length.should.equal(5);
+
+    MockDate.set(375000);
+    createMessage('2', 'SHIPS!!').display();
+
+    document.getElementById('messages').children.length.should.equal(5);
+
+    MockDate.set(385000);
+    createMessage('3', 'message three').display();
+
+    document.getElementById('messages').children.length.should.equal(6);
+  });
 });

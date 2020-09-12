@@ -274,10 +274,12 @@ function handleMessagePageSnapshot_(snapshot) {
       messages.get(change.doc.id).remove();
     } else {
       const firebaseData = change.doc.data();
-      const message = createMessage(
-          change.doc.id, firebaseData['timestamp'], firebaseData['uid'],
-          firebaseData['name'], firebaseData['profilePicUrl'],
-          firebaseData['text'], firebaseData['videoUrl']);
+      const date =
+          firebaseData['timestamp'] ? firebaseData['timestamp'].toDate() : null;
+      const message =
+          createMessage(change.doc.id, date, firebaseData['uid'],
+                        firebaseData['name'], firebaseData['profilePicUrl'],
+                        firebaseData['text'], firebaseData['videoUrl']);
       message.display();
     }
   });

@@ -7,7 +7,7 @@ import {Message} from '../public/scripts/src/messages.js';
 import {findDivToInsertBefore} from '../public/scripts/src/ui.js';
 
 function createMessage(id, messageText, uid = 'authorUid') {
-  return new Message(id, firebase.firestore.Timestamp.now(), uid, 'Author Name',
+  return new Message(id, new Date(), uid, 'Author Name',
                      'authorPic.png', messageText, null);
 }
 

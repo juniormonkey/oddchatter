@@ -9,15 +9,13 @@ import {
 
 const firebasemock = require('firebase-mock');
 
-const Timestamp = firebase.firestore.Timestamp;
-
 function createMessage(id, messageText, uid = 'authorUid') {
-  return new Message(id, Timestamp.now(), uid, 'Author Name', 'authorPic.png',
+  return new Message(id, new Date(), uid, 'Author Name', 'authorPic.png',
                      messageText, null);
 }
 
 function createVideoMessage(id) {
-  return new Message(id, Timestamp.now(), 'authorUid', 'Author Name',
+  return new Message(id, new Date(), 'authorUid', 'Author Name',
                      'authorPic.png', null, 'callback.mp4');
 }
 

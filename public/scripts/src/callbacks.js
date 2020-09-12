@@ -12,10 +12,10 @@ export class Callback {
    * @param {string} buttonText The text to display on the button.
    * @param {Array<string>} videoUrls
    *     A list of URLs of videos to play when the callback is triggered.
-   * @param {Element} formElement
+   * @param {function(): Element} formElement
    *     The HTML form that submits the callback chat message.
-   * @param {Element} buttonElement The HTML button that submits the form.
-   * @param {Element} audioElement
+   * @param {function(): Element} buttonElement The HTML button that submits the form.
+   * @param {function(): Element} audioElement
    *     The HTML audio element to play when the callback is triggered.
    */
   constructor(text, buttonText, videoUrls, formElement, buttonElement,
@@ -34,7 +34,7 @@ export class Callback {
   /**
    * Enables the button to allow this callback to be used in chat.
    */
-  enableButton() { this.buttonElement.removeAttribute('disabled'); }
+  enableButton() { this.buttonElement().removeAttribute('disabled'); }
 
   getByline() {
     if (this.text === '👏' || this.text === '👎') {
@@ -94,14 +94,14 @@ export const CALLBACKS = [
                  'science6.mp4',
                  'science7.mp4',
                ],
-               ui.scienceFormElement(), ui.scienceButtonElement(),
-               ui.scienceAudioElement()),
+               ui.scienceFormElement, ui.scienceButtonElement,
+               ui.scienceAudioElement),
   new Callback('ART', '🎨', [ 'art1.mp4', 'art2.mp4', 'art3.mp4' ],
-               ui.artFormElement(), ui.artButtonElement(),
-               ui.artAudioElement()),
+               ui.artFormElement, ui.artButtonElement,
+               ui.artAudioElement),
   new Callback('MAPS', '🗺️', [ 'maps1.mp4', 'maps2.mp4', 'maps3.mp4' ],
-               ui.mapsFormElement(), ui.mapsButtonElement(),
-               ui.mapsAudioElement()),
+               ui.mapsFormElement, ui.mapsButtonElement,
+               ui.mapsAudioElement),
   new Callback('SHIPS', '🚢',
                [
                  'ships1.mp4',
@@ -111,12 +111,12 @@ export const CALLBACKS = [
                  'ships5.mp4',
                  'ships6.mp4',
                ],
-               ui.shipsFormElement(), ui.shipsButtonElement(),
-               ui.shipsAudioElement()),
+               ui.shipsFormElement, ui.shipsButtonElement,
+               ui.shipsAudioElement),
   new Callback('👏', '👏', [ 'applause1.mp4', 'applause2.mp4', 'applause3.mp4' ],
-               ui.applauseFormElement(), ui.applauseButtonElement(),
-               ui.applauseAudioElement()),
+               ui.applauseFormElement, ui.applauseButtonElement,
+               ui.applauseAudioElement),
   new Callback('👎', '👎', [ 'boo1.mp4', 'boo2.mp4', 'boo3.mp4' ],
-               ui.booFormElement(), ui.booButtonElement(),
-               ui.booAudioElement()),
+               ui.booFormElement, ui.booButtonElement,
+               ui.booAudioElement),
 ];

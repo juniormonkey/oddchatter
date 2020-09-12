@@ -26,8 +26,7 @@ export class Message {
 
   /**
    * @param {string} id A unique string ID.
-   * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
-   *     message.
+   * @param {!Date} timestamp The timestamp of the message.
    * @param {string} authorUid The UID of the message author.
    * @param {string} authorName The name of the message author.
    * @param {string} authorPic The URL of the author's profile pic.
@@ -86,10 +85,10 @@ export class Message {
     }
 
     div.querySelector('.name').textContent = this.authorName;
-    if (this.timestamp && this.timestamp.toMillis() > 10000) {
+    if (this.timestamp && this.timestamp.getTime() > 10000) {
       div.querySelector('.timestamp').textContent =
-          `${this.timestamp.toDate().toLocaleDateString()} ${
-              this.timestamp.toDate().toLocaleTimeString()}`;
+          `${this.timestamp.toLocaleDateString()} ${
+              this.timestamp.toLocaleTimeString()}`;
     }
     const messageElement = div.querySelector('.message');
 
@@ -192,9 +191,9 @@ export class Message {
     // If timestamp is null, assume we've gotten a brand new message.
     // https://stackoverflow.com/a/47781432/4816918
     if (!this.timestamp) {
-      this.timestamp = firebase.firestore.Timestamp.now();
+      this.timestamp = new Date();
     }
-    return this.timestamp.toMillis();
+    return this.timestamp.getTime();
   }
 }
 
@@ -215,8 +214,8 @@ let unsubscribe_ = [];
  * timestamps, and loads them in ascending rather than descending timestamp
  * order.
  *
- * @param {firebase.firestore.Timestamp=} oldestTimestamp
- * @param {firebase.firestore.Timestamp=} newestTimestamp
+ * @param {Date=} oldestTimestamp
+ * @param {Date=} newestTimestamp
  */
 export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
@@ -244,8 +243,7 @@ export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
  * Creates a new Message object, and stores it in the map and list caches.
  *
  * @param {string} id A unique string ID.
- * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
- *     message.
+ * @param {!Date} timestamp The timestamp of the message.
  * @param {string} authorUid The UID of the message author.
  * @param {string} authorName The name of the message author.
  * @param {string} authorPic The URL of the author's profile pic.

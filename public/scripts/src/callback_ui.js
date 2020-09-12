@@ -41,18 +41,24 @@ export class CallbackUi {
     if (docsWithinWindow.length > 0) {
       const lastTimestampMillis = getTimestampMillis_(docs[0].data());
       if (lastTimestampMillis > 0) {
-        const voices = docsWithinWindow.map(
-            (doc) =>
-                ({uid : doc.id, profilePhoto : doc.data()['profilePicUrl']}));
-        // Always update progress bar.
-        this.displayProgress_(lastTimestampMillis, voices,
-                              callbackWindowStartMillis);
-        // If the number of voices is above the threshold, also play the video.
+        // If the number of voices is above the threshold, hide the progress bar and play the video.
         if (docsWithinWindow.length >= config.CONFIG.callback_threshold) {
+          if (this.progressBar) {
+            this.progressBar.div.remove();
+            this.progressBar = null;
+          }
+
           this.lastCalledTimestampMillis = lastTimestampMillis + 1000;
           this.displayVideo_(lastTimestampMillis + 1);
           logging.logEvent('screen_view',
                            {screen_name : this.callback.getCollection()});
+        } else {
+          // Update progress bar, creating it first if necessary.
+          const voices = docsWithinWindow.map(
+              (doc) =>
+                  ({uid : doc.id, profilePhoto : doc.data()['profilePicUrl']}));
+          this.displayProgress_(lastTimestampMillis, voices,
+                                callbackWindowStartMillis);
         }
       }
     }
@@ -89,8 +95,6 @@ export class CallbackUi {
    * @private
    */
   displayVideo_(timestamp) {
-    // TODO: remove the progress bar?
-    //
     // Scroll down after displaying if we're already within one message of the
     // bottom.
     const scrollToVideo =
@@ -102,13 +106,13 @@ export class CallbackUi {
         this.callback.videoUrls[Math.floor(Math.random() *
                                            this.callback.videoUrls.length)]}`;
     const message = messages.createMessage(
-        CALLBACK_ID.next(), firebase.firestore.Timestamp.fromMillis(timestamp),
+        CALLBACK_ID.next(), new Date(timestamp),
         '', this.callback.getByline(), 'images/adventureharvey.jpg', '', video);
     message.display();
     if (scrollToVideo) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
-    this.callback.audioElement.play();
+    this.callback.audioElement().play();
   }
 }
 

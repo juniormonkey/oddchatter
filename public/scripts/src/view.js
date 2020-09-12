@@ -164,7 +164,7 @@ function showIntroduction_() {
     ui.introButtonElement().addEventListener('click', () => {
       // Play all the sounds, at volume 0, for mobile browsers.
       for (const callback of callbacks.CALLBACKS) {
-        const audio = callback.audioElement;
+        const audio = callback.audioElement();
         audio.volume = 0;
         audio.muted = true;
         audio.playbackRate = 2;

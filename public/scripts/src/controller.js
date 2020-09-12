@@ -19,7 +19,7 @@ export function init() {
   ui.signInSplashButtonElement().addEventListener('click', signIn_);
 
   for (const callback of callbacks.CALLBACKS) {
-    callback.formElement.addEventListener(
+    callback.formElement().addEventListener(
         'submit', goog.partial(onCallbackFormSubmit_, callback));
   }
 
@@ -134,7 +134,7 @@ function onCallbackFormSubmit_(callback, e) {
     content_id : '',
   });
   onMessageSubmitted_(callback.getMessage());
-  callback.buttonElement.setAttribute('disabled', 'true');
+  callback.buttonElement().setAttribute('disabled', 'true');
   setTimeout(() => callback.enableButton(), 1000);
 }
 

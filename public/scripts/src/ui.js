@@ -1,12 +1,13 @@
 /**
  * @fileoverview A model of the UI, for interacting with DOM elements.
  */
-goog.module('oddsalon.oddchatter.ui');
+
+goog.require('goog.array');
 
 /**
  * A utility class to keep generating the next ID in an incrementing sequence.
  */
-class IncrementingId {
+export class IncrementingId {
   /**
    * @param {string} text Some prefix text to use in the ID.
 
@@ -30,76 +31,131 @@ class IncrementingId {
  * @param {string} url The profile pic URL to edit.
  * @return {string} A new profile pic URL with the size param added.
  */
-function addSizeToGoogleProfilePic(url) {
+export function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
     return `${url}?sz=150`;
   }
   return url;
 }
 
-exports = {
-  IncrementingId,
-  addSizeToGoogleProfilePic,
-};
+/**
+ * Finds the right place to insert a new message to keep the message list
+ * sorted by timestamp.
+ * @param {number} timestamp The timestamp of the message to insert, in
+ *     milliseconds since epoch.
+ * @return {Element} The element before which to insert the new message, or
+ *     null if the new message should be appended at the end of the list.
+ */
+export function findDivToInsertBefore(timestamp) {
+  const existingMessages = messageListElement().children;
+  if (existingMessages.length === 0) {
+    return null;
+  } else {
+    const insertionPoint = goog.array.binarySearch(
+        existingMessages, timestamp, (targetTime, node) => {
+          const nodeTime = parseInt(node.getAttribute('timestamp'), 10);
+
+          if (!nodeTime) {
+            throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
+          }
+          return targetTime - nodeTime;
+        });
+
+    if (insertionPoint >= existingMessages.length ||
+        insertionPoint < -(existingMessages.length)) {
+      // The message is newer than all existing messages.
+      return null;
+    } else if (insertionPoint >= 0) {
+      // Found a message with the same timestamp as the new message; insert
+      // the new message after it.
+      return existingMessages[insertionPoint + 1];
+    } else {
+      // goog.array.binarySearch() returns a negative index if the timestamp
+      // was not matched; '-(index + 1)' provides the right place to insert
+      // the new message.
+      return existingMessages[-(insertionPoint + 1)];
+    }
+  }
+}
 
 // Shortcuts to DOM Elements.
-/** @const */ exports.outerContainerElement =
+/** @return {Element} */ export const outerContainerElement = () =>
     document.getElementById('outer-container');
-/** @const */ exports.promoElement = document.getElementById('promo');
-/** @const */ exports.errorContainerElement =
+/** @return {Element} */ export const promoElement = () =>
+    document.getElementById('promo');
+/** @return {Element} */ export const errorContainerElement = () =>
     document.getElementById('error-container');
-/** @const */ exports.errorLinkElement = document.getElementById('error-link');
-/** @const */ exports.introContainerElement =
+/** @return {Element} */ export const errorLinkElement = () =>
+    document.getElementById('error-link');
+/** @return {Element} */ export const introContainerElement = () =>
     document.getElementById('intro-container');
-/** @const */ exports.introButtonElement =
+/** @return {Element} */ export const introButtonElement = () =>
     document.getElementById('intro-button');
-/** @const */ exports.messageListElement = document.getElementById('messages');
-/** @const */ exports.messageFormElement =
+/** @return {Element} */ export const messageListElement = () =>
+    document.getElementById('messages');
+/** @return {Element} */ export const messageFormElement = () =>
     document.getElementById('message-form');
-/** @const */ exports.messageInputElement = document.getElementById('message');
-/** @const */ exports.submitButtonElement = document.getElementById('submit');
-/** @const */ exports.scienceButtonElement = document.getElementById('science');
-/** @const */ exports.artButtonElement = document.getElementById('art');
-/** @const */ exports.mapsButtonElement = document.getElementById('maps');
-/** @const */ exports.shipsButtonElement = document.getElementById('ships');
-/** @const */ exports.applauseButtonElement =
+/** @return {Element} */ export const messageInputElement = () =>
+    document.getElementById('message');
+/** @return {Element} */ export const submitButtonElement = () =>
+    document.getElementById('submit');
+/** @return {Element} */ export const scienceButtonElement = () =>
+    document.getElementById('science');
+/** @return {Element} */ export const artButtonElement = () =>
+    document.getElementById('art');
+/** @return {Element} */ export const mapsButtonElement = () =>
+    document.getElementById('maps');
+/** @return {Element} */ export const shipsButtonElement = () =>
+    document.getElementById('ships');
+/** @return {Element} */ export const applauseButtonElement = () =>
     document.getElementById('applause');
-/** @const */ exports.booButtonElement = document.getElementById('boo');
-/** @const */ exports.userPicElement = document.getElementById('user-pic');
-/** @const */ exports.userNameElement = document.getElementById('user-name');
-/** @const */ exports.signInButtonElement = document.getElementById('sign-in');
-/** @const */ exports.signOutButtonElement =
+/** @return {Element} */ export const booButtonElement = () =>
+    document.getElementById('boo');
+/** @return {Element} */ export const userPicElement = () =>
+    document.getElementById('user-pic');
+/** @return {Element} */ export const userNameElement = () =>
+    document.getElementById('user-name');
+/** @return {Element} */ export const signInButtonElement = () =>
+    document.getElementById('sign-in');
+/** @return {Element} */ export const signOutButtonElement = () =>
     document.getElementById('sign-out');
-/** @const */ exports.signInSnackbarElement =
+/** @return {Element} */ export const signInSnackbarElement = () =>
     document.getElementById('must-signin-snackbar');
-/** @const */ exports.splashScreenElement =
+/** @return {Element} */ export const splashScreenElement = () =>
     document.getElementById('signin-splashscreen');
-/** @const */ exports.signInSplashButtonElement =
+/** @return {Element} */ export const signInSplashButtonElement = () =>
     document.getElementById('sign-in-splash');
-/** @const */ exports.messagesCardContainerElement =
+/** @return {Element} */ export const messagesCardContainerElement = () =>
     document.getElementById('messages-card-container');
-/** @const */ exports.youtubeStreamContainerElement =
+/** @return {Element} */ export const youtubeStreamContainerElement = () =>
     document.getElementById('youtube-stream-container');
-/** @const */ exports.youtubeVideoIframeElement =
+/** @return {Element} */ export const youtubeVideoIframeElement = () =>
     document.getElementById('youtube-video');
-/** @const */ exports.youtubeChatIframeElement =
+/** @return {Element} */ export const youtubeChatIframeElement = () =>
     document.getElementById('youtube-chat');
 
-/** @const */ exports.scienceAudioElement =
+/** @return {Element} */ export const scienceAudioElement = () =>
     document.getElementById('science-audio');
-/** @const */ exports.artAudioElement = document.getElementById('art-audio');
-/** @const */ exports.mapsAudioElement = document.getElementById('maps-audio');
-/** @const */ exports.shipsAudioElement =
+/** @return {Element} */ export const artAudioElement = () =>
+    document.getElementById('art-audio');
+/** @return {Element} */ export const mapsAudioElement = () =>
+    document.getElementById('maps-audio');
+/** @return {Element} */ export const shipsAudioElement = () =>
     document.getElementById('ships-audio');
-/** @const */ exports.applauseAudioElement =
+/** @return {Element} */ export const applauseAudioElement = () =>
     document.getElementById('applause-audio');
-/** @const */ exports.booAudioElement = document.getElementById('boo-audio');
+/** @return {Element} */ export const booAudioElement = () =>
+    document.getElementById('boo-audio');
 
-/** @const */ exports.scienceFormElement =
+/** @return {Element} */ export const scienceFormElement = () =>
     document.getElementById('science-form');
-/** @const */ exports.artFormElement = document.getElementById('art-form');
-/** @const */ exports.mapsFormElement = document.getElementById('maps-form');
-/** @const */ exports.shipsFormElement = document.getElementById('ships-form');
-/** @const */ exports.applauseFormElement =
+/** @return {Element} */ export const artFormElement = () =>
+    document.getElementById('art-form');
+/** @return {Element} */ export const mapsFormElement = () =>
+    document.getElementById('maps-form');
+/** @return {Element} */ export const shipsFormElement = () =>
+    document.getElementById('ships-form');
+/** @return {Element} */ export const applauseFormElement = () =>
     document.getElementById('applause-form');
-/** @const */ exports.booFormElement = document.getElementById('boo-form');
+/** @return {Element} */ export const booFormElement = () =>
+    document.getElementById('boo-form');

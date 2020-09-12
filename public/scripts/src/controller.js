@@ -2,31 +2,30 @@
  * @fileoverview UI code for handling interaction with the UI. If we consider
  * this app as a MVC, this is the Controller.
  */
-goog.module('oddsalon.oddchatter.controller');
 
-const callbacks = goog.require('oddsalon.oddchatter.callbacks');
-const logging = goog.require('oddsalon.oddchatter.logging');
-const ui = goog.require('oddsalon.oddchatter.ui');
-const user = goog.require('oddsalon.oddchatter.user');
+import * as callbacks from './callbacks.js';
+import * as logging from './logging.js';
+import * as ui from './ui.js';
+import * as user from './user.js';
 
 /**
  * Initializes all the event listeners.
  */
-function init() {
+export function init() {
   // Saves message on form submit.
-  ui.messageFormElement.addEventListener('submit', onMessageFormSubmit_);
-  ui.signOutButtonElement.addEventListener('click', signOut_);
-  ui.signInButtonElement.addEventListener('click', signIn_);
-  ui.signInSplashButtonElement.addEventListener('click', signIn_);
+  ui.messageFormElement().addEventListener('submit', onMessageFormSubmit_);
+  ui.signOutButtonElement().addEventListener('click', signOut_);
+  ui.signInButtonElement().addEventListener('click', signIn_);
+  ui.signInSplashButtonElement().addEventListener('click', signIn_);
 
   for (const callback of callbacks.CALLBACKS) {
-    callback.formElement.addEventListener(
+    callback.formElement().addEventListener(
         'submit', goog.partial(onCallbackFormSubmit_, callback));
   }
 
   // Toggle for the button.
-  ui.messageInputElement.addEventListener('keyup', toggleButton_);
-  ui.messageInputElement.addEventListener('change', toggleButton_);
+  ui.messageInputElement().addEventListener('keyup', toggleButton_);
+  ui.messageInputElement().addEventListener('change', toggleButton_);
 }
 
 /**
@@ -74,7 +73,10 @@ function checkForCallbacks_(text) {
     firebase.firestore()
         .collection(callback.getCollection())
         .doc(user.getUid())
-        .set({timestamp: firebase.firestore.FieldValue.serverTimestamp()})
+        .set({
+          profilePicUrl: user.getProfilePicUrl(),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        })
         .catch((error) => {
           console.error('Error writing new message to database', error);
         });
@@ -117,7 +119,7 @@ function onMessageFormSubmit_(e) {
   e.preventDefault();
   logging.logEvent(
       'share', {method: 'chat', content_type: 'freeform', content_id: ''});
-  onMessageSubmitted_(ui.messageInputElement.value);
+  onMessageSubmitted_(ui.messageInputElement().value);
 }
 
 /**
@@ -134,7 +136,7 @@ function onCallbackFormSubmit_(callback, e) {
     content_id: '',
   });
   onMessageSubmitted_(callback.getMessage());
-  callback.buttonElement.setAttribute('disabled', 'true');
+  callback.buttonElement().setAttribute('disabled', 'true');
   setTimeout(() => callback.enableButton(), 1000);
 }
 
@@ -148,7 +150,7 @@ function onMessageSubmitted_(message) {
   if (message && checkSignedInWithMessage_()) {
     saveMessage_(message).then(() => {
       // Clear message text field and re-enable the SEND button.
-      resetMaterialTextfield_(ui.messageInputElement);
+      resetMaterialTextfield_(ui.messageInputElement());
       toggleButton_();
     });
   }
@@ -167,7 +169,7 @@ function checkSignedInWithMessage_() {
 
   // Display a message to the user using a Toast.
   const data = {message: 'You must sign-in first', timeout: 2000};
-  ui.signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
+  ui.signInSnackbarElement().MaterialSnackbar.showSnackbar(data);
   return false;
 }
 
@@ -187,11 +189,9 @@ function resetMaterialTextfield_(element) {
  * @private
  */
 function toggleButton_() {
-  if (ui.messageInputElement.value) {
-    ui.submitButtonElement.removeAttribute('disabled');
+  if (ui.messageInputElement().value) {
+    ui.submitButtonElement().removeAttribute('disabled');
   } else {
-    ui.submitButtonElement.setAttribute('disabled', 'true');
+    ui.submitButtonElement().setAttribute('disabled', 'true');
   }
 }
-
-exports = {init};

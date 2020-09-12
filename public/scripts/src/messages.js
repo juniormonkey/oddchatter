@@ -1,13 +1,11 @@
 /**
  * @fileoverview Code for handling messages in chat.
  */
-goog.module('oddsalon.oddchatter.messages');
 
-goog.require('goog.array');
-
-const config = goog.require('oddsalon.oddchatter.config');
-const ui = goog.require('oddsalon.oddchatter.ui');
-const user = goog.require('oddsalon.oddchatter.user');
+import * as callbacks from './callbacks.js';
+import * as config from './config.js';
+import * as ui from './ui.js';
+import * as user from './user.js';
 
 /**
  * Template for messages.
@@ -21,12 +19,14 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '<div class="timestamp"></div>' +
                          '</div>';
 
-class Message {
+const CALLBACK_STRINGS =
+    callbacks.CALLBACKS.map(callback => callback.getMessage());
+
+export class Message {
 
   /**
    * @param {string} id A unique string ID.
-   * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
-   *     message.
+   * @param {!Date} timestamp The timestamp of the message.
    * @param {string} authorUid The UID of the message author.
    * @param {string} authorName The name of the message author.
    * @param {string} authorPic The URL of the author's profile pic.
@@ -56,20 +56,23 @@ class Message {
   }
 
   /**
-   * Displays the message in the UI.
+   * Displays the message in the UI. Does nothing if the message matches one of
+   * the CALLBACK_STRINGS; these are handled in aggregate by callback_ui.js.
    */
   display() {
+    if (CALLBACK_STRINGS.includes(this.text)) {
+      return;
+    }
     const div =
         document.getElementById(this.id) || this.createAndInsertElement_();
-
     // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
          * ... if we're already within one message of the bottom, or ...
          */
-        ui.messageListElement.scrollTop >=
-            (ui.messageListElement.scrollHeight -
-             ui.messageListElement.clientHeight - div.clientHeight) ||
+        ui.messageListElement().scrollTop >=
+            (ui.messageListElement().scrollHeight -
+             ui.messageListElement().clientHeight - div.clientHeight) ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
@@ -82,10 +85,10 @@ class Message {
     }
 
     div.querySelector('.name').textContent = this.authorName;
-    if (this.timestamp && this.timestamp.toMillis() > 10000) {
+    if (this.timestamp && this.timestamp.getTime() > 10000) {
       div.querySelector('.timestamp').textContent =
-          `${this.timestamp.toDate().toLocaleDateString()} ${
-              this.timestamp.toDate().toLocaleTimeString()}`;
+          `${this.timestamp.toLocaleDateString()} ${
+              this.timestamp.toLocaleTimeString()}`;
     }
     const messageElement = div.querySelector('.message');
 
@@ -102,7 +105,7 @@ class Message {
       deleteLine.setAttribute('href', '#');
       deleteLine.textContent = 'delete';
       deleteLine.addEventListener('click', () => {
-        firebase.firestore()
+        window.firebase.firestore()
             .collection('messages')
             .doc(this.id)
             .delete()
@@ -122,7 +125,8 @@ class Message {
       const video = document.createElement('video');
       video.addEventListener('load', () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+          ui.messageListElement().scrollTop =
+              ui.messageListElement().scrollHeight;
         }
       });
       video.playsInline = true;
@@ -139,7 +143,8 @@ class Message {
       video.appendChild(fallback);
       video.onloadedmetadata = () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+          ui.messageListElement().scrollTop =
+              ui.messageListElement().scrollHeight;
         }
       };
       messageElement.innerHTML = '';
@@ -150,9 +155,9 @@ class Message {
       div.classList.add('visible');
     }, 1);
     if (scrollAfterDisplaying) {
-      ui.messageListElement.scrollTop = ui.messageListElement.scrollHeight;
+      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
-    ui.messageInputElement.focus();
+    ui.messageInputElement().focus();
   }
 
   /**
@@ -167,45 +172,30 @@ class Message {
     const div = container.firstChild;
     div.setAttribute('id', this.id);
 
-    // If timestamp is null, assume we've gotten a brand new message.
-    // https://stackoverflow.com/a/47781432/4816918
-    const timestampMillis =
-        this.timestamp ? this.timestamp.toMillis() : Date.now();
-    div.setAttribute('timestamp', timestampMillis);
+    div.setAttribute('timestamp', this.timestampMillis_());
 
-    // figure out where to insert new message
-    const existingMessages = ui.messageListElement.children;
-    if (existingMessages.length === 0) {
-      ui.messageListElement.appendChild(div);
+    // Figure out where to insert new message.
+    const nextDiv = ui.findDivToInsertBefore(this.timestampMillis_());
+    if (nextDiv) {
+      ui.messageListElement().insertBefore(div, nextDiv);
     } else {
-      const insertionPoint = goog.array.binarySearch(
-          existingMessages, timestampMillis, (targetTime, node) => {
-            const nodeTime = node.getAttribute('timestamp');
-
-            if (!nodeTime) {
-              throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
-            }
-            return targetTime - nodeTime;
-          });
-
-      if (insertionPoint >= existingMessages.length) {
-        // The message is newer than all existing messages.
-        ui.messageListElement.appendChild(div);
-      } else if (insertionPoint > 0) {
-        // Found a message with the same timestamp as the new message; insert
-        // the new message after it.
-        ui.messageListElement.insertBefore(
-            div, existingMessages[insertionPoint + 1]);
-      } else {
-        // goog.array.binarySearch() returns a negative index if the timestamp
-        // was not matched; the absolute value of this index provides the
-        // right place to insert the new message.
-        ui.messageListElement.insertBefore(
-            div, existingMessages[-(insertionPoint + 1)]);
-      }
+      ui.messageListElement().appendChild(div);
     }
 
     return div;
+  }
+
+  /**
+   * @return {number} The timestamp of the message, in milliseconds since epoch.
+   * @private
+   */
+  timestampMillis_() {
+    // If timestamp is null, assume we've gotten a brand new message.
+    // https://stackoverflow.com/a/47781432/4816918
+    if (!this.timestamp) {
+      this.timestamp = new Date();
+    }
+    return this.timestamp.getTime();
   }
 }
 
@@ -220,18 +210,19 @@ const messages = new Map();
 let unsubscribe_ = [];
 
 /**
- * Loads chat messages history and listens for upcoming ones. If oldestTimestamp
- * is passed, only loads messages since that timestamp; if newestTimestamp is
- * also passed, only loads messages between those two timestamps, and loads them
- * in ascending rather than descending timestamp order.
+ * Loads chat messages history and listens for upcoming ones. If
+ * oldestTimestamp is passed, only loads messages since that timestamp; if
+ * newestTimestamp is also passed, only loads messages between those two
+ * timestamps, and loads them in ascending rather than descending timestamp
+ * order.
  *
- * @param {firebase.firestore.Timestamp=} oldestTimestamp
- * @param {firebase.firestore.Timestamp=} newestTimestamp
+ * @param {Date=} oldestTimestamp
+ * @param {Date=} newestTimestamp
  */
-function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
+export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
   // ones.
-  let query = firebase.firestore().collection('messages').limit(8);
+  let query = window.firebase.firestore().collection('messages').limit(8);
 
   if (oldestTimestamp) {
     query = query.where('timestamp', '>', oldestTimestamp);
@@ -254,8 +245,7 @@ function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
  * Creates a new Message object, and stores it in the map and list caches.
  *
  * @param {string} id A unique string ID.
- * @param {!firebase.firestore.Timestamp} timestamp The timestamp of the
- *     message.
+ * @param {!Date} timestamp The timestamp of the message.
  * @param {string} authorUid The UID of the message author.
  * @param {string} authorName The name of the message author.
  * @param {string} authorPic The URL of the author's profile pic.
@@ -263,8 +253,8 @@ function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
  * @param {string|null} videoUrl The URL of the callback video to play.
  * @return {Message} the newly created message.
  */
-function createMessage(id, timestamp, authorUid, authorName, authorPic, text,
-                       videoUrl) {
+export function createMessage(id, timestamp, authorUid, authorName, authorPic,
+                              text, videoUrl) {
   const message = new Message(id, timestamp, authorUid, authorName, authorPic,
                               text, videoUrl);
   messages.set(id, message);
@@ -277,16 +267,21 @@ function createMessage(id, timestamp, authorUid, authorName, authorPic, text,
  * @private
  */
 function handleMessagePageSnapshot_(snapshot) {
+  // QuerySnapshot.docChanges is not available in tests. :(
+  if (!snapshot.docChanges) {
+    return;
+  }
   snapshot.docChanges().forEach((change) => {
     if (change.type === 'removed') {
       messages.get(change.doc.id).remove();
     } else {
       const firebaseData = change.doc.data();
-      const message = createMessage(
-          change.doc.id, firebaseData['timestamp'], firebaseData['uid'],
-          firebaseData['name'], firebaseData['profilePicUrl'],
-          firebaseData['text'], firebaseData['videoUrl']);
-      // TODO: the callback construction will need this too.
+      const date =
+          firebaseData['timestamp'] ? firebaseData['timestamp'].toDate() : null;
+      const message =
+          createMessage(change.doc.id, date, firebaseData['uid'],
+                        firebaseData['name'], firebaseData['profilePicUrl'],
+                        firebaseData['text'], firebaseData['videoUrl']);
       message.display();
     }
   });
@@ -309,16 +304,9 @@ function handleFirebaseError_(error) {
 /**
  * Cleans up the firestore messages listener.
  */
-function unload() {
+export function unload() {
   for (const unsubscribe of unsubscribe_) {
     unsubscribe();
   }
   unsubscribe_ = [];
 }
-
-exports = {
-  Message,
-  createMessage,
-  load,
-  unload,
-};

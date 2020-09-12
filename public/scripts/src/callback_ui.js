@@ -56,8 +56,10 @@ export class CallbackUi {
         } else {
           // Update progress bar, creating it first if necessary.
           const voices = docsWithinWindow.map(
-              (doc) =>
-                  ({uid: doc.id, profilePhoto: doc.data()['profilePicUrl']}));
+              (doc) => ({
+                uid: doc.id,
+                profilePhoto: doc.data().profilePicUrl,
+              }));
           this.displayProgress_(lastTimestampMillis, voices,
                                 callbackWindowStartMillis);
         }
@@ -79,8 +81,8 @@ export class CallbackUi {
   displayProgress_(timestamp, voices, callbackWindowStartMillis) {
     if (!this.progressBar ||
         this.progressBar.timestamp < callbackWindowStartMillis) {
-      this.progressBar =
-          new CallbackProgress(this.callback.buttonText, timestamp);
+      this.progressBar = new CallbackProgress(
+          this.callback.buttonText, this.callback.getByline(), timestamp);
       this.progressBar.display();
     }
     for (const voice of voices) {
@@ -120,7 +122,9 @@ export class CallbackUi {
     '<div class="message-container">' +
     '  <div class="spacing"><div class="callback-emoji"></div></div>' +
     '  <div class="callback-progress">' +
-    '    <div class="callback-progress-bar"></div>' +
+    '    <div class="callback-progress-bar">' +
+    '      <div class="callback-progress-callback"></div>' +
+    '    </div>' +
     '  </div>' +
     '</div>';
 
@@ -133,12 +137,14 @@ export class CallbackUi {
 class CallbackProgress {
   /**
    * @param {string} callbackEmoji The single-character emoji to use as a label.
+   * @param {string} callbackText The full callback to use in the progress bar.
    * @param {number} timestamp The timestamp to display, in milliseconds since
    *     epoch.
    */
-  constructor(callbackEmoji, timestamp) {
+  constructor(callbackEmoji, callbackText, timestamp) {
     this.id = CALLBACK_ID.next();
     this.callbackEmoji = callbackEmoji;
+    this.callbackText = callbackText;
     this.timestamp = timestamp;
     this.div = null;
     this.voices = [];
@@ -163,6 +169,8 @@ class CallbackProgress {
       this.div.setAttribute('timestamp', this.timestamp);
 
       this.div.querySelector('.callback-emoji').innerText = this.callbackEmoji;
+      this.div.querySelector('.callback-progress-callback').innerText =
+          this.callbackText;
 
       // Figure out where to insert new message.
       const nextDiv = ui.findDivToInsertBefore(this.timestamp);
@@ -200,9 +208,12 @@ class CallbackProgress {
       // Add the profile photo to the progress bar.
       const authorPic = document.createElement('div');
       authorPic.className = 'callback-progress-voice';
-      authorPic.style.backgroundImage =
-          `url(${ui.addSizeToGoogleProfilePic(photoUrl)})`;
-      progressBar.appendChild(authorPic);
+      if (photoUrl) {
+        authorPic.style.backgroundImage =
+            `url(${ui.addSizeToGoogleProfilePic(photoUrl)})`;
+      }
+      progressBar.insertBefore(
+          authorPic, this.div.querySelector('.callback-progress-callback'));
 
       // TODO: scroll to the bottom if UID is the current user.
 

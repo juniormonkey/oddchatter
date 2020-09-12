@@ -151,7 +151,9 @@ export class Message {
       messageElement.appendChild(video);
     }
     // Show the card fading-in and scroll to view the new message.
-    setTimeout(() => { div.classList.add('visible'); }, 1);
+    setTimeout(() => {
+      div.classList.add('visible');
+    }, 1);
     if (scrollAfterDisplaying) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }

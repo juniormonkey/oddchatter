@@ -1,10 +1,8 @@
-import assert from 'assert';
-import firebase from 'firebase';
+/* eslint-disable closure/no-undef */
 import MockDate from 'mockdate';
-import should from 'should';
 
 import {
-  Message
+  Message,
 } from '../public/scripts/src/messages.js';
 
 const firebasemock = require('firebase-mock');
@@ -19,25 +17,33 @@ function createVideoMessage(id) {
                      'authorPic.png', null, 'callback.mp4');
 }
 
-function getTimestampFromDom(id) {
-  return parseInt(document.getElementById(id).getAttribute('timestamp'));
-}
-
 function mockScrolling() {
-  Object.defineProperty(HTMLElement.prototype, "scrollTop", {
-    configurable : true,
-    get : function() { return this._scrollTop || 0; },
-    set(val) { this._scrollTop = val; }
+  Object.defineProperty(HTMLElement.prototype, 'scrollTop', {
+    configurable: true,
+    get() {
+      return this._scrollTop || 0;
+    },
+    set(val) {
+      this._scrollTop = val;
+    },
   });
-  Object.defineProperty(HTMLElement.prototype, "scrollHeight", {
-    configurable : true,
-    get : function() { return this._scrollHeight || 0; },
-    set(val) { this._scrollHeight = val; }
+  Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+    configurable: true,
+    get() {
+      return this._scrollHeight || 0;
+    },
+    set(val) {
+      this._scrollHeight = val;
+    },
   });
-  Object.defineProperty(HTMLElement.prototype, "clientHeight", {
-    configurable : true,
-    get : function() { return this._clientHeight || 20; },
-    set(val) { this._clientHeight = val; }
+  Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+    configurable: true,
+    get() {
+      return this._clientHeight || 20;
+    },
+    set(val) {
+      this._clientHeight = val;
+    },
   });
 }
 
@@ -58,19 +64,23 @@ describe('messages', function() {
         // use null if your code does not use RTDB
         null,
         // use null if your code does not use AUTHENTICATION
-        () => { return mockauth; },
+        () => {
+          return mockauth;
+        },
         // use null if your code does not use FIRESTORE
-        () => { return mockfirestore; },
+        () => {
+          return mockfirestore;
+        },
         // use null if your code does not use STORAGE
         null,
         // use null if your code does not use MESSAGING
         null);
 
     mockauth.changeAuthState({
-      uid : 'testUid',
-      provider : 'google',
-      token : 'authToken',
-      expires : Math.floor(new Date() / 1000) + 24 * 60 * 60,
+      uid: 'testUid',
+      provider: 'google',
+      token: 'authToken',
+      expires: Math.floor(new Date() / 1000) + 24 * 60 * 60,
     });
     mockauth.flush();
   });

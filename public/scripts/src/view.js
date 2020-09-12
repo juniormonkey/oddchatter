@@ -4,7 +4,7 @@
  */
 
 import * as callbacks from './callbacks.js';
-import * as callback_ui from './callback_ui.js';
+import * as callbackUi from './callback_ui.js';
 import * as config from './config.js';
 import * as logging from './logging.js';
 import * as messages from './messages.js';
@@ -22,7 +22,7 @@ export function applyNewConfiguration(config) {
     ui.promoElement().removeAttribute('hidden');
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.errorContainerElement().setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name : 'promo'});
+    logging.logEvent('screen_view', {screen_name: 'promo'});
     return;
   }
 
@@ -32,7 +32,7 @@ export function applyNewConfiguration(config) {
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.promoElement().setAttribute('hidden', true);
     ui.errorLinkElement().setAttribute('href', config.fallback_url);
-    logging.logEvent('screen_view', {screen_name : 'error'});
+    logging.logEvent('screen_view', {screen_name: 'error'});
     return;
   }
 
@@ -41,7 +41,7 @@ export function applyNewConfiguration(config) {
     ui.outerContainerElement().removeAttribute('hidden');
     ui.promoElement().setAttribute('hidden', true);
     ui.errorContainerElement().setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name : 'main'});
+    logging.logEvent('screen_view', {screen_name: 'main'});
   }
 
   // If there's a YouTube stream ID, show the embedded player.
@@ -122,7 +122,7 @@ export async function applyNewAuthState(firebaseUser) {
     ui.messagesCardContainerElement().setAttribute('hidden', 'true');
 
     // Remove the firestore snapshot listeners.
-    for (const callback of callback_ui.CALLBACKS) {
+    for (const callback of callbackUi.CALLBACKS) {
       if (callback.unsubscribeFromFirestore) {
         callback.unsubscribeFromFirestore();
         callback.unsubscribeFromFirestore = null;
@@ -146,7 +146,7 @@ function showMessagesCard_() {
   loadCallbacks_();
   messages.load(config.CONFIG.event_start);
 
-  logging.logEvent('screen_view', {screen_name : 'chat'});
+  logging.logEvent('screen_view', {screen_name: 'chat'});
 }
 
 /**
@@ -157,7 +157,7 @@ function showMessagesCard_() {
 function showIntroduction_() {
   ui.introContainerElement().removeAttribute('hidden');
   ui.messagesCardContainerElement().setAttribute('hidden', true);
-  logging.logEvent('screen_view', {screen_name : 'introduction'});
+  logging.logEvent('screen_view', {screen_name: 'introduction'});
 
   /* eslint-disable-next-line no-unused-vars */
   return new Promise((resolve, reject) => {
@@ -188,7 +188,7 @@ function showIntroduction_() {
  * @private
  */
 function loadCallbacks_() {
-  for (const callback of callback_ui.CALLBACKS) {
+  for (const callback of callbackUi.CALLBACKS) {
     const query = window.firebase.firestore()
                       .collection(callback.callback.getCollection())
                       .orderBy('timestamp', 'desc')
@@ -196,8 +196,12 @@ function loadCallbacks_() {
 
     if (!callback.unsubscribeFromFirestore) {
       callback.unsubscribeFromFirestore = query.onSnapshot(
-          (snapshot) => { callback.handleFirestoreSnapshot(snapshot.docs); },
-          (error) => { console.error('Error querying Firestore: ', error); });
+          (snapshot) => {
+            callback.handleFirestoreSnapshot(snapshot.docs);
+          },
+          (error) => {
+            console.error('Error querying Firestore: ', error);
+          });
     }
   }
 }

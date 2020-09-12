@@ -20,7 +20,9 @@ export class IncrementingId {
   /**
    * @return {string} The next ID in the sequence.
    */
-  next() { return this.text + this.index++; }
+  next() {
+    return this.text + this.index++;
+  }
 }
 
 /**
@@ -77,83 +79,83 @@ export function findDivToInsertBefore(timestamp) {
 }
 
 // Shortcuts to DOM Elements.
-/** @const */ export const outerContainerElement = () =>
+/** @return {Element} */ export const outerContainerElement = () =>
     document.getElementById('outer-container');
-/** @const */ export const promoElement = () =>
+/** @return {Element} */ export const promoElement = () =>
     document.getElementById('promo');
-/** @const */ export const errorContainerElement = () =>
+/** @return {Element} */ export const errorContainerElement = () =>
     document.getElementById('error-container');
-/** @const */ export const errorLinkElement = () =>
+/** @return {Element} */ export const errorLinkElement = () =>
     document.getElementById('error-link');
-/** @const */ export const introContainerElement = () =>
+/** @return {Element} */ export const introContainerElement = () =>
     document.getElementById('intro-container');
-/** @const */ export const introButtonElement = () =>
+/** @return {Element} */ export const introButtonElement = () =>
     document.getElementById('intro-button');
-/** @const */ export const messageListElement = () =>
+/** @return {Element} */ export const messageListElement = () =>
     document.getElementById('messages');
-/** @const */ export const messageFormElement = () =>
+/** @return {Element} */ export const messageFormElement = () =>
     document.getElementById('message-form');
-/** @const */ export const messageInputElement = () =>
+/** @return {Element} */ export const messageInputElement = () =>
     document.getElementById('message');
-/** @const */ export const submitButtonElement = () =>
+/** @return {Element} */ export const submitButtonElement = () =>
     document.getElementById('submit');
-/** @const */ export const scienceButtonElement = () =>
+/** @return {Element} */ export const scienceButtonElement = () =>
     document.getElementById('science');
-/** @const */ export const artButtonElement = () =>
+/** @return {Element} */ export const artButtonElement = () =>
     document.getElementById('art');
-/** @const */ export const mapsButtonElement = () =>
+/** @return {Element} */ export const mapsButtonElement = () =>
     document.getElementById('maps');
-/** @const */ export const shipsButtonElement = () =>
+/** @return {Element} */ export const shipsButtonElement = () =>
     document.getElementById('ships');
-/** @const */ export const applauseButtonElement = () =>
+/** @return {Element} */ export const applauseButtonElement = () =>
     document.getElementById('applause');
-/** @const */ export const booButtonElement = () =>
+/** @return {Element} */ export const booButtonElement = () =>
     document.getElementById('boo');
-/** @const */ export const userPicElement = () =>
+/** @return {Element} */ export const userPicElement = () =>
     document.getElementById('user-pic');
-/** @const */ export const userNameElement = () =>
+/** @return {Element} */ export const userNameElement = () =>
     document.getElementById('user-name');
-/** @const */ export const signInButtonElement = () =>
+/** @return {Element} */ export const signInButtonElement = () =>
     document.getElementById('sign-in');
-/** @const */ export const signOutButtonElement = () =>
+/** @return {Element} */ export const signOutButtonElement = () =>
     document.getElementById('sign-out');
-/** @const */ export const signInSnackbarElement = () =>
+/** @return {Element} */ export const signInSnackbarElement = () =>
     document.getElementById('must-signin-snackbar');
-/** @const */ export const splashScreenElement = () =>
+/** @return {Element} */ export const splashScreenElement = () =>
     document.getElementById('signin-splashscreen');
-/** @const */ export const signInSplashButtonElement = () =>
+/** @return {Element} */ export const signInSplashButtonElement = () =>
     document.getElementById('sign-in-splash');
-/** @const */ export const messagesCardContainerElement = () =>
+/** @return {Element} */ export const messagesCardContainerElement = () =>
     document.getElementById('messages-card-container');
-/** @const */ export const youtubeStreamContainerElement = () =>
+/** @return {Element} */ export const youtubeStreamContainerElement = () =>
     document.getElementById('youtube-stream-container');
-/** @const */ export const youtubeVideoIframeElement = () =>
+/** @return {Element} */ export const youtubeVideoIframeElement = () =>
     document.getElementById('youtube-video');
-/** @const */ export const youtubeChatIframeElement = () =>
+/** @return {Element} */ export const youtubeChatIframeElement = () =>
     document.getElementById('youtube-chat');
 
-/** @const */ export const scienceAudioElement = () =>
+/** @return {Element} */ export const scienceAudioElement = () =>
     document.getElementById('science-audio');
-/** @const */ export const artAudioElement = () =>
+/** @return {Element} */ export const artAudioElement = () =>
     document.getElementById('art-audio');
-/** @const */ export const mapsAudioElement = () =>
+/** @return {Element} */ export const mapsAudioElement = () =>
     document.getElementById('maps-audio');
-/** @const */ export const shipsAudioElement = () =>
+/** @return {Element} */ export const shipsAudioElement = () =>
     document.getElementById('ships-audio');
-/** @const */ export const applauseAudioElement = () =>
+/** @return {Element} */ export const applauseAudioElement = () =>
     document.getElementById('applause-audio');
-/** @const */ export const booAudioElement = () =>
+/** @return {Element} */ export const booAudioElement = () =>
     document.getElementById('boo-audio');
 
-/** @const */ export const scienceFormElement = () =>
+/** @return {Element} */ export const scienceFormElement = () =>
     document.getElementById('science-form');
-/** @const */ export const artFormElement = () =>
+/** @return {Element} */ export const artFormElement = () =>
     document.getElementById('art-form');
-/** @const */ export const mapsFormElement = () =>
+/** @return {Element} */ export const mapsFormElement = () =>
     document.getElementById('maps-form');
-/** @const */ export const shipsFormElement = () =>
+/** @return {Element} */ export const shipsFormElement = () =>
     document.getElementById('ships-form');
-/** @const */ export const applauseFormElement = () =>
+/** @return {Element} */ export const applauseFormElement = () =>
     document.getElementById('applause-form');
-/** @const */ export const booFormElement = () =>
+/** @return {Element} */ export const booFormElement = () =>
     document.getElementById('boo-form');

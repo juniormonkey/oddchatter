@@ -1,16 +1,16 @@
-import assert from 'assert';
+/* eslint-disable closure/no-undef */
+/* eslint-disable closure/no-unused-expressions */
 import firebase from 'firebase';
 import MockDate from 'mockdate';
 import should from 'should';
 
-import {CALLBACKS} from '../public/scripts/src/callback_ui.js'
+import {CALLBACKS} from '../public/scripts/src/callback_ui.js';
 import {CONFIG} from '../public/scripts/src/config.js';
-import {Message} from '../public/scripts/src/messages.js'
+import {Message} from '../public/scripts/src/messages.js';
 
 const Timestamp = firebase.firestore.Timestamp;
 
 const firebasemock = require('firebase-mock');
-import MockFirebaseQuerySnapshot from 'firebase-mock';
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name', 'authorPic.png',
@@ -22,8 +22,8 @@ function fakeFirestoreUpdate(fakeFirestore) {
     const docs = fakeFirestore.get(callback.callback.getCollection());
     const sortedDocs =
         docs ? docs.sort((one, two) => two.data().timestamp.toMillis() -
-                                       one.data().timestamp.toMillis())
-             : null;
+                                       one.data().timestamp.toMillis()) :
+             null;
     callback.handleFirestoreSnapshot(sortedDocs);
   }
 }
@@ -31,7 +31,7 @@ function fakeFirestoreUpdate(fakeFirestore) {
 function verifyProgressBarWidth(element, expectedWidthInVoices) {
   element.should.exist;
   element.style.width.should.equal(
-      (100 * expectedWidthInVoices / CONFIG.callback_threshold) + '%');
+      `${100 * expectedWidthInVoices / CONFIG.callback_threshold }%`);
   element.querySelectorAll('.callback-progress-voice')
       .length.should.equal(expectedWidthInVoices);
 }
@@ -44,12 +44,12 @@ describe('callbacks', function() {
         '  <input type="text" id="message">' +
         '  <button id="submit" type="submit">Send</button>' +
         '</form>' +
-        '<audio playsinline hidden id="science-audio" src="video/science1.mp4"></audio>' +
-        '<audio playsinline hidden id="art-audio" src="video/art1.mp4"></audio>' +
-        '<audio playsinline hidden id="maps-audio" src="video/maps1.mp4"></audio>' +
-        '<audio playsinline hidden id="ships-audio" src="video/ships1.mp4"></audio>' +
-        '<audio playsinline hidden id="applause-audio" src="video/applause1.mp4"></audio>' +
-        '<audio playsinline hidden id="boo-audio" src="video/boo1.mp4"></audio>';
+        '<audio id="science-audio" src="video/science1.mp4"></audio>' +
+        '<audio id="art-audio" src="video/art1.mp4"></audio>' +
+        '<audio id="maps-audio" src="video/maps1.mp4"></audio>' +
+        '<audio id="ships-audio" src="video/ships1.mp4"></audio>' +
+        '<audio id="applause-audio" src="video/applause1.mp4"></audio>' +
+        '<audio id="boo-audio" src="video/boo1.mp4"></audio>';
 
     window.HTMLMediaElement.prototype.play = () => { /* do nothing */ };
 
@@ -59,9 +59,13 @@ describe('callbacks', function() {
         // use null if your code does not use RTDB
         null,
         // use null if your code does not use AUTHENTICATION
-        () => { return mockauth; },
+        () => {
+          return mockauth;
+        },
         // use null if your code does not use FIRESTORE
-        () => { return mockfirestore; },
+        () => {
+          return mockfirestore;
+        },
         // use null if your code does not use STORAGE
         null,
         // use null if your code does not use MESSAGING
@@ -70,10 +74,10 @@ describe('callbacks', function() {
     window.firebase.initializeApp();
 
     mockauth.changeAuthState({
-      uid : 'testUid',
-      provider : 'google',
-      token : 'authToken',
-      expires : Math.floor(new Date() / 1000) + 24 * 60 * 60,
+      uid: 'testUid',
+      provider: 'google',
+      token: 'authToken',
+      expires: Math.floor(new Date() / 1000) + 24 * 60 * 60,
     });
     mockauth.flush();
 
@@ -114,24 +118,24 @@ describe('callbacks', function() {
     fakeFirestore.set('SHIPS', []);
     fakeFirestore.set('SCIENCE', []);
     fakeFirestore.get('SHIPS').push({
-      id : 'alice',
-      data : () => ({
-        profilePicUrl : 'alice.png',
-        timestamp : Timestamp.fromMillis(147000)
-      })
+      id: 'alice',
+      data: () => ({
+        profilePicUrl: 'alice.png',
+        timestamp: Timestamp.fromMillis(147000),
+      }),
     });
     fakeFirestore.get('SHIPS').push({
-      id : 'bob',
-      data : () => (
-          {profilePicUrl : 'bob.png', timestamp : Timestamp.fromMillis(149000)})
+      id: 'bob',
+      data: () => (
+          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
     });
 
     fakeFirestore.get('SCIENCE').push({
-      id : 'carol',
-      data : () => ({
-        profilePicUrl : 'carol.png',
-        timestamp : Timestamp.fromMillis(143000)
-      })
+      id: 'carol',
+      data: () => ({
+        profilePicUrl: 'carol.png',
+        timestamp: Timestamp.fromMillis(143000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(2);
@@ -142,20 +146,20 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(6);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            1);
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[5]
-                               .querySelector('.callback-progress-bar'),
+        .children[5]
+        .querySelector('.callback-progress-bar'),
                            2);
 
     fakeFirestore.get('SCIENCE').push({
-      id : 'alice',
-      data : () => ({
-        profilePicUrl : 'alice.png',
-        timestamp : Timestamp.fromMillis(150000)
-      })
+      id: 'alice',
+      data: () => ({
+        profilePicUrl: 'alice.png',
+        timestamp: Timestamp.fromMillis(150000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(2);
@@ -166,12 +170,12 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(6);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            2);
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[5]
-                               .querySelector('.callback-progress-bar'),
+        .children[5]
+        .querySelector('.callback-progress-bar'),
                            2);
   });
 
@@ -191,26 +195,26 @@ describe('callbacks', function() {
        fakeFirestore.set('SHIPS', []);
        fakeFirestore.set('SCIENCE', []);
        fakeFirestore.get('SHIPS').push({
-         id : 'alice',
-         data : () => ({
-           profilePicUrl : 'alice.png',
-           timestamp : Timestamp.fromMillis(147000)
-         })
+         id: 'alice',
+         data: () => ({
+           profilePicUrl: 'alice.png',
+           timestamp: Timestamp.fromMillis(147000),
+         }),
        });
        fakeFirestore.get('SHIPS').push({
-         id : 'bob',
-         data : () => ({
-           profilePicUrl : 'bob.png',
-           timestamp : Timestamp.fromMillis(149000)
-         })
+         id: 'bob',
+         data: () => ({
+           profilePicUrl: 'bob.png',
+           timestamp: Timestamp.fromMillis(149000),
+         }),
        });
 
        fakeFirestore.get('SCIENCE').push({
-         id : 'carol',
-         data : () => ({
-           profilePicUrl : 'carol.png',
-           timestamp : Timestamp.fromMillis(143000)
-         })
+         id: 'carol',
+         data: () => ({
+           profilePicUrl: 'carol.png',
+           timestamp: Timestamp.fromMillis(143000),
+         }),
        });
 
        fakeFirestore.get('SHIPS').length.should.equal(2);
@@ -221,20 +225,20 @@ describe('callbacks', function() {
        document.getElementById('messages').children.length.should.equal(6);
 
        verifyProgressBarWidth(document.getElementById('messages')
-                                  .children[2]
-                                  .querySelector('.callback-progress-bar'),
+           .children[2]
+           .querySelector('.callback-progress-bar'),
                               1);
        verifyProgressBarWidth(document.getElementById('messages')
-                                  .children[5]
-                                  .querySelector('.callback-progress-bar'),
+           .children[5]
+           .querySelector('.callback-progress-bar'),
                               2);
 
        fakeFirestore.get('SHIPS').push({
-         id : 'david',
-         data : () => ({
-           profilePicUrl : 'david.png',
-           timestamp : Timestamp.fromMillis(150000)
-         })
+         id: 'david',
+         data: () => ({
+           profilePicUrl: 'david.png',
+           timestamp: Timestamp.fromMillis(150000),
+         }),
        });
 
        fakeFirestore.get('SHIPS').length.should.equal(3);
@@ -245,12 +249,12 @@ describe('callbacks', function() {
        document.getElementById('messages').children.length.should.equal(6);
 
        verifyProgressBarWidth(document.getElementById('messages')
-                                  .children[2]
-                                  .querySelector('.callback-progress-bar'),
+           .children[2]
+           .querySelector('.callback-progress-bar'),
                               1);
        should.not.exist(document.getElementById('messages')
-                            .children[5]
-                            .querySelector('.callback-progress-bar'));
+           .children[5]
+           .querySelector('.callback-progress-bar'));
        document.getElementById('messages')
            .children[5]
            .querySelector('.callback-video')
@@ -272,24 +276,24 @@ describe('callbacks', function() {
     fakeFirestore.set('SHIPS', []);
     fakeFirestore.set('SCIENCE', []);
     fakeFirestore.get('SHIPS').push({
-      id : 'alice',
-      data : () => ({
-        profilePicUrl : 'alice.png',
-        timestamp : Timestamp.fromMillis(147000)
-      })
+      id: 'alice',
+      data: () => ({
+        profilePicUrl: 'alice.png',
+        timestamp: Timestamp.fromMillis(147000),
+      }),
     });
     fakeFirestore.get('SHIPS').push({
-      id : 'bob',
-      data : () => (
-          {profilePicUrl : 'bob.png', timestamp : Timestamp.fromMillis(149000)})
+      id: 'bob',
+      data: () => (
+          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
     });
 
     fakeFirestore.get('SCIENCE').push({
-      id : 'carol',
-      data : () => ({
-        profilePicUrl : 'carol.png',
-        timestamp : Timestamp.fromMillis(143000)
-      })
+      id: 'carol',
+      data: () => ({
+        profilePicUrl: 'carol.png',
+        timestamp: Timestamp.fromMillis(143000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(2);
@@ -300,22 +304,22 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(6);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            1);
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[5]
-                               .querySelector('.callback-progress-bar'),
+        .children[5]
+        .querySelector('.callback-progress-bar'),
                            2);
 
     MockDate.set(170000);
 
     fakeFirestore.get('SHIPS').push({
-      id : 'david',
-      data : () => ({
-        profilePicUrl : 'david.png',
-        timestamp : Timestamp.fromMillis(170000)
-      })
+      id: 'david',
+      data: () => ({
+        profilePicUrl: 'david.png',
+        timestamp: Timestamp.fromMillis(170000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(3);
@@ -326,16 +330,16 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(7);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            1);
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[5]
-                               .querySelector('.callback-progress-bar'),
+        .children[5]
+        .querySelector('.callback-progress-bar'),
                            2);
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[6]
-                               .querySelector('.callback-progress-bar'),
+        .children[6]
+        .querySelector('.callback-progress-bar'),
                            1);
   });
 
@@ -354,24 +358,24 @@ describe('callbacks', function() {
     fakeFirestore.set('SHIPS', []);
     fakeFirestore.set('SCIENCE', []);
     fakeFirestore.get('SHIPS').push({
-      id : 'alice',
-      data : () => ({
-        profilePicUrl : 'alice.png',
-        timestamp : Timestamp.fromMillis(147000)
-      })
+      id: 'alice',
+      data: () => ({
+        profilePicUrl: 'alice.png',
+        timestamp: Timestamp.fromMillis(147000),
+      }),
     });
     fakeFirestore.get('SHIPS').push({
-      id : 'bob',
-      data : () => (
-          {profilePicUrl : 'bob.png', timestamp : Timestamp.fromMillis(149000)})
+      id: 'bob',
+      data: () => (
+          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
     });
 
     fakeFirestore.get('SCIENCE').push({
-      id : 'carol',
-      data : () => ({
-        profilePicUrl : 'carol.png',
-        timestamp : Timestamp.fromMillis(143000)
-      })
+      id: 'carol',
+      data: () => ({
+        profilePicUrl: 'carol.png',
+        timestamp: Timestamp.fromMillis(143000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(2);
@@ -382,20 +386,20 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(6);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            1);
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[5]
-                               .querySelector('.callback-progress-bar'),
+        .children[5]
+        .querySelector('.callback-progress-bar'),
                            2);
 
     fakeFirestore.get('SHIPS').push({
-      id : 'david',
-      data : () => ({
-        profilePicUrl : 'david.png',
-        timestamp : Timestamp.fromMillis(150000)
-      })
+      id: 'david',
+      data: () => ({
+        profilePicUrl: 'david.png',
+        timestamp: Timestamp.fromMillis(150000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(3);
@@ -406,12 +410,12 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(6);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            1);
     should.not.exist(document.getElementById('messages')
-                         .children[5]
-                         .querySelector('.callback-progress-bar'));
+        .children[5]
+        .querySelector('.callback-progress-bar'));
     document.getElementById('messages')
         .children[5]
         .querySelector('.callback-video')
@@ -422,11 +426,11 @@ describe('callbacks', function() {
     MockDate.set(152000);
 
     fakeFirestore.get('SHIPS').push({
-      id : 'erica',
-      data : () => ({
-        profilePicUrl : 'erica.png',
-        timestamp : Timestamp.fromMillis(152000)
-      })
+      id: 'erica',
+      data: () => ({
+        profilePicUrl: 'erica.png',
+        timestamp: Timestamp.fromMillis(152000),
+      }),
     });
 
     fakeFirestore.get('SHIPS').length.should.equal(4);
@@ -437,19 +441,19 @@ describe('callbacks', function() {
     document.getElementById('messages').children.length.should.equal(7);
 
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[2]
-                               .querySelector('.callback-progress-bar'),
+        .children[2]
+        .querySelector('.callback-progress-bar'),
                            1);
     should.not.exist(document.getElementById('messages')
-                         .children[5]
-                         .querySelector('.callback-progress-bar'));
+        .children[5]
+        .querySelector('.callback-progress-bar'));
     document.getElementById('messages')
         .children[5]
         .querySelector('.callback-video')
         .should.exist;
     verifyProgressBarWidth(document.getElementById('messages')
-                               .children[6]
-                               .querySelector('.callback-progress-bar'),
+        .children[6]
+        .querySelector('.callback-progress-bar'),
                            1);
   });
 });

@@ -41,7 +41,8 @@ export class CallbackUi {
     if (docsWithinWindow.length > 0) {
       const lastTimestampMillis = getTimestampMillis_(docs[0].data());
       if (lastTimestampMillis > 0) {
-        // If the number of voices is above the threshold, hide the progress bar and play the video.
+        // If the number of voices is above the threshold, hide the progress bar
+        // and play the video.
         if (docsWithinWindow.length >= config.CONFIG.callback_threshold) {
           if (this.progressBar) {
             this.progressBar.div.remove();
@@ -51,12 +52,12 @@ export class CallbackUi {
           this.lastCalledTimestampMillis = lastTimestampMillis + 1000;
           this.displayVideo_(lastTimestampMillis + 1);
           logging.logEvent('screen_view',
-                           {screen_name : this.callback.getCollection()});
+                           {screen_name: this.callback.getCollection()});
         } else {
           // Update progress bar, creating it first if necessary.
           const voices = docsWithinWindow.map(
               (doc) =>
-                  ({uid : doc.id, profilePhoto : doc.data()['profilePicUrl']}));
+                  ({uid: doc.id, profilePhoto: doc.data()['profilePicUrl']}));
           this.displayProgress_(lastTimestampMillis, voices,
                                 callbackWindowStartMillis);
         }
@@ -97,17 +98,16 @@ export class CallbackUi {
   displayVideo_(timestamp) {
     // Scroll down after displaying if we're already within one message of the
     // bottom.
-    const scrollToVideo =
-        ui.messageListElement().scrollTop >=
-        (ui.messageListElement().scrollHeight -
-         ui.messageListElement().clientHeight - 60);
+    const scrollToVideo = ui.messageListElement().scrollTop >=
+                          (ui.messageListElement().scrollHeight -
+                           ui.messageListElement().clientHeight - 60);
 
     const video = `video/${
         this.callback.videoUrls[Math.floor(Math.random() *
                                            this.callback.videoUrls.length)]}`;
     const message = messages.createMessage(
-        CALLBACK_ID.next(), new Date(timestamp),
-        '', this.callback.getByline(), 'images/adventureharvey.jpg', '', video);
+        CALLBACK_ID.next(), new Date(timestamp), '', this.callback.getByline(),
+        'images/adventureharvey.jpg', '', video);
     message.display();
     if (scrollToVideo) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
@@ -151,10 +151,9 @@ class CallbackProgress {
   display() {
     // Scroll down after displaying if we're already within one message of the
     // bottom.
-    const scrollToProgressBar =
-        ui.messageListElement().scrollTop >=
-        (ui.messageListElement().scrollHeight -
-         ui.messageListElement().clientHeight - 60);
+    const scrollToProgressBar = ui.messageListElement().scrollTop >=
+                                (ui.messageListElement().scrollHeight -
+                                 ui.messageListElement().clientHeight - 60);
 
     if (!document.getElementById(this.id)) {
       const container = document.createElement('div');
@@ -173,7 +172,9 @@ class CallbackProgress {
         ui.messageListElement().appendChild(this.div);
       }
       // Show the card fading-in.
-      setTimeout(() => { this.div.classList.add('visible'); }, 1);
+      setTimeout(() => {
+        this.div.classList.add('visible');
+      }, 1);
     }
 
     if (scrollToProgressBar) {
@@ -194,7 +195,7 @@ class CallbackProgress {
 
       // Adjust the width of the progress bar.
       progressBar.style.width =
-          (100 * this.voices.length / config.CONFIG.callback_threshold) + '%';
+          `${100 * this.voices.length / config.CONFIG.callback_threshold}%`;
 
       // Add the profile photo to the progress bar.
       const authorPic = document.createElement('div');
@@ -220,16 +221,6 @@ class CallbackProgress {
       }
     }
   }
-}
-
-/**
- * @param {number} from
- * @param {number} to
- * @return {number} A random number in the inclusive range [from, to].
- * @private
- */
-function randomNumberBetween_(from, to) {
-  return from + Math.floor(Math.random() * (to - from + 1));
 }
 
 /**

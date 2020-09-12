@@ -1,5 +1,4 @@
-import assert from 'assert';
-import firebase from 'firebase';
+/* eslint-disable closure/no-undef */
 import MockDate from 'mockdate';
 import should from 'should';
 
@@ -46,10 +45,10 @@ describe('ui', function() {
     const message3 = createMessage('three', 'same timestamp as B');
 
     MockDate.set(400000);
-    const message4 = createMessage('four', 'same timestamp as D')
+    const message4 = createMessage('four', 'same timestamp as D');
 
     MockDate.set(500000);
-    const message5 = createMessage('five', 'newer than all other messages')
+    const message5 = createMessage('five', 'newer than all other messages');
 
     const insertion1 = findDivToInsertBefore(message1.timestampMillis_());
     should.exist(insertion1);

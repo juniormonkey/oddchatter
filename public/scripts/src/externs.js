@@ -6,17 +6,27 @@
 
 /**
  * @interface
+ * @param {Element} element
  */
-Node.MaterialSnackbar = function() {};
+function MaterialSnackbar(element) {}
 
 /**
  * @param {Object} data
  */
-Node.MaterialSnackbar.prototype.showSnackbar = function(data) {};
+MaterialSnackbar.prototype.showSnackbar = function(data) {};
 
 /**
  * @interface
+ * @param {Element} element
  */
-Node.MaterialTextfield = function() {};
+function MaterialTextfield(element) {}
 
-Node.MaterialTextfield.prototype.boundUpdateClassesHandler = function() {};
+MaterialTextfield.prototype.boundUpdateClassesHandler = function() {};
+
+/**
+ * @interface
+ * @param {Element} element
+ */
+function MaterialSwitch(element) {}
+
+MaterialSwitch.prototype.boundChangeHandler = function() {};

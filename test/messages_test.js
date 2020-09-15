@@ -188,7 +188,6 @@ describe('messages', function() {
     document.getElementById('messages').scrollTop.should.equal(200);
   });
 
-  // TODO: collapse callback messages
   // Callback strings are handled by callbacks.js.
   it('hides messages that match a callback string', function() {
     MockDate.set(100000);
@@ -216,5 +215,34 @@ describe('messages', function() {
     createMessage('3', 'message three').display();
 
     document.getElementById('messages').children.length.should.equal(6);
+  });
+
+  it('shows callback messages in admin mode', function() {
+    window.ADMIN_MODE = true;
+    MockDate.set(100000);
+    createMessage('A', 'message A').display();
+    MockDate.set(200000);
+    createMessage('B', 'message B').display();
+    MockDate.set(300000);
+    createMessage('C', 'message C').display();
+    MockDate.set(400000);
+    createMessage('D', 'message D').display();
+
+    document.getElementById('messages').children.length.should.equal(4);
+
+    MockDate.set(350000);
+    createMessage('1', 'message one').display();
+
+    document.getElementById('messages').children.length.should.equal(5);
+
+    MockDate.set(375000);
+    createMessage('2', 'SHIPS!!').display();
+
+    document.getElementById('messages').children.length.should.equal(6);
+
+    MockDate.set(385000);
+    createMessage('3', 'message three').display();
+
+    document.getElementById('messages').children.length.should.equal(7);
   });
 });

@@ -15,7 +15,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Odd Chatter</title>
+  <title>Odd Chatter Admin Console</title>
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
@@ -28,13 +28,13 @@
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Odd Chatter">
+  <meta name="application-name" content="Odd Chatter Admin Console">
   <meta name="theme-color" content="#303F9F">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Odd Chatter">
+  <meta name="apple-mobile-web-app-title" content="Odd Chatter Admin Console">
   <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
 
   <!-- Tile icon for Win8 -->
@@ -52,31 +52,13 @@
 
 </head>
 <body>
-<div id="promo">
-  <div id="promo-container">
-    <div id="promo-social">
-      <a href="https://www.facebook.com/events/323537199082506" id="promo-facebook">&nbsp;</a>
-      <a href="https://www.eventbrite.com/e/odd-salon-shorts-shock-art-tickets-118691229663" id="promo-eventbrite">&nbsp;</a>
-    </div>
-    <div id="promo-image">&nbsp;</div>
-    <div id="promo-action">Come back here half an hour before the event to chat!</div>
-  </div>
-</div>
 
-<div id='error-container' hidden>
-  <div id='error'>
-    <div id='error-harvey'>&nbsp;</div>
-    <div id='error-header'>Technical difficulties</div>
-    <div id='error-text'>Oh no! It looks like MISTAKES WERE MADE. Quick, follow the crowds over to <a id='error-link'>the YouTube chat</a>!</div>
-  </div>
-</div>
-
-<div id='outer-container' hidden class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+<div id="outer-container" hidden class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <!-- Header section containing logo -->
   <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
       <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-        <h3><img src="images/harvey.jpg" class="inline-icon">Odd Chatter</h3>
+        <h3><img src="images/harvey.jpg" class="inline-icon">Odd Chatter Admin Console</h3>
       </div>
       <div id="user-container">
         <div hidden id="user-pic"></div>
@@ -99,63 +81,34 @@
         <div class="mdl-card__supporting-text mdl-color-text--grey-900">
           <div id="messages">
           </div>
-          <form id="message-form" action="#">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input disabled class="mdl-textfield__input" type="text" id="message" autocomplete="off">
-              <label class="mdl-textfield__label" for="message">Message...</label>
-            </div>
-            <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised">              Send
-            </button>
-          </form>
-          <div class="messagebuttons">
-            <form id="science-form" class="one-button-form" action=#>
-              <button disabled id="science" title="Science!" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-		🔬
-              </button>
-            </form>
-            <form id="art-form" class="one-button-form" action=#>
-              <button disabled id="art" title="Art!" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-               🎨
-              </button>
-            </form>
-            <form id="maps-form" class="one-button-form" action=#>
-              <button disabled id="maps" title="Maps!" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-                🗺️
-              </button>
-            </form>
-            <form id="ships-form" class="one-button-form" action=#>
-              <button disabled id="ships" title="Ships!" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-                🚢
-              </button>
-            </form>
-            <form id="applause-form" class="one-button-form" action=#>
-              <button disabled id="applause" title="Applause" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-                👏
-              </button>
-            </form>
-            <form id="boo-form" class="one-button-form" action=#>
-              <button disabled id="boo" title="Boo!" type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-                👎
-              </button>
-            </form>
-          </div>
         </div>
       </div>
-
-      <!-- YT Live Stream container -->
-      <div id="youtube-stream-container" hidden class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
-        <iframe hidden
-                id="youtube-video"
-                width="560"
-                height="315"
-                frameborder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-        <iframe hidden id="youtube-chat" referrerPolicy="origin" frameBorder=0></iframe>
-      </div>
-      <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">
-        <div class="mdl-snackbar__text"></div>
-        <button class="mdl-snackbar__action" type="button"></button>
+      <div id="config-container" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+        <label class="mdl-switch mdl-js-switch" for="enabled">
+          <input type="checkbox" id="enabled" class="mdl-switch__input" disabled>
+          <span class="mdl-switch__label">Enable Odd Chatter</span>
+        </label>
+        <form id="fallback-form" action="#">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="fallback-url" autocomplete="off" disabled>
+            <label class="mdl-textfield__label" for="fallback-url">Fallback URL (in case of emergency)</label>
+          </div>
+          <button id="fallback-submit" type="submit" class="mdl-button mdl-js-button mdl-button--raised" disabled>Save</button>
+        </form>
+        <form id="youtube-stream-form" action="#">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="youtube-stream-url" autocomplete="off">
+            <label class="mdl-textfield__label" for="youtube-stream-url">YouTube ID of video to embed</label>
+          </div>
+          <button id="youtube-stream-submit" type="submit" class="mdl-button mdl-js-button mdl-button--raised">Save</button>
+        </form>
+        <form id="youtube-chat-form" action="#">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="youtube-chat-url" autocomplete="off">
+            <label class="mdl-textfield__label" for="youtube-chat-url">YouTube ID of chat to embed</label>
+          </div>
+          <button id="youtube-chat-submit" type="submit" class="mdl-button mdl-js-button mdl-button--raised">Save</button>
+        </form>
       </div>
     </div>
 
@@ -171,5 +124,14 @@
   </main>
 </div>
 
+<!-- Import and configure the Firebase SDK -->
+<script src="/__/firebase/7.19.0/firebase-app.js"></script>
+<script src="/__/firebase/7.19.0/firebase-analytics.js"></script>
+<script src="/__/firebase/7.19.0/firebase-auth.js"></script>
+<script src="/__/firebase/7.19.0/firebase-firestore.js"></script>
+<script src="/__/firebase/7.19.0/firebase-performance.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script src="scripts/admin.js"></script>
 </body>
 </html>

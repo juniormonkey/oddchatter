@@ -13,19 +13,25 @@ import * as user from './user.js';
  */
 export function init() {
   // Saves message on form submit.
-  ui.messageFormElement().addEventListener('submit', onMessageFormSubmit_);
+  if (ui.messageFormElement()) {
+    ui.messageFormElement().addEventListener('submit', onMessageFormSubmit_);
+  }
   ui.signOutButtonElement().addEventListener('click', signOut_);
   ui.signInButtonElement().addEventListener('click', signIn_);
   ui.signInSplashButtonElement().addEventListener('click', signIn_);
 
   for (const callback of callbacks.CALLBACKS) {
-    callback.formElement().addEventListener(
-        'submit', goog.partial(onCallbackFormSubmit_, callback));
+    if (callback.formElement()) {
+      callback.formElement().addEventListener(
+          'submit', goog.partial(onCallbackFormSubmit_, callback));
+    }
   }
 
   // Toggle for the button.
-  ui.messageInputElement().addEventListener('keyup', toggleButton_);
-  ui.messageInputElement().addEventListener('change', toggleButton_);
+  if (ui.messageInputElement()) {
+    ui.messageInputElement().addEventListener('keyup', toggleButton_);
+    ui.messageInputElement().addEventListener('change', toggleButton_);
+  }
 }
 
 /**
@@ -169,19 +175,22 @@ function checkSignedInWithMessage_() {
 
   // Display a message to the user using a Toast.
   const data = {message: 'You must sign-in first', timeout: 2000};
-  ui.signInSnackbarElement().MaterialSnackbar.showSnackbar(data);
+  /** @type {MaterialSnackbar} */ (
+      ui.signInSnackbarElement()['MaterialSnackbar'])
+      .showSnackbar(data);
   return false;
 }
 
 /**
- * Resets the given MaterialTextField.
+ * Resets the given MaterialTextfield.
  *
  * @param {Element} element The text field element to reset.
  * @private
  */
 function resetMaterialTextfield_(element) {
   element.value = '';
-  element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
+  /** @type {MaterialTextfield} */ (element.parentNode['MaterialTextfield'])
+      .boundUpdateClassesHandler();
 }
 
 /**

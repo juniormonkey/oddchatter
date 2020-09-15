@@ -56,11 +56,12 @@ export class Message {
   }
 
   /**
-   * Displays the message in the UI. Does nothing if the message matches one of
-   * the CALLBACK_STRINGS; these are handled in aggregate by callback_ui.js.
+   * Displays the message in the UI. Unless running in admin mode, skips
+   * messages that matche one of the CALLBACK_STRINGS; these are handled in
+   * aggregate by callback_ui.js.
    */
   display() {
-    if (CALLBACK_STRINGS.includes(this.text)) {
+    if (!window.ADMIN_MODE && CALLBACK_STRINGS.includes(this.text)) {
       return;
     }
     const div =
@@ -157,7 +158,9 @@ export class Message {
     if (scrollAfterDisplaying) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
-    ui.messageInputElement().focus();
+    if (ui.messageInputElement()) {
+      ui.messageInputElement().focus();
+    }
   }
 
   /**

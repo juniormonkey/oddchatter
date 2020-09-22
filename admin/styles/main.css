@@ -271,3 +271,7 @@ h3 {
 #config-container {
   padding: 10px;
 }
+.settings-description {
+  font-style: italic;
+  font-size: 12px;
+}

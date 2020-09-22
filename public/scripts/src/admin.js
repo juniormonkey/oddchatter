@@ -44,6 +44,37 @@ function main() {
                       (url) => {
                         configuration.fallback_url = url;
                       });
+
+    enableWithDefault(youtubeStreamFormElement(), youtubeStreamURLElement(),
+                      configuration.youtube_video,
+                      (videoId) => {
+                        configuration.youtube_video = videoId;
+                      });
+
+    enableWithDefault(youtubeChatFormElement(), youtubeChatURLElement(),
+                      configuration.youtube_chat,
+                      (videoId) => {
+                        configuration.youtube_chat = videoId;
+                      });
+
+    enableWithDefault2(
+        callbackFormElement(), callbackThresholdElement(),
+        configuration.callback_threshold, callbackWindowElement(),
+        configuration.callback_window_ms,
+        (callbackThreshold, callbackWindowMs) => {
+          if (isNaN(parseInt(callbackThreshold, 10)) || isNaN(+callbackThreshold)) {
+            console.error('callbackThreshold must be a number, was ',
+                          callbackThreshold);
+            return;
+          }
+          if (isNaN(parseInt(callbackWindowMs, 10)) || isNaN(+callbackWindowMs)) {
+            console.error('callbackWindowMs must be a number, was ',
+                          callbackWindowMs);
+            return;
+          }
+          configuration.callback_threshold = +callbackThreshold;
+          configuration.callback_window_ms = +callbackWindowMs;
+        });
   });
 
   config.CONFIG.loadFromFirestore();
@@ -65,17 +96,49 @@ function main() {
  */
 function enableWithDefault(formElement, textInput, defaultValue,
                            updateConfiguration) {
-  textInput.value = defaultValue;
-  /** @type {MaterialTextfield} */ (textInput.parentNode['MaterialTextfield'])
-      .boundUpdateClassesHandler();
+  enableTextInput(textInput, defaultValue);
   formElement.addEventListener('submit', (e) => {
     e.preventDefault();
     updateConfiguration(textInput.value);
     config.CONFIG.saveToFirestore();
   });
-  textInput.removeAttribute('disabled');
   formElement.querySelectorAll('button').forEach(
       (el) => el.removeAttribute('disabled'));
+}
+
+/**
+ * Enables a two-field text input form with a default value for the text fields.
+ * @param {Element} formElement The outer <form> element.
+ * @param {Element} textInput1 The first inner <input> element.
+ * @param {string} defaultValue1 The default text for the first input element.
+ * @param {Element} textInput2 The second inner <input> element.
+ * @param {string} defaultValue2 The default text for the second input element.
+ * @param {function(string, string)} updateConfiguration A function that updates
+ *     the configuration on form submit.
+ */
+function enableWithDefault2(formElement, textInput1, defaultValue1, textInput2,
+                            defaultValue2, updateConfiguration) {
+  enableTextInput(textInput1, defaultValue1);
+  enableTextInput(textInput2, defaultValue2);
+  formElement.addEventListener('submit', (e) => {
+    e.preventDefault();
+    updateConfiguration(textInput1.value, textInput2.value);
+    config.CONFIG.saveToFirestore();
+  });
+  formElement.querySelectorAll('button').forEach(
+      (el) => el.removeAttribute('disabled'));
+}
+
+/**
+ * Enables a text field with a default value.
+ * @param {Element} textInput The inner <input> element.
+ * @param {string} defaultValue The default text for the input element.
+ */
+function enableTextInput(textInput, defaultValue) {
+  textInput.value = defaultValue;
+  /** @type {MaterialTextfield} */ (textInput.parentNode['MaterialTextfield'])
+      .boundUpdateClassesHandler();
+  textInput.removeAttribute('disabled');
 }
 
 /** @return {Element} */ const enableSwitchElement = () =>
@@ -92,5 +155,11 @@ function enableWithDefault(formElement, textInput, defaultValue,
     document.getElementById('youtube-chat-url');
 /** @return {Element} */ const youtubeChatFormElement = () =>
     document.getElementById('youtube-chat-form');
+/** @return {Element} */ const callbackThresholdElement = () =>
+    document.getElementById('callback-threshold');
+/** @return {Element} */ const callbackWindowElement = () =>
+    document.getElementById('callback-window');
+/** @return {Element} */ const callbackFormElement = () =>
+    document.getElementById('callback-form');
 
 main();

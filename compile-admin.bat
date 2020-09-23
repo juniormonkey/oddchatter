@@ -15,4 +15,6 @@ npx google-closure-compiler ^
   --js='!src\*externs.js' ^
   --dependency_mode=PRUNE ^
   --compilation_level=ADVANCED_OPTIMIZATIONS ^
-  --entry_point='src\admin'
+  --define=config.ADMIN_MODE ^
+  --entry_point='src\admin' ^
+  %*

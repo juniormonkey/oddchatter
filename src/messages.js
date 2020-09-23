@@ -61,7 +61,7 @@ export class Message {
    * aggregate by callback_ui.js.
    */
   display() {
-    if (!window.ADMIN_MODE && CALLBACK_STRINGS.includes(this.text)) {
+    if (!config.ADMIN_MODE && CALLBACK_STRINGS.includes(this.text)) {
       return;
     }
     const div =

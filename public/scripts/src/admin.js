@@ -82,7 +82,6 @@ function main() {
   // - only accessible to admin users - TODO: can Firebase restrict new users?
   // - (set the event start time?)
   // - list of users, with block button - TODO: is there a good UI for this?
-  // - thresholds to update?
   // - different background or header or something to emphasise admin mode
 }
 

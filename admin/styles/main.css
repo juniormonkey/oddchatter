@@ -153,17 +153,13 @@ main,
   font-size: 12px;
   box-sizing: border-box;
 }
-#fallback-form, #youtube-stream-form, #youtube-chat-form {
+.configuration-form {
   display: block;
 }
-#fallback-form .mdl-textfield,
-#youtube-stream-form .mdl-textfield,
-#youtube-chat-form .mdl-textfield {
+.configuration-form .mdl-textfield {
   width: calc(100% - 120px);
 }
-#fallback-form button,
-#youtube-stream-form button,
-#youtube-chat-form button {
+.configuration-form button {
   width: 100px;
   margin: 0 0 0 10px;
 }
@@ -268,10 +264,21 @@ h3 {
   text-align: center;
   margin-top: calc(50% - 80px);
 }
-#config-container {
-  padding: 10px;
+#config-cell {
+  background: none;
+}
+.config-container {
+  padding: 10px 10px 0 10px;
+  margin-bottom: 10px;
+  background: linear-gradient(white, #f9f9f9);
 }
 .settings-description {
   font-style: italic;
   font-size: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  padding-top: 5px;
+}
+.settings-description:first-child {
+  border-top: none;
+  padding-top: 0;
 }

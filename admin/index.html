@@ -112,148 +112,170 @@
               <div id="messages"></div>
             </div>
           </div>
-          <div
-            id="config-container"
+          <div id="config-cell"
             class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
-            <div class="settings-description">
-              When the app is disabled, we show a promo for the upcoming Odd
-              Salon instead.
+            <div class="config-container">
+              <div class="settings-description">
+                If everything goes wrong, set a URL here and everyone will see an
+                error page with a link to this URL.
+              </div>
+              <form id="fallback-form" class="configuration-form" action="#">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input
+                    class="mdl-textfield__input"
+                    type="text"
+                    id="fallback-url"
+                    autocomplete="off"
+                    disabled
+                  />
+                  <label class="mdl-textfield__label" for="fallback-url">
+                    Fallback URL (in case of emergency)
+                  </label>
+                </div>
+                <button
+                  id="fallback-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                  disabled>
+                  Save
+                </button>
+              </form>
             </div>
-            <label class="mdl-switch mdl-js-switch" for="enabled">
-              <input
-                type="checkbox"
-                id="enabled"
-                class="mdl-switch__input"
-                disabled
-              />
-              <span class="mdl-switch__label">Enable Odd Chatter</span>
-            </label>
-            <hr>
-            <div class="settings-description">
-              If everything goes wrong, set a URL here and everyone will see an
-              error page with a link to this URL.
-            </div>
-            <form id="fallback-form" action="#">
-              <div
-                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <div class="config-container">
+              <div class="settings-description">
+                When the app is disabled, we show a promo for the upcoming Odd
+                Salon instead.
+              </div>
+              <label class="mdl-switch mdl-js-switch" style="margin-bottom: 5px;" for="enabled">
                 <input
-                  class="mdl-textfield__input"
-                  type="text"
-                  id="fallback-url"
-                  autocomplete="off"
+                  type="checkbox"
+                  id="enabled"
+                  class="mdl-switch__input"
                   disabled
                 />
-                <label class="mdl-textfield__label" for="fallback-url">
-                  Fallback URL (in case of emergency)
-                </label>
+                <span class="mdl-switch__label">Enable Odd Chatter</span>
+              </label>
+              <div class="settings-description">
+                Set the start time of the event. No messages from before this time will be shown.
               </div>
-              <button
-                id="fallback-submit"
-                type="submit"
-                class="mdl-button mdl-js-button mdl-button--raised"
-                disabled>
-                Save
-              </button>
-            </form>
-            <hr>
-            <div class="settings-description">
-              Set a
-              <a
-                href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817">
-                YouTube video ID
-              </a>
-              here to show the video embedded in the Odd Chatter page.
+              <form id="event-start-form" class="configuration-form">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label has-placeholder">
+                  <input
+                    class="mdl-textfield__input"
+                    type="datetime-local"
+                    id="event-start"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="event-start">
+                    Start time of the event
+                  </label>
+                </div>
+                <button
+                  id="event-start-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised">
+                  Save
+                </button>
+              </form>
+              <div class="settings-description">
+                Callback videos are triggered by more than a threshold of voices
+                saying the same thing within a specific time window. Adjust these
+                values here.
+              </div>
+              <form id="callback-form" class="configuration-form" action="#">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input
+                    class="mdl-textfield__input"
+                    type="number"
+                    min="1"
+                    id="callback-threshold"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-chat-url">
+                    Number of voices it takes to trigger a video
+                  </label>
+                </div>
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input
+                    class="mdl-textfield__input"
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    id="callback-window"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-chat-url">
+                    Length of the window, in milliseconds
+                  </label>
+                </div>
+                <button
+                  id="callback-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised">
+                  Save
+                </button>
+              </form>
+              <div class="settings-description">
+                Set a
+                <a
+                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817">
+                  YouTube video ID
+                </a>
+                here to show the video embedded in the Odd Chatter page.
+              </div>
+              <form id="youtube-stream-form" class="configuration-form" action="#">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input
+                    class="mdl-textfield__input"
+                    type="text"
+                    id="youtube-stream-url"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-stream-url">
+                    YouTube ID of video to embed
+                  </label>
+                </div>
+                <button
+                  id="youtube-stream-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised">
+                  Save
+                </button>
+              </form>
+              <div class="settings-description">
+                Set a
+                <a
+                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817">
+                  YouTube video ID
+                </a>
+                here to show the YouTube chat embedded in the Odd Chatter page.
+              </div>
+              <form id="youtube-chat-form" class="configuration-form" action="#">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input
+                    class="mdl-textfield__input"
+                    type="text"
+                    id="youtube-chat-url"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-chat-url">
+                    YouTube ID of chat to embed
+                  </label>
+                </div>
+                <button
+                  id="youtube-chat-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised">
+                  Save
+                </button>
+              </form>
             </div>
-            <form id="youtube-stream-form" action="#">
-              <div
-                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input
-                  class="mdl-textfield__input"
-                  type="text"
-                  id="youtube-stream-url"
-                  autocomplete="off"
-                />
-                <label class="mdl-textfield__label" for="youtube-stream-url">
-                  YouTube ID of video to embed
-                </label>
-              </div>
-              <button
-                id="youtube-stream-submit"
-                type="submit"
-                class="mdl-button mdl-js-button mdl-button--raised">
-                Save
-              </button>
-            </form>
-            <hr>
-            <div class="settings-description">
-              Set a
-              <a
-                href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817">
-                YouTube video ID
-              </a>
-              here to show the YouTube chat embedded in the Odd Chatter page.
-            </div>
-            <form id="youtube-chat-form" action="#">
-              <div
-                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input
-                  class="mdl-textfield__input"
-                  type="text"
-                  id="youtube-chat-url"
-                  autocomplete="off"
-                />
-                <label class="mdl-textfield__label" for="youtube-chat-url">
-                  YouTube ID of chat to embed
-                </label>
-              </div>
-              <button
-                id="youtube-chat-submit"
-                type="submit"
-                class="mdl-button mdl-js-button mdl-button--raised">
-                Save
-              </button>
-            </form>
-            <hr>
-            <div class="settings-description">
-              Callback videos are triggered by more than a threshold of voices
-              saying the same thing within a specific time window. Adjust these
-              values here.
-            </div>
-            <form id="callback-form" action="#">
-              <div
-                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input
-                  class="mdl-textfield__input"
-                  type="number"
-                  min="1"
-                  id="callback-threshold"
-                  autocomplete="off"
-                />
-                <label class="mdl-textfield__label" for="youtube-chat-url">
-                  Number of voices it takes to trigger a video
-                </label>
-              </div>
-              <div
-                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input
-                  class="mdl-textfield__input"
-                  type="number"
-                  min="1000"
-                  step="1000"
-                  id="callback-window"
-                  autocomplete="off"
-                />
-                <label class="mdl-textfield__label" for="youtube-chat-url">
-                  Length of the window, in milliseconds
-                </label>
-              </div>
-              <button
-                id="callback-submit"
-                type="submit"
-                class="mdl-button mdl-js-button mdl-button--raised">
-                Save
-              </button>
-            </form>
           </div>
         </div>
 

@@ -69,12 +69,14 @@
     <div
       id="outer-container"
       hidden
-      class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header"
+    >
       <!-- Header section containing logo -->
       <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
         <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
           <div
-            class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+            class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"
+          >
             <h3>
               <img src="images/harvey.jpg" class="inline-icon" />
               Odd Chatter Admin Console
@@ -86,12 +88,14 @@
             <button
               hidden
               id="sign-out"
-              class="mdl-button mdl-js-button mdl-color-text--white">
+              class="mdl-button mdl-js-button mdl-color-text--white"
+            >
               Sign out
             </button>
             <button
               id="sign-in"
-              class="mdl-button mdl-js-button mdl-color-text--white">
+              class="mdl-button mdl-js-button mdl-color-text--white"
+            >
               <i class="material-icons">account_circle</i>
               Sign in
             </button>
@@ -103,25 +107,30 @@
         <div
           hidden
           id="messages-card-container"
-          class="mdl-cell mdl-cell--12-col mdl-grid">
+          class="mdl-cell mdl-cell--12-col mdl-grid"
+        >
           <!-- Messages container -->
           <div
             id="messages-card"
-            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+          >
             <div class="mdl-card__supporting-text mdl-color-text--grey-900">
               <div id="messages"></div>
             </div>
           </div>
-          <div id="config-cell"
-            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+          <div
+            id="config-cell"
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+          >
             <div class="config-container">
               <div class="settings-description">
-                If everything goes wrong, set a URL here and everyone will see an
-                error page with a link to this URL.
+                If everything goes wrong, set a URL here and everyone will see
+                an error page with a link to this URL.
               </div>
               <form id="fallback-form" class="configuration-form" action="#">
                 <div
-                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
                   <input
                     class="mdl-textfield__input"
                     type="text"
@@ -137,7 +146,8 @@
                   id="fallback-submit"
                   type="submit"
                   class="mdl-button mdl-js-button mdl-button--raised"
-                  disabled>
+                  disabled
+                >
                   Save
                 </button>
               </form>
@@ -147,7 +157,11 @@
                 When the app is disabled, we show a promo for the upcoming Odd
                 Salon instead.
               </div>
-              <label class="mdl-switch mdl-js-switch" style="margin-bottom: 5px;" for="enabled">
+              <label
+                class="mdl-switch mdl-js-switch"
+                style="margin-bottom: 5px"
+                for="enabled"
+              >
                 <input
                   type="checkbox"
                   id="enabled"
@@ -157,11 +171,13 @@
                 <span class="mdl-switch__label">Enable Odd Chatter</span>
               </label>
               <div class="settings-description">
-                Set the start time of the event. No messages from before this time will be shown.
+                Set the start time of the event. No messages from before this
+                time will be shown.
               </div>
               <form id="event-start-form" class="configuration-form">
                 <div
-                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label has-placeholder">
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label has-placeholder"
+                >
                   <input
                     class="mdl-textfield__input"
                     type="datetime-local"
@@ -175,18 +191,20 @@
                 <button
                   id="event-start-submit"
                   type="submit"
-                  class="mdl-button mdl-js-button mdl-button--raised">
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
                   Save
                 </button>
               </form>
               <div class="settings-description">
                 Callback videos are triggered by more than a threshold of voices
-                saying the same thing within a specific time window. Adjust these
-                values here.
+                saying the same thing within a specific time window. Adjust
+                these values here.
               </div>
               <form id="callback-form" class="configuration-form" action="#">
                 <div
-                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
                   <input
                     class="mdl-textfield__input"
                     type="number"
@@ -199,7 +217,8 @@
                   </label>
                 </div>
                 <div
-                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
                   <input
                     class="mdl-textfield__input"
                     type="number"
@@ -215,21 +234,28 @@
                 <button
                   id="callback-submit"
                   type="submit"
-                  class="mdl-button mdl-js-button mdl-button--raised">
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
                   Save
                 </button>
               </form>
               <div class="settings-description">
                 Set a
                 <a
-                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817">
+                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817"
+                >
                   YouTube video ID
                 </a>
                 here to show the video embedded in the Odd Chatter page.
               </div>
-              <form id="youtube-stream-form" class="configuration-form" action="#">
+              <form
+                id="youtube-stream-form"
+                class="configuration-form"
+                action="#"
+              >
                 <div
-                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
                   <input
                     class="mdl-textfield__input"
                     type="text"
@@ -243,21 +269,28 @@
                 <button
                   id="youtube-stream-submit"
                   type="submit"
-                  class="mdl-button mdl-js-button mdl-button--raised">
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
                   Save
                 </button>
               </form>
               <div class="settings-description">
                 Set a
                 <a
-                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817">
+                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817"
+                >
                   YouTube video ID
                 </a>
                 here to show the YouTube chat embedded in the Odd Chatter page.
               </div>
-              <form id="youtube-chat-form" class="configuration-form" action="#">
+              <form
+                id="youtube-chat-form"
+                class="configuration-form"
+                action="#"
+              >
                 <div
-                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
                   <input
                     class="mdl-textfield__input"
                     type="text"
@@ -271,7 +304,8 @@
                 <button
                   id="youtube-chat-submit"
                   type="submit"
-                  class="mdl-button mdl-js-button mdl-button--raised">
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
                   Save
                 </button>
               </form>
@@ -281,12 +315,14 @@
 
         <div
           id="signin-splashscreen"
-          class="mdl-cell mdl-cell--12-col mdl-grid">
+          class="mdl-cell mdl-cell--12-col mdl-grid"
+        >
           <div class="mdl-layout-spacer"></div>
           <div class="mdl-cell mdl-cell--4-col" id="signin-card">
             <button
               id="sign-in-splash"
-              class="mdl-button mdl-js-button mdl-button--raised mdl-color-text--white">
+              class="mdl-button mdl-js-button mdl-button--raised mdl-color-text--white"
+            >
               <i class="material-icons">account_circle</i>
               Sign in with Google
             </button>

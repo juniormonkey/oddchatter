@@ -111,7 +111,7 @@ main,
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 5px;
-  color: #FFF;
+  color: #fff;
   height: 30px;
   transition: width 1s ease-in-out;
 }

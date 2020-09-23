@@ -62,12 +62,14 @@ function main() {
         configuration.callback_threshold, callbackWindowElement(),
         configuration.callback_window_ms,
         (callbackThreshold, callbackWindowMs) => {
-          if (isNaN(parseInt(callbackThreshold, 10)) || isNaN(+callbackThreshold)) {
+          if (isNaN(parseInt(callbackThreshold, 10)) ||
+              isNaN(+callbackThreshold)) {
             console.error('callbackThreshold must be a number, was ',
                           callbackThreshold);
             return;
           }
-          if (isNaN(parseInt(callbackWindowMs, 10)) || isNaN(+callbackWindowMs)) {
+          if (isNaN(parseInt(callbackWindowMs, 10)) ||
+              isNaN(+callbackWindowMs)) {
             console.error('callbackWindowMs must be a number, was ',
                           callbackWindowMs);
             return;

@@ -3,5 +3,8 @@ firebase-debug.log
 *.cache
 .firebase/*
 public/scripts/main.js
-node_modules/*
 public/scripts/main.js.map
+admin/scripts/admin.js
+admin/scripts/admin.js.map
+admin/scripts/src
+node_modules/*

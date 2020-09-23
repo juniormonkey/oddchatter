@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      https://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Odd Chatter Admin Console</title>
+
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Web Application Manifest -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Odd Chatter Admin Console" />
+    <meta name="theme-color" content="#303F9F" />
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta
+      name="apple-mobile-web-app-title"
+      content="Odd Chatter Admin Console"
+    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F" />
+
+    <!-- Tile icon for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF" />
+    <meta name="msapplication-navbutton-color" content="#303F9F" />
+
+    <!-- Material Design Lite -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css"
+    />
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+    <!-- App Styling -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap"
+    />
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <div
+      id="outer-container"
+      hidden
+      class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header"
+    >
+      <!-- Header section containing logo -->
+      <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+          <div
+            class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"
+          >
+            <h3>
+              <img src="images/harvey.jpg" class="inline-icon" />
+              Odd Chatter Admin Console
+            </h3>
+          </div>
+          <div id="user-container">
+            <div hidden id="user-pic"></div>
+            <div hidden id="user-name"></div>
+            <button
+              hidden
+              id="sign-out"
+              class="mdl-button mdl-js-button mdl-color-text--white"
+            >
+              Sign out
+            </button>
+            <button
+              id="sign-in"
+              class="mdl-button mdl-js-button mdl-color-text--white"
+            >
+              <i class="material-icons">account_circle</i>
+              Sign in
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="public-works mdl-layout__content mdl-color--grey-800">
+        <div
+          hidden
+          id="messages-card-container"
+          class="mdl-cell mdl-cell--12-col mdl-grid"
+        >
+          <!-- Messages container -->
+          <div
+            id="messages-card"
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+          >
+            <div class="mdl-card__supporting-text mdl-color-text--grey-900">
+              <div id="messages"></div>
+            </div>
+          </div>
+          <div
+            id="config-cell"
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+          >
+            <div class="config-container">
+              <div class="settings-description">
+                If everything goes wrong, set a URL here and everyone will see
+                an error page with a link to this URL.
+              </div>
+              <form id="fallback-form" class="configuration-form" action="#">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
+                  <input
+                    class="mdl-textfield__input"
+                    type="text"
+                    id="fallback-url"
+                    autocomplete="off"
+                    disabled
+                  />
+                  <label class="mdl-textfield__label" for="fallback-url">
+                    Fallback URL (in case of emergency)
+                  </label>
+                </div>
+                <button
+                  id="fallback-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                  disabled
+                >
+                  Save
+                </button>
+              </form>
+            </div>
+            <div class="config-container">
+              <div class="settings-description">
+                When the app is disabled, we show a promo for the upcoming Odd
+                Salon instead.
+              </div>
+              <label
+                class="mdl-switch mdl-js-switch"
+                style="margin-bottom: 5px"
+                for="enabled"
+              >
+                <input
+                  type="checkbox"
+                  id="enabled"
+                  class="mdl-switch__input"
+                  disabled
+                />
+                <span class="mdl-switch__label">Enable Odd Chatter</span>
+              </label>
+              <div class="settings-description">
+                Set the start time of the event. No messages from before this
+                time will be shown.
+              </div>
+              <form id="event-start-form" class="configuration-form">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label has-placeholder"
+                >
+                  <input
+                    class="mdl-textfield__input"
+                    type="datetime-local"
+                    id="event-start"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="event-start">
+                    Start time of the event
+                  </label>
+                </div>
+                <button
+                  id="event-start-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
+                  Save
+                </button>
+              </form>
+              <div class="settings-description">
+                Callback videos are triggered by more than a threshold of voices
+                saying the same thing within a specific time window. Adjust
+                these values here.
+              </div>
+              <form id="callback-form" class="configuration-form" action="#">
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
+                  <input
+                    class="mdl-textfield__input"
+                    type="number"
+                    min="1"
+                    id="callback-threshold"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-chat-url">
+                    Number of voices it takes to trigger a video
+                  </label>
+                </div>
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
+                  <input
+                    class="mdl-textfield__input"
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    id="callback-window"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-chat-url">
+                    Length of the window, in milliseconds
+                  </label>
+                </div>
+                <button
+                  id="callback-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
+                  Save
+                </button>
+              </form>
+              <div class="settings-description">
+                Set a
+                <a
+                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817"
+                >
+                  YouTube video ID
+                </a>
+                here to show the video embedded in the Odd Chatter page.
+              </div>
+              <form
+                id="youtube-stream-form"
+                class="configuration-form"
+                action="#"
+              >
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
+                  <input
+                    class="mdl-textfield__input"
+                    type="text"
+                    id="youtube-stream-url"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-stream-url">
+                    YouTube ID of video to embed
+                  </label>
+                </div>
+                <button
+                  id="youtube-stream-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
+                  Save
+                </button>
+              </form>
+              <div class="settings-description">
+                Set a
+                <a
+                  href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817"
+                >
+                  YouTube video ID
+                </a>
+                here to show the YouTube chat embedded in the Odd Chatter page.
+              </div>
+              <form
+                id="youtube-chat-form"
+                class="configuration-form"
+                action="#"
+              >
+                <div
+                  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                >
+                  <input
+                    class="mdl-textfield__input"
+                    type="text"
+                    id="youtube-chat-url"
+                    autocomplete="off"
+                  />
+                  <label class="mdl-textfield__label" for="youtube-chat-url">
+                    YouTube ID of chat to embed
+                  </label>
+                </div>
+                <button
+                  id="youtube-chat-submit"
+                  type="submit"
+                  class="mdl-button mdl-js-button mdl-button--raised"
+                >
+                  Save
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="signin-splashscreen"
+          class="mdl-cell mdl-cell--12-col mdl-grid"
+        >
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-cell mdl-cell--4-col" id="signin-card">
+            <button
+              id="sign-in-splash"
+              class="mdl-button mdl-js-button mdl-button--raised mdl-color-text--white"
+            >
+              <i class="material-icons">account_circle</i>
+              Sign in with Google
+            </button>
+          </div>
+          <div class="mdl-layout-spacer"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Import and configure the Firebase SDK -->
+    <script src="/__/firebase/7.19.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.19.0/firebase-analytics.js"></script>
+    <script src="/__/firebase/7.19.0/firebase-auth.js"></script>
+    <script src="/__/firebase/7.19.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.19.0/firebase-performance.js"></script>
+    <script src="/__/firebase/init.js"></script>
+
+    <script src="scripts/admin.js"></script>
+  </body>
+</html>

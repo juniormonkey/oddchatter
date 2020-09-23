@@ -2,6 +2,8 @@
  * @fileoverview Main JS code for the Odd Chatter page.
  */
 
+window.ADMIN_MODE = false;
+
 import * as config from './config.js';
 import * as controller from './controller.js';
 import * as view from './view.js';

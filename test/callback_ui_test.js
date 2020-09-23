@@ -4,9 +4,9 @@ import firebase from 'firebase';
 import MockDate from 'mockdate';
 import should from 'should';
 
-import {CALLBACKS} from '../public/scripts/src/callback_ui.js';
-import {CONFIG} from '../public/scripts/src/config.js';
-import {Message} from '../public/scripts/src/messages.js';
+import {CALLBACKS} from '../src/callback_ui.js';
+import {CONFIG} from '../src/config.js';
+import {Message} from '../src/messages.js';
 
 const Timestamp = firebase.firestore.Timestamp;
 

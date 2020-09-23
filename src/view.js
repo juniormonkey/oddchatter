@@ -69,8 +69,9 @@ export function applyNewConfiguration(configuration) {
   if (ui.youtubeChatIframeElement()) {
     if (configuration.youtube_chat) {
       ui.youtubeChatIframeElement().src =
-          `https://www.youtube.com/live_chat?v=${
-              configuration.youtube_chat}&embed_domain=${window.location.hostname}`;
+          `https://www.youtube.com/live_chat` +
+          `?v=${configuration.youtube_chat}` +
+          `&embed_domain=${window.location.hostname}`;
       ui.youtubeChatIframeElement().removeAttribute('hidden');
     } else {
       ui.youtubeChatIframeElement().setAttribute('hidden', true);

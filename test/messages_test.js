@@ -2,8 +2,9 @@
 import MockDate from 'mockdate';
 
 import {
+  overrideAdminMode,
   Message,
-} from '../public/scripts/src/messages.js';
+} from '../src/messages.js';
 
 const firebasemock = require('firebase-mock');
 
@@ -218,7 +219,7 @@ describe('messages', function() {
   });
 
   it('shows callback messages in admin mode', function() {
-    window.ADMIN_MODE = true;
+    overrideAdminMode(true);
     MockDate.set(100000);
     createMessage('A', 'message A').display();
     MockDate.set(200000);

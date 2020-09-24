@@ -1,7 +1,10 @@
+.coveralls.yml
 firebase-debug.log
 *.swp
 *.cache
+.nyc_output/*
 .firebase/*
 public/scripts/*
 admin/scripts/*
 node_modules/*
+coverage/*

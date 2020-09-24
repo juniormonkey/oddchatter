@@ -2,8 +2,8 @@
 import MockDate from 'mockdate';
 import should from 'should';
 
-import {Message} from '../public/scripts/src/messages.js';
-import {findDivToInsertBefore} from '../public/scripts/src/ui.js';
+import {Message} from '../src/messages.js';
+import {findDivToInsertBefore} from '../src/ui.js';
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name',

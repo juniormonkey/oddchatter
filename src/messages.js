@@ -22,6 +22,19 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 const CALLBACK_STRINGS =
     callbacks.CALLBACKS.map(callback => callback.getMessage());
 
+/**
+ * Do not set this field, except from tests.
+ */
+let adminModeOverride = false;
+
+/**
+ * Do not call this, except from tests.
+ * @param {boolean} mode
+ */
+export function overrideAdminMode(mode) {
+  adminModeOverride = mode;
+}
+
 export class Message {
 
   /**
@@ -56,12 +69,19 @@ export class Message {
   }
 
   /**
+   * @return whether we're in admin mode.
+   */
+  isAdminMode_() {
+    return config.ADMIN_MODE || adminModeOverride;
+  }
+
+  /**
    * Displays the message in the UI. Unless running in admin mode, skips
    * messages that matche one of the CALLBACK_STRINGS; these are handled in
    * aggregate by callback_ui.js.
    */
   display() {
-    if (!window.ADMIN_MODE && CALLBACK_STRINGS.includes(this.text)) {
+    if (!this.isAdminMode_() && CALLBACK_STRINGS.includes(this.text)) {
       return;
     }
     const div =

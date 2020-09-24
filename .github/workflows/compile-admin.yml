@@ -1,4 +1,4 @@
-name: Test
+name: Google Closure Compiler (Admin console)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  mocha:
+  google-closure-compiler-admin:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,10 +21,5 @@ jobs:
       - name: Install packages
         run: npm ci
 
-      - name: Run tests
-        run: npm test
-        
-      - name: Coveralls
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run compiler
+        run: ./compile-admin.sh

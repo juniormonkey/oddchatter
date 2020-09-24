@@ -1,10 +1,10 @@
+.coveralls.yml
 firebase-debug.log
 *.swp
 *.cache
+.nyc_output/*
 .firebase/*
-public/scripts/main.js
-public/scripts/main.js.map
-admin/scripts/admin.js
-admin/scripts/admin.js.map
-admin/scripts/src
+public/scripts/*
+admin/scripts/*
 node_modules/*
+coverage/*

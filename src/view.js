@@ -14,17 +14,17 @@ import * as user from './user.js';
 /**
  * Updates the UI in response to a config change.
  *
- * @param {config.Configuration} config
+ * @param {config.Configuration} configuration
  */
-export function applyNewConfiguration(config) {
+export function applyNewConfiguration(configuration) {
   // If we're in admin mode, redirect non-admin users to the regular app.
   // TODO: this is not actual security. Replace this with real security.
-  if (window.ADMIN_MODE && !config.admin_users.includes(user.getUid())) {
+  if (config.ADMIN_MODE && !configuration.admin_users.includes(user.getUid())) {
     window.location.href = 'https://odd-chatter.web.app/';
     return;
   }
   // Show only the splash screen if the app is not enabled.
-  if (!config.enabled() && ui.promoElement()) {
+  if (!configuration.enabled() && ui.promoElement()) {
     ui.promoElement().removeAttribute('hidden');
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.errorContainerElement().setAttribute('hidden', true);
@@ -33,11 +33,11 @@ export function applyNewConfiguration(config) {
   }
 
   // If we've set a fallback URL, show the error screen with a link to that URL.
-  if (config.fallback_url && ui.errorLinkElement()) {
+  if (configuration.fallback_url && ui.errorLinkElement()) {
     ui.errorContainerElement().removeAttribute('hidden');
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.promoElement().setAttribute('hidden', true);
-    ui.errorLinkElement().setAttribute('href', config.fallback_url);
+    ui.errorLinkElement().setAttribute('href', configuration.fallback_url);
     logging.logEvent('screen_view', {screen_name: 'error'});
     return;
   }
@@ -56,9 +56,9 @@ export function applyNewConfiguration(config) {
 
   // If there's a YouTube stream ID, show the embedded player.
   if (ui.youtubeVideoIframeElement()) {
-    if (config.youtube_video) {
+    if (configuration.youtube_video) {
       ui.youtubeVideoIframeElement().src =
-          `https://www.youtube.com/embed/${config.youtube_video}`;
+          `https://www.youtube.com/embed/${configuration.youtube_video}`;
       ui.youtubeVideoIframeElement().removeAttribute('hidden');
     } else {
       ui.youtubeVideoIframeElement().setAttribute('hidden', true);
@@ -67,10 +67,11 @@ export function applyNewConfiguration(config) {
 
   // If there's a YouTube chat ID, show the embedded chat widget.
   if (ui.youtubeChatIframeElement()) {
-    if (config.youtube_chat) {
+    if (configuration.youtube_chat) {
       ui.youtubeChatIframeElement().src =
-          `https://www.youtube.com/live_chat?v=${
-              config.youtube_chat}&embed_domain=${window.location.hostname}`;
+          `https://www.youtube.com/live_chat` +
+          `?v=${configuration.youtube_chat}` +
+          `&embed_domain=${window.location.hostname}`;
       ui.youtubeChatIframeElement().removeAttribute('hidden');
     } else {
       ui.youtubeChatIframeElement().setAttribute('hidden', true);
@@ -80,7 +81,7 @@ export function applyNewConfiguration(config) {
   // If there's either a YouTube stream ID or chat ID, show the container that
   // wraps both of these elements.
   if (ui.youtubeStreamContainerElement()) {
-    if (config.youtube_video || config.youtube_chat) {
+    if (configuration.youtube_video || configuration.youtube_chat) {
       ui.youtubeStreamContainerElement().removeAttribute('hidden');
     } else {
       ui.youtubeStreamContainerElement().setAttribute('hidden', true);
@@ -164,7 +165,7 @@ function showMessagesCard_() {
   }
 
   // Load the messages.
-  if (!window.ADMIN_MODE) {
+  if (!config.ADMIN_MODE) {
     loadCallbacks_();
   }
   messages.load(config.CONFIG.event_start);

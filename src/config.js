@@ -2,7 +2,11 @@
  * @fileoverview Configuration for the Odd Chatter app.
  */
 
-export const DEBUG_MODE = false;
+/** @define {boolean} */
+export const DEBUG_MODE = goog.define('config.DEBUG_MODE', false);
+
+/** @define {boolean} */
+export const ADMIN_MODE = goog.define('config.ADMIN_MODE', false);
 
 /** @const */ const DEFAULT_CALLBACK_WINDOW_MS = 10000;
 /** @const */ const DEFAULT_CALLBACK_THRESHOLD = 3;
@@ -70,7 +74,7 @@ export class Configuration {
    *     DEBUG_MODE and ADMIN_MODE.
    */
   enabled() {
-    return this.enabled_ || DEBUG_MODE || window.ADMIN_MODE;
+    return this.enabled_ || DEBUG_MODE || ADMIN_MODE;
   }
 
   /**

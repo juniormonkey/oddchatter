@@ -55,14 +55,6 @@ function signOut_() {
 }
 
 /**
- * @return {boolean} true if a user is signed-in.
- * @private
- */
-function isUserSignedIn_() {
-  return !!firebase.auth().currentUser;
-}
-
-/**
  * Compares the given message text against all the registered callbacks,
  * and updates the timestamp for any callback that matches.
  *
@@ -169,7 +161,7 @@ function onMessageSubmitted_(message) {
  */
 function checkSignedInWithMessage_() {
   // Return true if the user is signed in Firebase
-  if (isUserSignedIn_()) {
+  if (user.isSignedIn()) {
     return true;
   }
 

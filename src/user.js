@@ -23,3 +23,10 @@ export function getProfilePicUrl() {
   return window.firebase.auth().currentUser.photoURL ||
          '/images/profile_placeholder.png';
 }
+
+/**
+ * @return {boolean} If a user is signed in.
+ */
+export function isSignedIn() {
+  return !!window.firebase.auth().currentUser;
+}

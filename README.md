@@ -8,13 +8,21 @@ A callback-enabled chat UI for use while watching Odd Salon.
 
 ----
 
-Odd Chatter is a Firebase project, https://firebase.google.com/docs. All data and configuration is stored in Cloud Firestore data, and the HTML/JS/CSS frontend is hosted on Firebase Hosting. 
+Odd Chatter is a Firebase project, https://firebase.google.com/docs. All data and configuration is stored in Cloud Firestore data, and the HTML/JS/CSS frontend is hosted on Firebase Hosting.
+
+This web app consists of a chat window with pre-defined "callbacks", which the users type or click based on what they see in the talk. (These are callbacks in the style of live-performance Rocky Horror Picture Show, not as in [programming](https://en.wikipedia.org/wiki/Callback_(computer_programming)).) When enough users activate a callback within a predefined period of time, the app shows a short YouTube clip that contains an audio recording of that callback.
+
+In addition, there is an "admin mode" that allows certain users to delete messages, and a pre-show mode that shows a banner and marketing links instead of the chat UI.
+
+User authentication is through Google Accounts.
+
+<!-- Logging? -->
 
 ## Compiling and deploying
 
 ### Prerequisites
 
-You'll need to install Firebase locally both to compile and deploy the code: `npm install --save firebase`.
+You need to install Firebase locally both to compile and deploy the code: `npm install --save firebase`.
 
 The client-side code is JS, using the [google-closure-library](https://github.com/google/closure-library) (install using `npm install --save google-closure-library`) and compiled using [google-closure-compiler](https://developers.google.com/closure/compiler) (install using `npm install --save google-closure-compiler`).
 
@@ -116,7 +124,7 @@ The JS client is roughly MVC, where the Firebase Firestore DB is the model, `vie
 
 ### Sending a message
 
-When a user sends a message, it gets written into the `messages` collection, in `oddsalon.oddchatter.controller.saveMessage_()`. (The callback buttons simply send a text message with predefined strings.) In addition, if the message consists of one of the predefined strings, the document in that callback's collection with the user's UID as its document ID is updated with the current timestamp; this check is done in `oddsalon.oddchatter.controller.checkForCallbacks_()`.
+When a user sends a message, it is written into the `messages` collection, in `oddsalon.oddchatter.controller.saveMessage_()`. (The callback buttons simply send a text message with predefined strings.) In addition, if the message consists of one of the predefined strings (meaning the user typed a callback manually), the document in that callback's collection with the user's UID as its document ID is updated with the current timestamp; this check is done in `oddsalon.oddchatter.controller.checkForCallbacks_()`.
 
 ### Displaying messages
 
@@ -124,7 +132,7 @@ The script installs a Firestore query listener in `oddsalon.oddchatter.view.load
 
 ### Displaying callback videos
 
-The script installs a Firestore query listener for each callback in `oddsalon.oddchatter.view.loadCallbacks()`, to display the callback's video if the most recent `oddsalon.oddchatter.config.Configuration.callback_threshold` documents in that callback's collection are all more recent than `oddsalon.oddchatter.config.Configuration.callback_window_ms` milliseconds ago, or the last time the callback video was played, whichever is more recent. 
+The script installs a Firestore query listener for each callback in `oddsalon.oddchatter.view.loadCallbacks()`, to display the callback's video if the most recent `oddsalon.oddchatter.config.Configuration.callback_threshold` documents in that callback's collection are all more recent than `oddsalon.oddchatter.config.Configuration.callback_window_ms` milliseconds ago, or the last time the callback video was played, whichever is more recent.
 
 ### Onboarding
 
@@ -137,4 +145,3 @@ The script installs a Firestore query listener in `oddsalon.oddchatter.config.Co
 ### Analytics
 
 In theory, this app uses Google Analytics to record user behavior, logging events to track which screens are seen and which elements are used. As of 8/27/2020 this does not appear to be working.
-

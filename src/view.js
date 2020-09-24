@@ -19,7 +19,8 @@ import * as user from './user.js';
 export function applyNewConfiguration(configuration) {
   // If we're in admin mode, redirect non-admin users to the regular app.
   // TODO: this is not actual security. Replace this with real security.
-  if (config.ADMIN_MODE && !configuration.admin_users.includes(user.getUid())) {
+  if (config.ADMIN_MODE && user.isSignedIn() &&
+      !configuration.admin_users.includes(user.getUid())) {
     window.location.href = 'https://odd-chatter.web.app/';
     return;
   }
@@ -116,6 +117,8 @@ export async function applyNewAuthState(firebaseUser) {
 
     // Hide the sign-in UI
     ui.splashScreenElement().setAttribute('hidden', 'true');
+
+    applyNewConfiguration(config.CONFIG);
 
     // Show the messages UI, or the introduction if it hasn't been seen yet
     if (config.CONFIG.intro_seen || !ui.introContainerElement()) {

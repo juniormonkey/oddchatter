@@ -4,7 +4,7 @@
   "description": "Odd Chatter",
   "main": "src/main.js",
   "scripts": {
-    "test": "c8 mocha",
+    "test": "c8 --reporter=text --reporter=lcov mocha",
     "coverage": "c8 report --reporter=text-lcov | coveralls"
   },
   "repository": {

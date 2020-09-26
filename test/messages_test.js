@@ -2,11 +2,14 @@
 import MockDate from 'mockdate';
 
 import {
-  overrideAdminMode,
   Message,
+  overrideAdminMode,
 } from '../src/messages.js';
 
 const firebasemock = require('firebase-mock');
+
+import Autolinker from 'autolinker';
+import createDOMPurify from 'dompurify';
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name', 'authorPic.png',
@@ -50,6 +53,9 @@ function mockScrolling() {
 
 describe('messages', function() {
   beforeEach(function() {
+    global.Autolinker = Autolinker;
+    global.DOMPurify = createDOMPurify(window);
+
     document.body.innerHTML =
         '<div id="messages"></div>' +
         '<form id="message-form">' +
@@ -61,7 +67,7 @@ describe('messages', function() {
 
     const mockauth = new firebasemock.MockAuthentication();
     const mockfirestore = new firebasemock.MockFirestore();
-    window.firebase = new firebasemock.MockFirebaseSdk(
+    global.firebase = new firebasemock.MockFirebaseSdk(
         // use null if your code does not use RTDB
         null,
         // use null if your code does not use AUTHENTICATION
@@ -245,5 +251,72 @@ describe('messages', function() {
     createMessage('3', 'message three').display();
 
     document.getElementById('messages').children.length.should.equal(7);
+  });
+
+  it('sanitizes malicious HTML', function() {
+    createMessage('A', '<script src=malicious.js>').display();
+    createMessage('B', '<safe>').display();
+    createMessage('C', 'very safe').display();
+
+    document.getElementById('messages').children.length.should.equal(3);
+
+    document.getElementById('A')
+        .querySelector('.message')
+        .innerHTML.should.equal('&lt;script src=malicious.js&gt;');
+    document.getElementById('B')
+        .querySelector('.message')
+        .innerHTML.should.equal('&lt;safe&gt;');
+    document.getElementById('C')
+        .querySelector('.message')
+        .innerHTML.should.equal('very safe');
+  });
+
+  it('linkifies URLs, email addresses and phone numbers', function() {
+    createMessage('A', 'Donate at http://oddsalon.com/donate').display();
+    createMessage('B', '<a href=https://oddsalon.com>click here!</a>')
+        .display();
+    createMessage('C', 'oddsalon@gmail.com').display();
+    createMessage('D', 'Oops here\'s my digits: 415-123-4567').display();
+    createMessage('E', 'LONG: https://www.oddsalon.com/donate').display();
+    createMessage('F', 'SHORT: oddsalon.com').display();
+
+    document.getElementById('messages').children.length.should.equal(6);
+
+    document.getElementById('A')
+        .querySelector('.message')
+        .innerHTML.should.equal(
+            'Donate at <a href="http://oddsalon.com/donate"' +
+            ' target="_blank" rel="noopener noreferrer"' +
+            '>http://oddsalon.com/donate</a>');
+    document.getElementById('B')
+        .querySelector('.message')
+        .innerHTML.should.equal('&lt;a href=<a href="https://oddsalon.com"' +
+                                ' target="_blank" rel="noopener noreferrer"' +
+                                '>https://oddsalon.com</a>&gt;click here!' +
+                                '&lt;/a&gt;');
+    document.getElementById('C')
+        .querySelector('.message')
+        .innerHTML.should.equal('<a href="mailto:oddsalon@gmail.com"' +
+                                ' target="_blank" rel="noopener noreferrer"' +
+                                '>oddsalon@gmail.com</a>');
+    document.getElementById('D')
+        .querySelector('.message')
+        .innerHTML.should.equal(
+            'Oops here\'s my digits: <a href="tel:4151234567"' +
+            ' target="_blank" rel="noopener noreferrer"' +
+            '>415-123-4567</a>');
+
+    document.getElementById('E')
+        .querySelector('.message')
+        .innerHTML.should.equal(
+            'LONG: <a href="https://www.oddsalon.com/donate"' +
+            ' target="_blank" rel="noopener noreferrer"' +
+            '>https://www.oddsalon.com/donate</a>');
+
+    document.getElementById('F')
+        .querySelector('.message')
+        .innerHTML.should.equal('SHORT: <a href="http://oddsalon.com"' +
+                                ' target="_blank" rel="noopener noreferrer"' +
+                                '>oddsalon.com</a>');
   });
 });

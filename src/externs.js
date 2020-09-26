@@ -30,3 +30,24 @@ MaterialTextfield.prototype.boundUpdateClassesHandler = function() {};
 function MaterialSwitch(element) {}
 
 MaterialSwitch.prototype.boundChangeHandler = function() {};
+
+/**
+ * @constructor
+ * @param {Object} options
+ */
+function Autolinker(options) {}
+
+/**
+ * @param {string} textToLinkify
+ */
+Autolinker.prototype.link = function(textToLinkify) {};
+
+/**
+ * @interface
+ */
+function DOMPurify() {}
+
+/**
+ * @param {string} dirty
+ */
+DOMPurify.sanitize = function(dirty) {};

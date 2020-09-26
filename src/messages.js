@@ -55,6 +55,9 @@ export class Message {
     this.authorPic = authorPic;
     this.text = text;
     this.videoUrl = videoUrl;
+    /* eslint-disable-next-line closure/no-undef */
+    this.autolinker = new Autolinker(
+        {newWindow: true, stripPrefix: false, stripTrailingSlash: false});
   }
 
   /**
@@ -126,7 +129,7 @@ export class Message {
       deleteLine.setAttribute('href', '#');
       deleteLine.textContent = 'delete';
       deleteLine.addEventListener('click', () => {
-        window.firebase.firestore()
+        firebase.firestore()
             .collection('messages')
             .doc(this.id)
             .delete()
@@ -139,6 +142,11 @@ export class Message {
 
     if (this.text) { // If the message is text.
       messageElement.textContent = this.text;
+      // Run DOMPurify to sanitize the message text.
+      /* eslint-disable-next-line closure/no-undef */
+      messageElement.innerHTML = DOMPurify.sanitize(messageElement.innerHTML);
+      // Autolink URLs in the message text.
+      messageElement.innerHTML = this.autolinker.link(messageElement.innerHTML);
       // Replace all line breaks by <br>.
       messageElement.innerHTML =
           messageElement.innerHTML.replace(/\n/g, '<br>');
@@ -245,7 +253,7 @@ let unsubscribe_ = [];
 export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
   // ones.
-  let query = window.firebase.firestore().collection('messages').limit(8);
+  let query = firebase.firestore().collection('messages').limit(8);
 
   if (oldestTimestamp) {
     query = query.where('timestamp', '>', oldestTimestamp);

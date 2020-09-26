@@ -1,4 +1,6 @@
 Robocopy /E /NFL src public\scripts\src
+copy /Y node_modules\autolinker\dist\Autolinker.min.js* public\scripts\
+copy /Y node_modules\dompurify\dist\purify.min.js* public\scripts\
 npx google-closure-compiler ^
   --externs=src\externs.js ^
   --externs=node_modules\firebase\externs\firebase-app-externs.js ^

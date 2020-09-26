@@ -2,6 +2,8 @@
 
 rm -rf public/scripts/src
 cp src public/scripts/src
+cp -f node_modules/autolinker/dist/Autolinker.min.js* public/scripts/
+cp -f node_modules/dompurify/dist/purify.min.js* public/scripts/
 npx google-closure-compiler \
   --platform=java \
   --externs=src/externs.js \

@@ -8,6 +8,9 @@ import {CALLBACKS} from '../src/callback_ui.js';
 import {CONFIG} from '../src/config.js';
 import {Message} from '../src/messages.js';
 
+import Autolinker from 'autolinker';
+import createDOMPurify from 'dompurify';
+
 const Timestamp = firebase.firestore.Timestamp;
 
 const firebasemock = require('firebase-mock');
@@ -38,6 +41,9 @@ function verifyProgressBarWidth(element, expectedWidthInVoices) {
 
 describe('callbacks', function() {
   beforeEach(async function() {
+    global.Autolinker = Autolinker;
+    global.DOMPurify = createDOMPurify(window);
+
     document.body.innerHTML =
         '<div id="messages"></div>' +
         '<form id="message-form">' +

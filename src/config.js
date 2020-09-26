@@ -81,7 +81,7 @@ export class Configuration {
    * Loads the configuration from Firestore, and listens for changes.
    */
   loadFromFirestore() {
-    const query = firebase.firestore()
+    const query = window.firebase.firestore()
                       .collection('configuration')
                       .orderBy('timestamp', 'desc')
                       .limit(1);
@@ -109,7 +109,7 @@ export class Configuration {
   saveToFirestore() {
     // Add a new configuration entry to the database.
     /* eslint-disable quote-props */
-    return firebase.firestore()
+    return window.firebase.firestore()
         .collection('configuration')
         .add({
           'enabled': this.enabled_,
@@ -120,7 +120,7 @@ export class Configuration {
           'admin_users': this.admin_users,
           'youtube_video': this.youtube_video,
           'youtube_chat': this.youtube_chat,
-          'timestamp': firebase.firestore.FieldValue.serverTimestamp(),
+          'timestamp': window.firebase.firestore.FieldValue.serverTimestamp(),
         })
         .catch((error) => {
           console.error('Error writing new message to database', error);
@@ -130,3 +130,23 @@ export class Configuration {
 }
 
 /** @const {Configuration} */ export const CONFIG = new Configuration();
+
+/**
+ * Do not set this field, except from tests.
+ */
+let adminModeOverride = false;
+
+/**
+ * Do not call this, except from tests.
+ * @param {boolean} mode
+ */
+export function overrideAdminMode(mode) {
+  adminModeOverride = mode;
+}
+
+/**
+ * @return whether we're in admin mode.
+ */
+export function isAdminMode() {
+  return ADMIN_MODE || adminModeOverride;
+}

@@ -1,9 +1,10 @@
 /* eslint-disable closure/no-undef */
 import MockDate from 'mockdate';
-import should from 'should';
 
 import {Message} from '../src/messages.js';
 import {findDivToInsertBefore} from '../src/ui.js';
+
+const should = require('chai').should();
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name',

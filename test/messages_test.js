@@ -2,11 +2,14 @@
 import MockDate from 'mockdate';
 
 import {
-  Message,
   overrideAdminMode,
+} from '../src/config.js';
+import {
+  Message,
 } from '../src/messages.js';
 
 const firebasemock = require('firebase-mock');
+require('chai').should();
 
 import Autolinker from 'autolinker';
 import createDOMPurify from 'dompurify';

@@ -17,19 +17,21 @@ import * as user from './user.js';
  * @param {config.Configuration} configuration
  */
 export function applyNewConfiguration(configuration) {
-  // If we're in admin mode, redirect non-admin users to the regular app.
-  // TODO: this is not actual security. Replace this with real security.
-  if (config.ADMIN_MODE && user.isSignedIn() &&
-      !configuration.admin_users.includes(user.getUid())) {
-    window.location.href = 'https://odd-chatter.web.app/';
-    return;
-  }
-  // Show only the splash screen if the app is not enabled.
-  if (!configuration.enabled() && ui.promoElement()) {
-    ui.promoElement().removeAttribute('hidden');
-    ui.outerContainerElement().setAttribute('hidden', true);
-    ui.errorContainerElement().setAttribute('hidden', true);
-    logging.logEvent('screen_view', {screen_name: 'promo'});
+  // Show the splash screen and not the full app, if...
+  const showSplashScreen =
+      config.isAdminMode() ?
+          // ... we're in admin mode, and a non-admin user is logged in, or...
+          user.isSignedIn() &&
+                !configuration.admin_users.includes(user.getUid()) :
+          // ... we're not in admin mode, and the app is not enabled.
+          !configuration.enabled();
+  if (showSplashScreen) {
+    if (ui.promoElement()) {
+      ui.promoElement().removeAttribute('hidden');
+      ui.outerContainerElement().setAttribute('hidden', true);
+      ui.errorContainerElement().setAttribute('hidden', true);
+      logging.logEvent('screen_view', {screen_name: 'promo'});
+    }
     return;
   }
 
@@ -168,7 +170,7 @@ function showMessagesCard_() {
   }
 
   // Load the messages.
-  if (!config.ADMIN_MODE) {
+  if (!config.isAdminMode()) {
     loadCallbacks_();
   }
   messages.load(config.CONFIG.event_start);

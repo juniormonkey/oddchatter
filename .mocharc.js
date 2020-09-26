@@ -3,13 +3,13 @@
 module.exports = {
   'require' : [
     'autolinker',
+    'chai',
     'dompurify',
     'esm', 
     'firebase-mock',
     'google-closure-library',
     'jsdom-global/register',
-    'mockdate',
-    'should'
+    'mockdate'
   ],
   'globals' : [
     'global',

@@ -2,7 +2,6 @@
 /* eslint-disable closure/no-unused-expressions */
 import firebase from 'firebase';
 import MockDate from 'mockdate';
-import should from 'should';
 
 import {CALLBACKS} from '../src/callback_ui.js';
 import {CONFIG} from '../src/config.js';
@@ -14,6 +13,7 @@ import createDOMPurify from 'dompurify';
 const Timestamp = firebase.firestore.Timestamp;
 
 const firebasemock = require('firebase-mock');
+const should = require('chai').should();
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name', 'authorPic.png',

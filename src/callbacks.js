@@ -45,7 +45,7 @@ export class Callback {
       return this.text.repeat(randomNumberBetween_(3, 6));
     }
 
-    return '!'.repeat(randomNumberBetween_(2, 4)) + this.text +
+    return this.text +
            '!'.repeat(randomNumberBetween_(1, 3)) +
            '1'.repeat(randomNumberBetween_(0, 2)) +
            '!'.repeat(randomNumberBetween_(1, 2));

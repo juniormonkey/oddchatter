@@ -28,6 +28,7 @@
     "google-closure-library": ">=20200719.0.0"
   },
   "devDependencies": {
+    "@sinonjs/fake-timers": "^6.0.1",
     "c8": "^7.3.1",
     "chai": "*",
     "chai-dom": "*",

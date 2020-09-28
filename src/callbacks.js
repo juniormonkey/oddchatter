@@ -35,7 +35,9 @@ export class Callback {
    * Enables the button to allow this callback to be used in chat.
    */
   enableButton() {
-    this.buttonElement().removeAttribute('disabled');
+    if (this.buttonElement()) {
+      this.buttonElement().removeAttribute('disabled');
+    }
   }
 
   getByline() {

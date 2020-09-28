@@ -63,15 +63,15 @@
   </div>
 </div>
 
-<div id='error-container' hidden>
-  <div id='error'>
-    <div id='error-harvey'>&nbsp;</div>
-    <div id='error-header'>Technical difficulties</div>
-    <div id='error-text'>Oh no! It looks like MISTAKES WERE MADE. Quick, follow the crowds over to <a id='error-link'>the YouTube chat</a>!</div>
+<div id="error-container" hidden>
+  <div id="error">
+    <div id="error-harvey">&nbsp;</div>
+    <div id="error-header">Technical difficulties</div>
+    <div id="error-text">Oh no! It looks like MISTAKES WERE MADE. Quick, follow the crowds over to <a id="error-link">the YouTube chat</a>!</div>
   </div>
 </div>
 
-<div id='outer-container' hidden class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+<div id="outer-container" hidden class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <!-- Header section containing logo -->
   <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
@@ -168,8 +168,48 @@
       </div>
       <div class="mdl-layout-spacer"></div>
     </div>
+
+    <div id="intro-container" hidden class="mdl-cell mdl-cell--12-col mdl-grid">
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-cell mdl-cell--8-col" id="intro">
+        <div id="intro-harvey">&nbsp;</div>
+        <div id="intro-header">Welcome to the Odd Salon chat!</div>
+        <div id="intro-text">
+          <div>This is not a quiet event - if enough folks shout the same callout in chat, we'll all hear it.</div>
+          <div>To make it easier, there's button shortcuts to our favorite callouts.</div>
+          <div>Remember, the chat is public - so don't share your bank account password.</div>
+          <div>And because Odd Salon is not only an event, it is a community - remember our 
+            <a href="https://www.oddsalon.com/about/code-of-conduct/" target="_blank">code of conduct</a>!</div>
+          <button id="intro-button"
+            class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-color-text--white">
+            I agree
+          </button>
+        </div>
+      </div>
+      <div class="mdl-layout-spacer"></div>
+    </div>
   </main>
 </div>
 
+<audio playsinline hidden id="science-audio" src="video/science1.mp4"></audio>
+<audio playsinline hidden id="art-audio" src="video/art1.mp4"></audio>
+<audio playsinline hidden id="maps-audio" src="video/maps1.mp4"></audio>
+<audio playsinline hidden id="ships-audio" src="video/ships1.mp4"></audio>
+<audio playsinline hidden id="applause-audio" src="video/applause1.mp4"></audio>
+<audio playsinline hidden id="boo-audio" src="video/boo1.mp4"></audio>
+
+<!-- Import and configure the Firebase SDK -->
+<script src="/__/firebase/7.19.0/firebase-app.js"></script>
+<script src="/__/firebase/7.19.0/firebase-analytics.js"></script>
+<script src="/__/firebase/7.19.0/firebase-auth.js"></script>
+<script src="/__/firebase/7.19.0/firebase-firestore.js"></script>
+<script src="/__/firebase/7.19.0/firebase-performance.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<!-- Import Autolinker and DOMPurify -->
+<script src="scripts/Autolinker.min.js"></script>
+<script src="scripts/purify.min.js"></script>
+
+<script src="scripts/main.js"></script>
 </body>
 </html>

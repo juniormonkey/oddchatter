@@ -125,7 +125,7 @@ function enableWithDefault2(formElement, textInput1, defaultValue1, textInput2,
     config.CONFIG.saveToFirestore();
   });
   // TODO: re-enable this once issue #41 is resolved.
-  //formElement.querySelectorAll('button').forEach(
+  // formElement.querySelectorAll('button').forEach(
   //    (el) => el.removeAttribute('disabled'));
 }
 

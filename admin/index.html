@@ -199,13 +199,14 @@
               <div class="settings-description">
                 Callback videos are triggered by more than a threshold of voices
                 saying the same thing within a specific time window. Adjust
-                these values here.
+                these values here. (This adjustment does not yet work.)
               </div>
               <form id="callback-form" class="configuration-form" action="#">
                 <div
                   class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
                 >
                   <input
+                    disabled
                     class="mdl-textfield__input"
                     type="number"
                     min="1"
@@ -220,6 +221,7 @@
                   class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
                 >
                   <input
+                    disabled
                     class="mdl-textfield__input"
                     type="number"
                     min="1000"
@@ -232,6 +234,7 @@
                   </label>
                 </div>
                 <button
+                  disabled
                   id="callback-submit"
                   type="submit"
                   class="mdl-button mdl-js-button mdl-button--raised"

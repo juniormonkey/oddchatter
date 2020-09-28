@@ -351,15 +351,15 @@ h3 {
     background-image: url("/images/screenshot-mobile.png");
   }
   #promo-container {
-    top: calc(50% - 146px);
+    top: calc(50% - 210px);
     width: 300px;
     position: relative;
     display: block;
     margin: auto;
   }
   #promo-image {
-    background-image: url("/images/shock.jpg");
-    height: 150px;
+    background-image: url("/images/shock-mobile.jpg");
+    height: 300px;
     width: 300px;
   }
   #promo-social,

@@ -70,7 +70,7 @@ describe('messages', function() {
 
     const mockauth = new firebasemock.MockAuthentication();
     const mockfirestore = new firebasemock.MockFirestore();
-    global.firebase = new firebasemock.MockFirebaseSdk(
+    window.firebase = new firebasemock.MockFirebaseSdk(
         // use null if your code does not use RTDB
         null,
         // use null if your code does not use AUTHENTICATION

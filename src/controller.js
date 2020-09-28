@@ -68,12 +68,12 @@ function checkForCallbacks_(text) {
       return;
     }
 
-    firebase.firestore()
+    window.firebase.firestore()
         .collection(callback.getCollection())
         .doc(user.getUid())
         .set({
           profilePicUrl: user.getProfilePicUrl(),
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          timestamp: window.firebase.firestore.FieldValue.serverTimestamp(),
         })
         .catch((error) => {
           console.error('Error writing new message to database', error);
@@ -93,14 +93,14 @@ function saveMessage_(messageText) {
 
   // Add a new message entry to the database.
   /* eslint-disable quote-props */
-  return firebase.firestore()
+  return window.firebase.firestore()
       .collection('messages')
       .add({
         'uid': user.getUid(),
         'name': user.getUserName(),
         'text': messageText,
         'profilePicUrl': user.getProfilePicUrl(),
-        'timestamp': firebase.firestore.FieldValue.serverTimestamp(),
+        'timestamp': window.firebase.firestore.FieldValue.serverTimestamp(),
       })
       .catch((error) => {
         console.error('Error writing new message to database', error);
@@ -113,11 +113,11 @@ function saveMessage_(messageText) {
  * @param {!Event} e
  * @private
  */
-function onMessageFormSubmit_(e) {
+async function onMessageFormSubmit_(e) {
   e.preventDefault();
   logging.logEvent(
       'share', {method: 'chat', content_type: 'freeform', content_id: ''});
-  onMessageSubmitted_(ui.messageInputElement().value);
+  await onMessageSubmitted_(ui.messageInputElement().value);
 }
 
 /**
@@ -126,14 +126,14 @@ function onMessageFormSubmit_(e) {
  * @param {!Event} e
  * @private
  */
-function onCallbackFormSubmit_(callback, e) {
+async function onCallbackFormSubmit_(callback, e) {
   e.preventDefault();
   logging.logEvent('share', {
     method: 'chat',
     content_type: callback.getCollection(),
     content_id: '',
   });
-  onMessageSubmitted_(callback.getMessage());
+  await onMessageSubmitted_(callback.getMessage());
   callback.buttonElement().setAttribute('disabled', 'true');
   setTimeout(() => callback.enableButton(), 1000);
 }
@@ -143,14 +143,13 @@ function onCallbackFormSubmit_(callback, e) {
  * @param {string} message The message to submit.
  * @private
  */
-function onMessageSubmitted_(message) {
+async function onMessageSubmitted_(message) {
   // Check that the user entered a message and is signed in.
   if (message && checkSignedInWithMessage_()) {
-    saveMessage_(message).then(() => {
-      // Clear message text field and re-enable the SEND button.
-      resetMaterialTextfield_(ui.messageInputElement());
-      toggleButton_();
-    });
+    await saveMessage_(message);
+    // Clear message text field and re-enable the SEND button.
+    resetMaterialTextfield_(ui.messageInputElement());
+    toggleButton_();
   }
 }
 
@@ -181,8 +180,10 @@ function checkSignedInWithMessage_() {
  */
 function resetMaterialTextfield_(element) {
   element.value = '';
-  /** @type {MaterialTextfield} */ (element.parentNode['MaterialTextfield'])
-      .boundUpdateClassesHandler();
+  if (element.parentNode['MaterialTextfield']) {
+    /** @type {MaterialTextfield} */ (element.parentNode['MaterialTextfield'])
+        .boundUpdateClassesHandler();
+  }
 }
 
 /**

@@ -11,6 +11,9 @@
         ],
         "release": [
           "odd-chatter"
+        ],
+        "admin": [
+          "odd-chatter-admin-dev"
         ]
       }
     },

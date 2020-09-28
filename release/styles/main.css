@@ -12,22 +12,26 @@
  * limitations under the License.
  */
 
-html, body {
-  font-family: 'EB Garamond', 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif; 
+html,
+body {
+  font-family: "EB Garamond", "Garamond", "Baskerville", "Baskerville Old Face",
+    "Hoefler Text", "Times New Roman", serif;
   background-color: #000;
 }
-main, #messages-card {
+main,
+#messages-card {
   height: 100%;
   padding-bottom: 0;
 }
 .public-works {
   height: 100%;
-  background-image: url('/images/background.jpeg');
+  background-image: url("/images/background.jpeg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-#messages-card-container, #signin-splashscreen {
+#messages-card-container,
+#signin-splashscreen {
   height: calc(100% - 35px);
   padding-bottom: 0;
 }
@@ -79,12 +83,56 @@ main, #messages-card {
   opacity: 1;
 }
 .message-container .pic {
-  background-image: url('/images/profile_placeholder.png');
+  background-image: url("/images/profile_placeholder.png");
   background-repeat: no-repeat;
   width: 30px;
   height: 30px;
   background-size: 30px;
   border-radius: 20px;
+}
+.message-container .callback-emoji {
+  background-color: rgba(0, 0, 0, 0.54);
+  width: 30px;
+  height: 30px;
+  border-radius: 20px;
+  line-height: 30px;
+  font-size: 16px;
+  text-align: center;
+  vertical-align: middle;
+}
+.message-container .callback-progress {
+  display: table-cell;
+  width: 100%;
+  padding: 5px 0 5px 10px;
+}
+.message-container .callback-progress-bar {
+  background-image: url("/images/crowd.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 5px;
+  color: #FFF;
+  height: 30px;
+  transition: width 1s ease-in-out;
+}
+.message-container .callback-progress-callback {
+  display: inline-block;
+  height: 25px;
+  float: right;
+  margin: 5px;
+}
+.message-container .callback-progress-voice {
+  background-image: url("/images/profile_placeholder.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 2px -5px;
+  background-size: 25px;
+  border-radius: 15px;
+}
+.message-container .callback-progress-voice:first-child {
+  margin-left: 15px;
 }
 .message-container .spacing {
   display: table-cell;
@@ -95,7 +143,9 @@ main, #messages-card {
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
-.message-container .name, .message-container .timestamp, .message-container .admin {
+.message-container .name,
+.message-container .timestamp,
+.message-container .admin {
   display: inline-block;
   padding-left: 40px;
   color: #bbb;
@@ -113,7 +163,8 @@ main, #messages-card {
 #message-form .mdl-textfield {
   width: calc(100% - 120px);
 }
-#message-form button, #image-form button {
+#message-form button,
+#image-form button {
   width: 100px;
   margin: 0 0 0 10px;
 }
@@ -139,7 +190,7 @@ main, #messages-card {
   top: -3px;
   position: relative;
   display: inline-block;
-  background-image: url('/images/profile_placeholder.png');
+  background-image: url("/images/profile_placeholder.png");
   background-repeat: no-repeat;
   width: 40px;
   height: 40px;
@@ -187,10 +238,10 @@ main, #messages-card {
   }
 }
 .mdl-textfield__label:after {
-  background-color: #0288D1;
+  background-color: #0288d1;
 }
 .mdl-textfield--floating-label.is-focused .mdl-textfield__label {
-  color: #0288D1;
+  color: #0288d1;
 }
 .mdl-button .material-icons {
   top: -1px;
@@ -204,10 +255,15 @@ main, #messages-card {
   padding-right: 5px;
 }
 .mdl-button {
-  font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif; 
+  font-family: "Garamond", "Baskerville", "Baskerville Old Face", "Hoefler Text",
+    "Times New Roman", serif;
 }
-h1, h2, h3, h4 {
-  font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif; 
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Garamond", "Baskerville", "Baskerville Old Face", "Hoefler Text",
+    "Times New Roman", serif;
 }
 h3 {
   font-size: 30px;
@@ -228,37 +284,38 @@ h3 {
   height: 100%;
 }
 #promo {
-  position:  absolute;
+  position: absolute;
   height: 100%;
   width: 100%;
-  background-image: url('/images/background.jpeg');
+  background-image: url("/images/background.jpeg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 10;
 }
 #promo-container {
-	position: relative;
+  position: relative;
   top: calc(50% - 335px);
   width: 1000px;
   display: block;
-	margin: auto;
+  margin: auto;
 }
 #promo-image {
-  background-image: url('/images/shock.jpg');
+  background-image: url("/images/shock.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-	height: 500px;
+  height: 500px;
   width: 1000px;
   display: block;
 }
-#promo-social, #promo-action {
+#promo-social,
+#promo-action {
   background-color: black;
   color: white;
   width: 1000px;
   display: block;
-  margin:auto;
+  margin: auto;
   padding: 20px 0;
   text-align: center;
   font-size: xx-large;
@@ -267,7 +324,7 @@ h3 {
 }
 #promo-facebook {
   display: inline-block;
-  background-image: url('/images/facebook.png');
+  background-image: url("/images/facebook.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -279,7 +336,7 @@ h3 {
 }
 #promo-eventbrite {
   display: inline-block;
-  background-image: url('/images/eventbrite.png');
+  background-image: url("/images/eventbrite.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -291,21 +348,22 @@ h3 {
 }
 @media screen and (max-width: 610px) {
   #promo {
-    background-image: url('/images/screenshot-mobile.png');
+    background-image: url("/images/screenshot-mobile.png");
   }
   #promo-container {
-    top: calc(50% - 146px);
+    top: calc(50% - 210px);
     width: 300px;
     position: relative;
     display: block;
     margin: auto;
   }
   #promo-image {
-    background-image: url('/images/shock.jpg');
-    height: 150px;
+    background-image: url("/images/shock-mobile.jpg");
+    height: 300px;
     width: 300px;
   }
-  #promo-social, #promo-action {
+  #promo-social,
+  #promo-action {
     font-size: large;
     width: 300px;
   }
@@ -317,7 +375,7 @@ h3 {
   }
 }
 #error-container {
-  color: #FFF;
+  color: #fff;
   position: absolute;
   height: 100%;
   width: 100%;
@@ -328,7 +386,7 @@ h3 {
   margin: 20% auto;
 }
 #error-harvey {
-  background-image: url('/images/harvey-big.jpg');
+  background-image: url("/images/harvey-big.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -347,19 +405,19 @@ h3 {
 #error-text {
   text-align: center;
   margin: 20px 0;
-	font-size: large;
+  font-size: large;
 }
 #intro-container {
-  color: #FFF;
+  color: #fff;
   z-index: 100;
 }
 #intro {
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   width: 75%;
   margin: 15% auto;
 }
 #intro-harvey {
-  background-image: url('/images/harvey-big.jpg');
+  background-image: url("/images/harvey-big.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -377,7 +435,7 @@ h3 {
 #intro-text {
   text-align: center;
   margin: 20px 0;
-	font-size: large;
+  font-size: large;
 }
 #intro-text div {
   margin: 10px 0;
@@ -386,5 +444,5 @@ h3 {
   height: 100%;
 }
 #youtube-stream-container {
-  background: rgba(0,0,0,0);
+  background: rgba(0, 0, 0, 0);
 }

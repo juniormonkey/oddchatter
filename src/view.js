@@ -90,6 +90,11 @@ export function applyNewConfiguration(configuration) {
       ui.youtubeStreamContainerElement().setAttribute('hidden', true);
     }
   }
+
+  // Listen for callbacks.
+  if (!config.isAdminMode()) {
+    loadCallbacks_();
+  }
 }
 
 /**
@@ -169,10 +174,6 @@ function showMessagesCard_() {
     ui.messageInputElement().focus();
   }
 
-  // Load the messages.
-  if (!config.isAdminMode()) {
-    loadCallbacks_();
-  }
   messages.load(config.CONFIG.event_start);
 
   logging.logEvent('screen_view', {screen_name: 'chat'});
@@ -218,19 +219,20 @@ function showIntroduction_() {
  */
 function loadCallbacks_() {
   for (const callback of callbackUi.CALLBACKS) {
+    if (callback.unsubscribeFromFirestore) {
+      callback.unsubscribeFromFirestore();
+    }
     const query = window.firebase.firestore()
                       .collection(callback.callback.getCollection())
                       .orderBy('timestamp', 'desc')
                       .limit(config.CONFIG.callback_threshold);
 
-    if (!callback.unsubscribeFromFirestore) {
-      callback.unsubscribeFromFirestore = query.onSnapshot(
-          (snapshot) => {
-            callback.handleFirestoreSnapshot(snapshot.docs);
-          },
-          (error) => {
-            console.error('Error querying Firestore: ', error);
-          });
-    }
+    callback.unsubscribeFromFirestore = query.onSnapshot(
+        (snapshot) => {
+          callback.handleFirestoreSnapshot(snapshot.docs);
+        },
+        (error) => {
+          console.error('Error querying Firestore: ', error);
+        });
   }
 }

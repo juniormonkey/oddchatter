@@ -25,6 +25,21 @@ export class CallbackUi {
   }
 
   /**
+   * Initializes the audio elements.
+   */
+  initAudio() {
+    this.callback.videoUrls.forEach(video => {
+      const audioElement = document.createElement('audio');
+      audioElement.id = video;
+      audioElement.playsinline = true;
+      audioElement.hidden = true;
+      audioElement.preload = 'auto';
+      audioElement.src = `video/${video}`;
+      ui.hiddenAudioElement().appendChild(audioElement);
+    });
+  }
+
+  /**
    * @param {Array<firebase.firestore.QueryDocumentSnapshot>} docs
    */
   handleFirestoreSnapshot(docs) {
@@ -104,17 +119,17 @@ export class CallbackUi {
                           (ui.messageListElement().scrollHeight -
                            ui.messageListElement().clientHeight - 60);
 
-    const video = `video/${
+    const video = 
         this.callback.videoUrls[Math.floor(Math.random() *
-                                           this.callback.videoUrls.length)]}`;
+                                           this.callback.videoUrls.length)];
     const message = messages.createMessage(
         CALLBACK_ID.next(), new Date(timestamp), '', this.callback.getByline(),
-        'images/adventureharvey.jpg', '', video);
+        'images/adventureharvey.jpg', '', `video/${video}`);
     message.display();
     if (scrollToVideo) {
       ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
     }
-    this.callback.audioElement().play();
+    document.getElementById(video).play();
   }
 }
 

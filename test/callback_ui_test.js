@@ -50,12 +50,7 @@ describe('callbacks', function() {
         '  <input type="text" id="message">' +
         '  <button id="submit" type="submit">Send</button>' +
         '</form>' +
-        '<audio id="science-audio" src="video/science1.mp4"></audio>' +
-        '<audio id="art-audio" src="video/art1.mp4"></audio>' +
-        '<audio id="maps-audio" src="video/maps1.mp4"></audio>' +
-        '<audio id="ships-audio" src="video/ships1.mp4"></audio>' +
-        '<audio id="applause-audio" src="video/applause1.mp4"></audio>' +
-        '<audio id="boo-audio" src="video/boo1.mp4"></audio>';
+        '<div id="hidden-audio"></div>';
 
     window.HTMLMediaElement.prototype.play = () => { /* do nothing */ };
 
@@ -87,11 +82,15 @@ describe('callbacks', function() {
     });
     mockauth.flush();
 
-    // This is needed because MockDate is not yet installed when
-    // callback_ui.CALLBACKS is initialized.
-    for (const callback of CALLBACKS) {
+    CALLBACKS.forEach(callback => {
+      // This is needed because MockDate is not yet installed when
+      // callback_ui.CALLBACKS is initialized.
       callback.lastCalledTimestampMillis = 1;
-    }
+
+      // This is needed because the real app would call this in the auth state
+      // changed listener, which this test does not set up.
+      callback.initAudio();
+    });
   });
 
   afterEach(function() {

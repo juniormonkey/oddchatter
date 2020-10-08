@@ -31,7 +31,8 @@ describe('view', function() {
         '    <button id="intro-button"></button>' +
         '  </div>' +
         '  <div id="messages-card-container" hidden></div>' +
-        '</div>';
+        '</div>' +
+        '<div id="hidden-audio"></div>';
 
     const mockauth = new firebasemock.MockAuthentication();
     const mockfirestore = new firebasemock.MockFirestore();

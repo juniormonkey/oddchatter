@@ -134,18 +134,8 @@ export function findDivToInsertBefore(timestamp) {
 /** @return {Element} */ export const youtubeChatIframeElement = () =>
     document.getElementById('youtube-chat');
 
-/** @return {Element} */ export const scienceAudioElement = () =>
-    document.getElementById('science-audio');
-/** @return {Element} */ export const artAudioElement = () =>
-    document.getElementById('art-audio');
-/** @return {Element} */ export const mapsAudioElement = () =>
-    document.getElementById('maps-audio');
-/** @return {Element} */ export const shipsAudioElement = () =>
-    document.getElementById('ships-audio');
-/** @return {Element} */ export const applauseAudioElement = () =>
-    document.getElementById('applause-audio');
-/** @return {Element} */ export const booAudioElement = () =>
-    document.getElementById('boo-audio');
+/** @return {Element} */ export const hiddenAudioElement = () =>
+    document.getElementById('hidden-audio');
 
 /** @return {Element} */ export const scienceFormElement = () =>
     document.getElementById('science-form');

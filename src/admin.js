@@ -182,10 +182,9 @@ function enableWithDefault2(
     e.preventDefault();
     updateConfiguration(textInput1.value, textInput2.value);
     config.CONFIG.saveToFirestore();
-  });
-  // TODO: re-enable this once issue #41 is resolved.
-  // formElement.querySelectorAll('button').forEach(
-  //    (el) => el.removeAttribute('disabled'));
+  });  
+  formElement.querySelectorAll('button').forEach(
+     (el) => el.removeAttribute('disabled'));
 }
 
 /**

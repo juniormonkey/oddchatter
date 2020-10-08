@@ -310,7 +310,7 @@ h3 {
   margin: auto;
 }
 #promo-image {
-  background-image: url("/images/shock.jpg");
+  background-image: url("/images/horror.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -367,7 +367,7 @@ h3 {
     margin: auto;
   }
   #promo-image {
-    background-image: url("/images/shock-mobile.jpg");
+    background-image: url("/images/horror-mobile.jpg");
     height: 300px;
     width: 300px;
   }

@@ -103,7 +103,7 @@ main,
 .message-container .callback-progress {
   display: table-cell;
   width: 100%;
-  padding: 5px 0 5px 10px;
+  padding: 0 0 10px 10px;
 }
 .message-container .callback-progress-bar {
   background-image: url("/images/crowd.jpg");
@@ -115,11 +115,20 @@ main,
   height: 30px;
   transition: width 1s ease-in-out;
 }
-.message-container .callback-progress-callback {
-  display: inline-block;
+.callback-progress-bar .callback-progress-callback {
   height: 25px;
   float: right;
   margin: 5px;
+}
+.callback-progress-bar-expired {
+  height: 30px;
+}
+.callback-progress-bar-expired .callback-progress-callback {
+  display: inline-block;
+  height: 25px;
+  line-height: 25px;
+  margin: 5px 15px;
+  vertical-align: bottom;
 }
 .message-container .callback-progress-voice {
   background-image: url("/images/profile_placeholder.png");
@@ -301,7 +310,7 @@ h3 {
   margin: auto;
 }
 #promo-image {
-  background-image: url("/images/shock.jpg");
+  background-image: url("/images/horror.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -358,7 +367,7 @@ h3 {
     margin: auto;
   }
   #promo-image {
-    background-image: url("/images/shock-mobile.jpg");
+    background-image: url("/images/horror-mobile.jpg");
     height: 300px;
     width: 300px;
   }
@@ -445,4 +454,8 @@ h3 {
 }
 #youtube-stream-container {
   background: rgba(0, 0, 0, 0);
+}
+#hidden-audio {
+  visibility: hidden;
+  height: 1px;
 }

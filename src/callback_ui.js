@@ -198,6 +198,22 @@ class CallbackProgress {
       setTimeout(() => {
         this.div.classList.add('visible');
       }, 1);
+
+      // Start the progress bar fading out.
+      setTimeout(() => {
+        const progressBar = this.div.querySelector('.callback-progress-bar');
+        progressBar.style.transition =
+            `opacity ${config.CONFIG.callback_window_ms - 1000}ms ease-in`;
+        progressBar.style.opacity = 0;
+      }, 1001);
+
+      // When the window ends, flip the progress bar style.
+      setTimeout(() => {
+        const progressBar = this.div.querySelector('.callback-progress-bar');
+        progressBar.classList.remove('callback-progress-bar');
+        progressBar.classList.add('callback-progress-bar-expired');
+        progressBar.removeAttribute('style');
+      }, config.CONFIG.callback_window_ms);
     }
 
     if (scrollToProgressBar) {

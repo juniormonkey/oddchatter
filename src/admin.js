@@ -182,7 +182,7 @@ function enableWithDefault2(
     e.preventDefault();
     updateConfiguration(textInput1.value, textInput2.value);
     config.CONFIG.saveToFirestore();
-  });  
+  });
   formElement.querySelectorAll('button').forEach(
      (el) => el.removeAttribute('disabled'));
 }

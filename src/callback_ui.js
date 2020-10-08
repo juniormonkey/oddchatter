@@ -119,7 +119,7 @@ export class CallbackUi {
                           (ui.messageListElement().scrollHeight -
                            ui.messageListElement().clientHeight - 60);
 
-    const video = 
+    const video =
         this.callback.videoUrls[Math.floor(Math.random() *
                                            this.callback.videoUrls.length)];
     const message = messages.createMessage(

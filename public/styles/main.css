@@ -446,3 +446,7 @@ h3 {
 #youtube-stream-container {
   background: rgba(0, 0, 0, 0);
 }
+#hidden-audio {
+  visibility: hidden;
+  height: 1px;
+}

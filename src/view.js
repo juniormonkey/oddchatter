@@ -125,6 +125,10 @@ export async function applyNewAuthState(firebaseUser) {
     // Hide the sign-in UI
     ui.splashScreenElement().setAttribute('hidden', 'true');
 
+    // Initialize the callback audio elements.
+    ui.hiddenAudioElement().innerHTML = '';
+    callbackUi.CALLBACKS.forEach(callback => callback.initAudio());
+
     applyNewConfiguration(config.CONFIG);
 
     // Show the messages UI, or the introduction if it hasn't been seen yet
@@ -193,8 +197,7 @@ function showIntroduction_() {
   return new Promise((resolve, reject) => {
     ui.introButtonElement().addEventListener('click', () => {
       // Play all the sounds, at volume 0, for mobile browsers.
-      for (const callback of callbacks.CALLBACKS) {
-        const audio = callback.audioElement();
+      ui.hiddenAudioElement().querySelectorAll('audio').forEach(audio => {
         audio.volume = 0;
         audio.muted = true;
         audio.playbackRate = 2;
@@ -205,8 +208,8 @@ function showIntroduction_() {
           audio.onended = null;
         };
         audio.play();
-        callback.enableButton();
-      }
+      });
+      callbacks.CALLBACKS.forEach(callback => callback.enableButton());
       config.CONFIG.intro_seen = true;
       resolve();
     });

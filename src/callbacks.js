@@ -15,17 +15,13 @@ export class Callback {
    *     The HTML form that submits the callback chat message.
    * @param {function(): Element} buttonElement The HTML button that submits the
    *     form.
-   * @param {function(): Element} audioElement
-   *     The HTML audio element to play when the callback is triggered.
    */
-  constructor(text, buttonText, videoUrls, formElement, buttonElement,
-              audioElement) {
+  constructor(text, buttonText, videoUrls, formElement, buttonElement) {
     this.text = text;
     this.buttonText = buttonText;
     this.videoUrls = videoUrls;
     this.formElement = formElement;
     this.buttonElement = buttonElement;
-    this.audioElement = audioElement;
     /** @type {number} */
     this.lastCalledTimestampMillis =
         Date.now() - config.CONFIG.callback_window_ms;
@@ -98,12 +94,11 @@ export const CALLBACKS = [
       'science6.mp4',
       'science7.mp4',
     ],
-               ui.scienceFormElement, ui.scienceButtonElement,
-               ui.scienceAudioElement),
+               ui.scienceFormElement, ui.scienceButtonElement),
   new Callback('ART', '🎨', ['art1.mp4', 'art2.mp4', 'art3.mp4'],
-               ui.artFormElement, ui.artButtonElement, ui.artAudioElement),
+               ui.artFormElement, ui.artButtonElement),
   new Callback('MAPS', '🗺️', ['maps1.mp4', 'maps2.mp4', 'maps3.mp4'],
-               ui.mapsFormElement, ui.mapsButtonElement, ui.mapsAudioElement),
+               ui.mapsFormElement, ui.mapsButtonElement),
   new Callback('SHIPS', '🚢',
     [
       'ships1.mp4',
@@ -113,11 +108,9 @@ export const CALLBACKS = [
       'ships5.mp4',
       'ships6.mp4',
     ],
-               ui.shipsFormElement, ui.shipsButtonElement,
-               ui.shipsAudioElement),
+               ui.shipsFormElement, ui.shipsButtonElement),
   new Callback('👏', '👏', ['applause1.mp4', 'applause2.mp4', 'applause3.mp4'],
-               ui.applauseFormElement, ui.applauseButtonElement,
-               ui.applauseAudioElement),
+               ui.applauseFormElement, ui.applauseButtonElement),
   new Callback('👎', '👎', ['boo1.mp4', 'boo2.mp4', 'boo3.mp4'],
-               ui.booFormElement, ui.booButtonElement, ui.booAudioElement),
+               ui.booFormElement, ui.booButtonElement),
 ];

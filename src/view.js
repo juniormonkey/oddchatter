@@ -8,6 +8,7 @@ import * as callbacks from './callbacks.js';
 import * as config from './config.js';
 import * as logging from './logging.js';
 import * as messages from './messages.js';
+import * as notifications from './notifications.js';
 import * as ui from './ui.js';
 import * as user from './user.js';
 
@@ -124,6 +125,9 @@ export async function applyNewAuthState(firebaseUser) {
 
     // Hide the sign-in UI
     ui.splashScreenElement().setAttribute('hidden', 'true');
+
+    // Save the Firebase Messaging Device token and enable notifications.
+    notifications.saveMessagingDeviceToken();
 
     // Initialize the callback audio elements.
     ui.hiddenAudioElement().innerHTML = '';

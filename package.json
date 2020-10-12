@@ -5,7 +5,13 @@
   "main": "src/main.js",
   "scripts": {
     "test": "c8 --all --include=src --reporter=text --reporter=lcov mocha",
-    "coverage": "c8 report --all --include=src --reporter=text-lcov | coveralls"
+    "coverage": "c8 report --all --include=src --reporter=text-lcov | coveralls",
+    "build": "run-script-os",
+    "build:windows": "compile.bat",
+    "build:linux:mac": "compile.sh",
+    "build-admin": "run-script-os",
+    "build-admin:windows": "compile-admin.bat",
+    "build-admin:linux:mac": "compile-admin.sh"
   },
   "repository": {
     "type": "git",
@@ -24,7 +30,9 @@
   "dependencies": {
     "autolinker": ">=3.14.1",
     "dompurify": ">=2.1.1",
-    "firebase": ">=7.21.0",
+    "firebase": "^7.23.0",
+    "firebase-admin": ">=9.2.0",
+    "firebase-functions": ">=3.11.0",
     "google-closure-library": ">=20200719.0.0"
   },
   "devDependencies": {
@@ -46,6 +54,10 @@
     "mocha": "*",
     "mockdate": ">=3.0.2",
     "prettier": ">=2.1.1",
-    "prettier-eslint": "^11.0.0"
+    "prettier-eslint": "^11.0.0",
+    "run-script-os": "^1.1.1"
+  },
+  "engines": {
+    "node": "8"
   }
 }

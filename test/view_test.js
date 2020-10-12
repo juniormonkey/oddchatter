@@ -36,21 +36,17 @@ describe('view', function() {
 
     const mockauth = new firebasemock.MockAuthentication();
     const mockfirestore = new firebasemock.MockFirestore();
+    const mockmessaging = new firebasemock.MockMessaging();
     window.firebase = new firebasemock.MockFirebaseSdk(
         // use null if your code does not use RTDB
         null,
-        // use null if your code does not use AUTHENTICATION
-        () => {
-          return mockauth;
-        },
-        // use null if your code does not use FIRESTORE
-        () => {
-          return mockfirestore;
-        },
+        () => mockauth,
+        () => mockfirestore,
         // use null if your code does not use STORAGE
         null,
-        // use null if your code does not use MESSAGING
-        null);
+        () => mockmessaging);
+
+    mockmessaging.getToken = () => Promise.resolve('messagingtoken');
 
     mockauth.onAuthStateChanged(applyNewAuthState);
 

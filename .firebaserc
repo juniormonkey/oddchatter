@@ -1,7 +1,8 @@
 {
   "projects": {
     "release": "odd-salon-callbacks",
-    "dev": "odd-salon-callbacks-dev"
+    "dev": "odd-salon-callbacks-dev",
+    "default": "odd-salon-callbacks-dev"
   },
   "targets": {
     "odd-salon-callbacks-dev": {

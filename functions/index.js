@@ -4,6 +4,9 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+/** @const Three hours in MS; the length of one Odd Salon with time to spare. */
+const THREE_HOURS_MS = 3 * 60 * 60 * 1000;
+
 /** Sends a notifications to all users when a new message is posted. */
 exports.sendNotifications = functions.firestore.document('messages/{messageId}').onCreate(
     async(snapshot) => {
@@ -18,10 +21,14 @@ exports.sendNotifications = functions.firestore.document('messages/{messageId}')
         },
       };
 
-      // Get the list of device tokens.
-      const allTokens = await admin.firestore().collection('fcmTokens').get();
+      // Get the list of device tokens created in the last ~3 hours.
+      const allTokens = await admin.firestore()
+          .collection('fcmTokens')
+          .where('timestamp', '>', new Date(Date.now() - THREE_HOURS_MS))
+          .get();
       const tokens = [];
       allTokens.forEach((tokenDoc) => {
+        console.log('token:', tokenDoc.id);
         tokens.push(tokenDoc.id);
       });
 

@@ -6,12 +6,15 @@
 export function saveMessagingDeviceToken() {
   window.firebase.messaging().getToken().then((currentToken) => {
     if (currentToken) {
-      // Saving the Device Token to the datastore.
+      /* eslint-disable quote-props */
       window.firebase
           .firestore()
           .collection('fcmTokens')
           .doc(currentToken)
-          .set({uid: window.firebase.auth().currentUser.uid});
+          .set({
+            'uid': window.firebase.auth().currentUser.uid,
+            'timestamp': window.firebase.firestore.FieldValue.serverTimestamp(),
+          });
     } else {
         // Need to request permissions to show notifications.
       requestNotificationsPermissions_();

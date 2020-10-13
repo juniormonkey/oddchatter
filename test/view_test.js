@@ -24,7 +24,9 @@ describe('view', function() {
         '    <div id="user-pic" hidden></div>' +
         '    <div id="user-name" hidden></div>' +
         '    <button id="sign-in"></button>' +
+        '    <button id="kebab-menu"></button>' +
         '    <button id="sign-out"></button>' +
+        '    <input type="checkbox" id="notifications-switch"></input>' +
         '  </div>' +
         '  <div id="signin-splashscreen"></div>' +
         '  <div id="intro-container" hidden>' +

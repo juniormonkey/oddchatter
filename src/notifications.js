@@ -3,8 +3,9 @@
  */
 
 /** Saves the messaging device token to the datastore. */
-export function saveMessagingDeviceToken() {
-  window.firebase.messaging().getToken().then((currentToken) => {
+export async function saveMessagingDeviceToken() {
+  try {
+    const currentToken = await window.firebase.messaging().getToken();
     if (currentToken) {
       /* eslint-disable quote-props */
       window.firebase
@@ -19,10 +20,34 @@ export function saveMessagingDeviceToken() {
         // Need to request permissions to show notifications.
       requestNotificationsPermissions_();
     }
-  }).catch(function(error) {
+  } catch (error) {
     console.error('Unable to get messaging token.', error);
-  });
+  }
 }
+
+/**
+ * Clears the current messaging device token from the datastore.
+ */
+export async function clearMessagingDeviceToken() {
+  try {
+    const currentToken = await window.firebase.messaging().getToken();
+    if (currentToken) {
+      /* eslint-disable quote-props */
+      window.firebase
+          .firestore()
+          .collection('fcmTokens')
+          .doc(currentToken)
+          .delete()
+          .catch((error) => {
+            console.error('Error removing token: ', error);
+          });
+    }
+  } catch (error) {
+    console.error('Unable to get messaging token.', error);
+  }
+}
+
+// TODO: clearMessagingDeviceToken() to delete the current token.
 
 /**
  *  Requests permission to show notifications.

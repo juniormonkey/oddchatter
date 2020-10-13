@@ -115,10 +115,10 @@ export async function applyNewAuthState(firebaseUser) {
         `url(${ui.addSizeToGoogleProfilePic(profilePicUrl)})`;
     ui.userNameElement().textContent = userName;
 
-    // Show user's profile and sign-out button.
+    // Show user's profile and kebab menu.
     ui.userNameElement().removeAttribute('hidden');
     ui.userPicElement().removeAttribute('hidden');
-    ui.signOutButtonElement().removeAttribute('hidden');
+    ui.kebabMenuElement().removeAttribute('hidden');
 
     // Hide sign-in button.
     ui.signInButtonElement().setAttribute('hidden', 'true');
@@ -143,10 +143,10 @@ export async function applyNewAuthState(firebaseUser) {
       showMessagesCard_();
     }
   } else { // User is signed out!
-    // Hide user's profile and sign-out button.
+    // Hide user's profile and kebab menu.
     ui.userNameElement().setAttribute('hidden', 'true');
     ui.userPicElement().setAttribute('hidden', 'true');
-    ui.signOutButtonElement().setAttribute('hidden', 'true');
+    ui.kebabMenuElement().setAttribute('hidden', 'true');
 
     // Show sign-in button.
     ui.signInButtonElement().removeAttribute('hidden');

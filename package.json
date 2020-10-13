@@ -6,6 +6,7 @@
   "scripts": {
     "test": "c8 --all --include=src --reporter=text --reporter=lcov mocha",
     "coverage": "c8 report --all --include=src --reporter=text-lcov | coveralls",
+    "lint": "eslint src/ test/ functions/",
     "build": "run-script-os",
     "build:windows": "compile.bat",
     "build:linux:mac": "compile.sh",

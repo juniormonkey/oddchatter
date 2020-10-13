@@ -5,6 +5,7 @@
 
 import * as callbacks from './callbacks.js';
 import * as logging from './logging.js';
+import * as notifications from './notifications.js';
 import * as ui from './ui.js';
 import * as user from './user.js';
 
@@ -19,6 +20,14 @@ export function init() {
   ui.signOutButtonElement().addEventListener('click', signOut_);
   ui.signInButtonElement().addEventListener('click', signIn_);
   ui.signInSplashButtonElement().addEventListener('click', signIn_);
+
+  ui.notificationsToggleElement().addEventListener('click', (e) => {
+    if (e.target.checked) {
+      notifications.saveMessagingDeviceToken();
+    } else {
+      notifications.clearMessagingDeviceToken();
+    }
+  });
 
   for (const callback of callbacks.CALLBACKS) {
     if (callback.formElement()) {

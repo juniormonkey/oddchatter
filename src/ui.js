@@ -119,6 +119,10 @@ export function findDivToInsertBefore(timestamp) {
     document.getElementById('sign-in');
 /** @return {Element} */ export const signOutButtonElement = () =>
     document.getElementById('sign-out');
+/** @return {Element} */ export const kebabMenuElement = () =>
+    document.getElementById('kebab-menu');
+/** @return {Element} */ export const notificationsToggleElement = () =>
+    document.getElementById('notifications-switch');
 /** @return {Element} */ export const signInSnackbarElement = () =>
     document.getElementById('must-signin-snackbar');
 /** @return {Element} */ export const splashScreenElement = () =>

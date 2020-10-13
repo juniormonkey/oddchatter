@@ -81,9 +81,23 @@
       <div id="user-container">
         <div hidden id="user-pic"></div>
         <div hidden id="user-name"></div>
-        <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-color-text--white">
-          Sign out
+        <button hidden id="kebab-menu" class="mdl-button mdl-js-button mdl-button--icon">
+          <i class="material-icons kebab-menu-icon">more_vert</i>
         </button>
+        
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu" for="kebab-menu">
+          <li class="mdl-menu__item">
+            <button id="sign-out" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color-text--white">
+              Sign out
+            </button>
+          </li>
+          <li class="mdl-menu__item">
+            <label class="mdl-switch mdl-js-switch" for="notifications-switch">
+              <span class="mdl-switch__label notifications-label">Notifications</span>
+              <input type="checkbox" id="notifications-switch" class="mdl-switch__input">
+            </label>
+          </li>
+        </ul>
         <button id="sign-in" class="mdl-button mdl-js-button mdl-color-text--white">
           <i class="material-icons">account_circle</i>Sign in
         </button>

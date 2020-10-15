@@ -47,6 +47,7 @@
     "eslint-config-closure-es6": ">=0.1.1",
     "eslint-config-google": ">=0.14.0",
     "eslint-plugin-closure": ">=0.1.1",
+    "eslint-plugin-promise": ">=4.2.1",
     "esm": ">=3.2.25",
     "firebase-mock": ">=2.3.2",
     "google-closure-compiler-java": ">=20200719.0.0",

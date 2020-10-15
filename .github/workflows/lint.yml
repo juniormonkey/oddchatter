@@ -25,5 +25,5 @@ jobs:
         run: npx eslint functions/ src/ test/ --ext .js,.jsx,.ts,.tsx
 
       - name: Run stylelint 
-        uses: actions-hub/stylelint@master
+        uses: npx stylelint styles/*
 

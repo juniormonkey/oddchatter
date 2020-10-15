@@ -1,8 +1,13 @@
+Del /Q public\styles\*
+Del /Q public\scripts\*
+Rmdir /Q public\scripts\*
+
 Robocopy /E /NFL src public\scripts\src
+
 copy /Y node_modules\autolinker\dist\Autolinker.min.js* public\scripts\
 copy /Y node_modules\dompurify\dist\purify.min.js* public\scripts\
-type styles\common.css styles\main.css > public\styles\main.css
-npx google-closure-compiler ^
+
+call npx google-closure-compiler ^
   --externs=src\externs.js ^
   --externs=node_modules\firebase\externs\firebase-app-externs.js ^
   --externs=node_modules\firebase\externs\firebase-auth-externs.js ^
@@ -21,3 +26,5 @@ npx google-closure-compiler ^
   --compilation_level=ADVANCED_OPTIMIZATIONS ^
   --entry_point='src\main' ^
   %*
+
+call npx postcss styles/main.css -o public\styles\main.css > NUL

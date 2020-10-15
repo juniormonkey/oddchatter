@@ -1,12 +1,14 @@
 .coveralls.yml
 firebase-debug.log
+firestore-debug.log
+ui-debug.log
 *.swp
 *.cache
 .nyc_output/*
 .firebase/*
 public/scripts/*
+public/styles/*
 admin/scripts/*
+admin/styles/*
 node_modules/*
 coverage/*
-firestore-debug.log
-ui-debug.log

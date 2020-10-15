@@ -1,8 +1,13 @@
+Del /Q admin\styles\*
+Del /Q admin\scripts\*
+Rmdir /Q admin\scripts\*
+
 Robocopy /E /NFL src admin\scripts\src
+
 copy /Y node_modules\autolinker\dist\Autolinker.min.js* admin\scripts\
 copy /Y node_modules\dompurify\dist\purify.min.js* admin\scripts\
-type styles\common.css styles\admin.css > admin\styles\main.css
-npx google-closure-compiler ^
+
+call npx google-closure-compiler ^
   --externs=src\externs.js ^
   --externs=node_modules\firebase\externs\firebase-app-externs.js ^
   --externs=node_modules\firebase\externs\firebase-auth-externs.js ^
@@ -21,3 +26,5 @@ npx google-closure-compiler ^
   --define=config.ADMIN_MODE ^
   --entry_point='src\admin' ^
   %*
+
+call npx postcss styles/admin.css -o admin\styles\main.css > NUL

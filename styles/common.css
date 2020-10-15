@@ -1,14 +1,22 @@
 html,
 body {
-  font-family: 'EB Garamond', 'Garamond', 'Baskerville', 'Baskerville Old Face',
-    'Hoefler Text', 'Times New Roman', serif;
+  font-family:
+    'EB Garamond',
+    'Garamond',
+    'Baskerville',
+    'Baskerville Old Face',
+    'Hoefler Text',
+    'Times New Roman',
+    serif;
   background-color: #000;
 }
+
 main,
 #messages-card {
   height: 100%;
   padding-bottom: 0;
 }
+
 .public-works {
   height: 100%;
   background-image: url('/images/background.jpeg');
@@ -16,34 +24,41 @@ main,
   background-repeat: no-repeat;
   background-size: cover;
 }
+
 #messages-card-container,
 #signin-splashscreen {
   height: calc(100% - 35px);
   padding-bottom: 0;
 }
+
 .mdl-layout__header-row span {
   margin-left: 15px;
   margin-top: 17px;
 }
+
 .mdl-grid {
   max-width: 1024px;
   margin: auto;
 }
+
 .material-icons {
   font-size: 36px;
   top: 8px;
   position: relative;
 }
+
 .mdl-layout__header-row {
   padding: 0;
   margin: 0 auto;
 }
+
 .mdl-card__supporting-text {
   width: auto;
   height: 100%;
   padding-top: 0;
   padding-bottom: 0;
 }
+
 #messages {
   overflow-y: auto;
   margin-bottom: 10px;
@@ -51,12 +66,11 @@ main,
   display: flex;
   flex-direction: column;
 }
+
 #message-filler {
   flex-grow: 1;
 }
-.message-container:first-of-type {
-  border-top-width: 0;
-}
+
 .message-container {
   display: block;
   margin-top: 10px;
@@ -65,9 +79,15 @@ main,
   opacity: 0;
   transition: opacity 1s ease-in-out;
 }
+
+.message-container:first-of-type {
+  border-top-width: 0;
+}
+
 .message-container.visible {
   opacity: 1;
 }
+
 .message-container .pic {
   background-image: url('/images/profile_placeholder.png');
   background-repeat: no-repeat;
@@ -76,18 +96,22 @@ main,
   background-size: 30px;
   border-radius: 20px;
 }
+
 .message-container .spacing {
   display: table-cell;
   vertical-align: top;
 }
+
 .message-container .message {
   display: table-cell;
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
+
 .message-container .byline {
   padding-left: 40px;
 }
+
 .message-container .name,
 .message-container .timestamp,
 .message-container .admin {
@@ -97,15 +121,18 @@ main,
   font-size: 12px;
   box-sizing: border-box;
 }
+
 .message-container .timestamp,
 .message-container .admin {
   float: right;
 }
+
 .mdl-card {
   min-height: 0;
   background: linear-gradient(white, #f9f9f9);
   justify-content: space-between;
 }
+
 #user-container {
   position: absolute;
   display: flex;
@@ -117,6 +144,7 @@ main,
   justify-content: flex-end;
   padding-right: 10px;
 }
+
 #user-container #user-pic {
   top: -3px;
   position: relative;
@@ -128,12 +156,14 @@ main,
   background-size: 40px;
   border-radius: 20px;
 }
+
 #user-container #user-name {
   font-size: 16px;
   line-height: 36px;
   padding-right: 10px;
   padding-left: 20px;
 }
+
 @media screen and (max-width: 610px) {
   #user-container #user-pic {
     top: 2px;
@@ -142,61 +172,86 @@ main,
     background-size: 33px;
     font-size: 10px;
   }
+
   #user-container #user-name {
     display: none;
   }
+
   .mdl-button {
     min-width: 36px;
     padding: 0 5px;
   }
 }
-.mdl-textfield__label:after {
+
+.mdl-textfield__label::after {
   background-color: #0288d1;
 }
+
 .mdl-textfield--floating-label.is-focused .mdl-textfield__label {
   color: #0288d1;
 }
+
 .mdl-button .material-icons {
   top: -1px;
   margin-right: 5px;
 }
+
 .inline-icon {
   vertical-align: top;
   padding-right: 5px;
 }
+
 .mdl-button {
-  font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text',
-    'Times New Roman', serif;
+  font-family:
+    'Garamond',
+    'Baskerville',
+    'Baskerville Old Face',
+    'Hoefler Text',
+    'Times New Roman',
+    serif;
 }
+
 h1,
 h2,
 h3,
 h4 {
-  font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text',
-    'Times New Roman', serif;
+  font-family:
+    'Garamond',
+    'Baskerville',
+    'Baskerville Old Face',
+    'Hoefler Text',
+    'Times New Roman',
+    serif;
 }
+
 h3 {
   font-size: 30px;
 }
+
 .messagebuttons {
   display: flex;
   justify-content: space-around;
 }
+
 .mdl-ripple {
   background: #000;
   opacity: 0.001;
 }
+
 #signin-card {
   text-align: center;
   margin-top: calc(50% - 80px);
 }
+
 .mdl-menu__item .mdl-button {
   display: block;
   margin: 5px auto;
 }
+
 .mdl-menu__item {
   width: 160px;
 }
+
 .material-icons.kebab-menu-icon {
   display: absolute;
   left: 30%;

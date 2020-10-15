@@ -1,10 +1,13 @@
 #!/bin/sh
 
-rm -rf public/scripts/src
+rm -rf public/styles/*
+rm -rf public/scripts/*
+
 cp src public/scripts/src
+
 cp -f node_modules/autolinker/dist/Autolinker.min.js* public/scripts/
 cp -f node_modules/dompurify/dist/purify.min.js* public/scripts/
-cat styles/common.css styles/main.css > public/styles/main.css
+
 npx google-closure-compiler \
   --platform=java \
   --externs=src/externs.js \
@@ -25,3 +28,5 @@ npx google-closure-compiler \
   --compilation_level=ADVANCED_OPTIMIZATIONS \
   --entry_point='src/main' \
   $@
+
+npx postcss styles/main.css -o public/styles/main.css > /dev/null

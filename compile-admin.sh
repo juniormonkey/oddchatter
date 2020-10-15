@@ -1,10 +1,13 @@
 #!/bin/sh
 
-rm -rf admin/scripts/src
+rm -rf admin/styles/*
+rm -rf admin/scripts/*
+
 cp src admin/scripts/src
+
 cp -f node_modules/autolinker/dist/Autolinker.min.js* admin/scripts/
 cp -f node_modules/dompurify/dist/purify.min.js* admin/scripts/
-cat styles/common.css styles/admin.css > admin/styles/main.css
+
 npx google-closure-compiler \
   --platform=java \
   --externs=src/externs.js \
@@ -25,3 +28,5 @@ npx google-closure-compiler \
   --define=config.ADMIN_MODE \
   --entry_point='src/admin' \
   $@
+
+npx postcss styles/admin.css -o admin/styles/main.css > /dev/null

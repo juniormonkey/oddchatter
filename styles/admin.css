@@ -1,27 +1,35 @@
+@import 'styles/common.css';
+
 .configuration-form {
   display: block;
 }
+
 .configuration-form .mdl-textfield {
   width: calc(100% - 120px);
 }
+
 .configuration-form button {
   width: 100px;
   margin: 0 0 0 10px;
 }
+
 #config-cell {
   background: none;
 }
+
 .config-container {
   padding: 10px 10px 0 10px;
   margin-bottom: 10px;
   background: linear-gradient(white, #f9f9f9);
 }
+
 .settings-description {
   font-style: italic;
   font-size: 12px;
   border-top: 1px solid rgba(0, 0, 0, 0.14);
   padding-top: 5px;
 }
+
 .settings-description:first-child {
   border-top: none;
   padding-top: 0;

@@ -1,4 +1,4 @@
-name: Google Closure Compiler
+name: Compiler
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  google-closure-compiler:
+  compiler:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

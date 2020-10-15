@@ -15,8 +15,10 @@ import * as user from './user.js';
 const MESSAGE_TEMPLATE = '<div class="message-container">' +
                          '<div class="spacing"><div class="pic"></div></div>' +
                          '<div class="message"></div>' +
-                         '<div class="name"></div>' +
+                         '<div class="byline">' +
                          '<div class="timestamp"></div>' +
+                         '<div class="name"></div>' +
+                         '</div>' +
                          '</div>';
 
 const CALLBACK_STRINGS =
@@ -117,7 +119,8 @@ export class Message {
               console.error('Error removing message: ', error);
             });
       });
-      div.appendChild(deleteLine);
+      const byline = div.querySelector('.byline');
+      byline.insertBefore(deleteLine, byline.childNodes[0]);
     }
 
     if (this.text) { // If the message is text.

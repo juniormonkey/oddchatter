@@ -21,13 +21,15 @@ export function init() {
   ui.signInButtonElement().addEventListener('click', signIn_);
   ui.signInSplashButtonElement().addEventListener('click', signIn_);
 
-  ui.notificationsToggleElement().addEventListener('click', (e) => {
-    if (e.target.checked) {
-      notifications.saveMessagingDeviceToken();
-    } else {
-      notifications.clearMessagingDeviceToken();
-    }
-  });
+  if (ui.notificationsToggleElement()) {
+    ui.notificationsToggleElement().addEventListener('click', (e) => {
+      if (e.target.checked) {
+        notifications.saveMessagingDeviceToken();
+      } else {
+        notifications.clearMessagingDeviceToken();
+      }
+    });
+  }
 
   for (const callback of callbacks.CALLBACKS) {
     if (callback.formElement()) {

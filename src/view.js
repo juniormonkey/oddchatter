@@ -126,12 +126,14 @@ export async function applyNewAuthState(firebaseUser) {
     // Hide the sign-in UI
     ui.splashScreenElement().setAttribute('hidden', 'true');
 
-    // Save the Firebase Messaging Device token and enable notifications.
-    notifications.saveMessagingDeviceToken();
+    if (!config.isAdminMode()) {
+      // Save the Firebase Messaging Device token and enable notifications.
+      notifications.saveMessagingDeviceToken();
 
-    // Initialize the callback audio elements.
-    ui.hiddenAudioElement().innerHTML = '';
-    callbackUi.CALLBACKS.forEach(callback => callback.initAudio());
+      // Initialize the callback audio elements.
+      ui.hiddenAudioElement().innerHTML = '';
+      callbackUi.CALLBACKS.forEach((callback) => callback.initAudio());
+    }
 
     applyNewConfiguration(config.CONFIG);
 

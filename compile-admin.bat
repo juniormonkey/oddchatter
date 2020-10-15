@@ -1,6 +1,7 @@
 Robocopy /E /NFL src admin\scripts\src
 copy /Y node_modules\autolinker\dist\Autolinker.min.js* admin\scripts\
 copy /Y node_modules\dompurify\dist\purify.min.js* admin\scripts\
+type styles\common.css styles\admin.css > admin\styles\main.css
 npx google-closure-compiler ^
   --externs=src\externs.js ^
   --externs=node_modules\firebase\externs\firebase-app-externs.js ^

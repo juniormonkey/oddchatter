@@ -28,9 +28,13 @@ The client-side code is JS, using the [google-closure-library](https://github.co
 
 ### Compiling
 
-The correct magic incantation to google-closure-compiler is stored in  `compile.bat` (for Windows) and`compile.sh` (for Bash systems). Additional parameters to these scripts are added to the parameters to `google-closure-compiler`, eg:
+The correct magic incantation to google-closure-compiler is stored in  `compile.bat` (for Windows) and`compile.sh` (for Bash systems); the right script for your system can be run with `npm run build`. Additional parameters to these scripts are added to the parameters to `google-closure-compiler`, eg:
 
-* `--define=config.DEBUG_MODE` simplifies local testing by, eg, bypassing the 'enabled' check in the configuration stored in Firestore.
+* `--define=config.DEBUG_MODE` simplifies local testing by, eg, bypassing the 'enabled' check in the configuration stored in Firestore:
+
+  ```sh
+  $ npm run build -- --define=config=DEBUG_MODE
+  ```
 
 ### Running locally
 

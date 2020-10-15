@@ -1,21 +1,7 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 html,
 body {
-  font-family: "EB Garamond", "Garamond", "Baskerville", "Baskerville Old Face",
-    "Hoefler Text", "Times New Roman", serif;
+  font-family: 'EB Garamond', 'Garamond', 'Baskerville', 'Baskerville Old Face',
+    'Hoefler Text', 'Times New Roman', serif;
   background-color: #000;
 }
 main,
@@ -25,7 +11,7 @@ main,
 }
 .public-works {
   height: 100%;
-  background-image: url("/images/background.jpeg");
+  background-image: url('/images/background.jpeg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -83,56 +69,12 @@ main,
   opacity: 1;
 }
 .message-container .pic {
-  background-image: url("/images/profile_placeholder.png");
+  background-image: url('/images/profile_placeholder.png');
   background-repeat: no-repeat;
   width: 30px;
   height: 30px;
   background-size: 30px;
   border-radius: 20px;
-}
-.message-container .callback-emoji {
-  background-color: rgba(0, 0, 0, 0.54);
-  width: 30px;
-  height: 30px;
-  border-radius: 20px;
-  line-height: 30px;
-  font-size: 16px;
-  text-align: center;
-  vertical-align: middle;
-}
-.message-container .callback-progress {
-  display: table-cell;
-  width: 100%;
-  padding: 5px 0 5px 10px;
-}
-.message-container .callback-progress-bar {
-  background-image: url("/images/crowd.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 5px;
-  color: #fff;
-  height: 30px;
-  transition: width 1s ease-in-out;
-}
-.message-container .callback-progress-callback {
-  display: inline-block;
-  height: 25px;
-  float: right;
-  margin: 5px;
-}
-.message-container .callback-progress-voice {
-  background-image: url("/images/profile_placeholder.png");
-  background-repeat: no-repeat;
-  display: inline-block;
-  width: 25px;
-  height: 25px;
-  margin: 2px -5px;
-  background-size: 25px;
-  border-radius: 15px;
-}
-.message-container .callback-progress-voice:first-child {
-  margin-left: 15px;
 }
 .message-container .spacing {
   display: table-cell;
@@ -143,30 +85,24 @@ main,
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
+.message-container .byline {
+  padding-left: 40px;
+}
 .message-container .name,
 .message-container .timestamp,
 .message-container .admin {
-  display: inline-block;
-  padding-left: 40px;
+  padding-right: 10px;
   color: #bbb;
   font-style: italic;
   font-size: 12px;
   box-sizing: border-box;
 }
-.configuration-form {
-  display: block;
-}
-.configuration-form .mdl-textfield {
-  width: calc(100% - 120px);
-}
-.configuration-form button {
-  width: 100px;
-  margin: 0 0 0 10px;
+.message-container .timestamp,
+.message-container .admin {
+  float: right;
 }
 .mdl-card {
   min-height: 0;
-}
-.mdl-card {
   background: linear-gradient(white, #f9f9f9);
   justify-content: space-between;
 }
@@ -185,7 +121,7 @@ main,
   top: -3px;
   position: relative;
   display: inline-block;
-  background-image: url("/images/profile_placeholder.png");
+  background-image: url('/images/profile_placeholder.png');
   background-repeat: no-repeat;
   width: 40px;
   height: 40px;
@@ -197,13 +133,6 @@ main,
   line-height: 36px;
   padding-right: 10px;
   padding-left: 20px;
-}
-.message img {
-  max-width: 300px;
-  max-height: 200px;
-}
-#mediaCapture {
-  display: none;
 }
 @media screen and (max-width: 610px) {
   #user-container #user-pic {
@@ -231,23 +160,20 @@ main,
   top: -1px;
   margin-right: 5px;
 }
-.callback-video {
-  width: 100%;
-}
 .inline-icon {
   vertical-align: top;
   padding-right: 5px;
 }
 .mdl-button {
-  font-family: "Garamond", "Baskerville", "Baskerville Old Face", "Hoefler Text",
-    "Times New Roman", serif;
+  font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text',
+    'Times New Roman', serif;
 }
 h1,
 h2,
 h3,
 h4 {
-  font-family: "Garamond", "Baskerville", "Baskerville Old Face", "Hoefler Text",
-    "Times New Roman", serif;
+  font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text',
+    'Times New Roman', serif;
 }
 h3 {
   font-size: 30px;
@@ -264,21 +190,15 @@ h3 {
   text-align: center;
   margin-top: calc(50% - 80px);
 }
-#config-cell {
-  background: none;
+.mdl-menu__item .mdl-button {
+  display: block;
+  margin: 5px auto;
 }
-.config-container {
-  padding: 10px 10px 0 10px;
-  margin-bottom: 10px;
-  background: linear-gradient(white, #f9f9f9);
+.mdl-menu__item {
+  width: 160px;
 }
-.settings-description {
-  font-style: italic;
-  font-size: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.14);
-  padding-top: 5px;
-}
-.settings-description:first-child {
-  border-top: none;
-  padding-top: 0;
+.material-icons.kebab-menu-icon {
+  display: absolute;
+  left: 30%;
+  top: 50%;
 }

@@ -17,15 +17,18 @@ function main() {
     return;
   }
 
-  // Initialize the UI controller
+  // Initialize the UI controller.
   controller.init();
 
-  // initialize Firebase and load the messages
+  // initialize Firebase and load the messages.
   firebase.auth().onAuthStateChanged(view.applyNewAuthState);
 
-  // Load the configuration from Firestore
+  // Load the configuration from Firestore.
   config.CONFIG.addConfigurationChangeListener(view.applyNewConfiguration);
   config.CONFIG.loadFromFirestore();
+
+  // Enable Firebase performance monitoring.
+  firebase.performance();
 }
 
 main();

@@ -8,3 +8,5 @@ public/scripts/*
 admin/scripts/*
 node_modules/*
 coverage/*
+firestore-debug.log
+ui-debug.log

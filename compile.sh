@@ -13,6 +13,7 @@ npx google-closure-compiler \
   --externs=node_modules/firebase/externs/firebase-error-externs.js \
   --externs=node_modules/firebase/externs/firebase-externs.js \
   --externs=node_modules/firebase/externs/firebase-firestore-externs.js \
+  --externs=node_modules/firebase/externs/firebase-messaging-externs.js \
   --create_source_map=public/scripts/main.js.map \
   --js_output_file=public/scripts/main.js \
   --js='node_modules/google-closure-library/closure/goog/**.js' \

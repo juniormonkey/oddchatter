@@ -21,7 +21,9 @@ describe('controller', function() {
         '<div id="outer-container" hidden>' +
         '  <div id="user-container">' +
         '    <button id="sign-in"></button>' +
+        '    <button id="kebab-menu"></button>' +
         '    <button id="sign-out"></button>' +
+        '    <input type="checkbox" id="notifications-switch"></input>' +
         '  </div>' +
         '  <div id="signin-splashscreen">' +
         '    <button id="sign-in-splash">Sign in</button>' +

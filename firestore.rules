@@ -61,5 +61,12 @@ service cloud.firestore {
                     || request.auth.uid == 'IeReT6Ewa7cSa0mphuxrdq3a6Eu1'
                     || request.auth.uid == 'TSWvmrXKlmfTeRo4N0apvuaaYno1');
     }
+    // FCM Tokens:
+    //   - Anyone can write their token.
+    //   - Reading list of tokens is not allowed.
+    match /fcmTokens/{token} {
+      allow read: if false;
+      allow write;
+    }
   }
 }

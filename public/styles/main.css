@@ -459,3 +459,18 @@ h3 {
   visibility: hidden;
   height: 1px;
 }
+.material-icons.kebab-menu-icon {
+  display: absolute;
+  left: 30%;
+  top: 50%;
+}
+.notifications-label {
+  vertical-align: top;
+}
+.mdl-menu__item .mdl-button {
+  display: block;
+  margin: 5px auto;
+}
+.mdl-menu__item {
+  width: 160px;
+}

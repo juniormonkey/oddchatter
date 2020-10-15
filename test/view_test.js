@@ -24,7 +24,9 @@ describe('view', function() {
         '    <div id="user-pic" hidden></div>' +
         '    <div id="user-name" hidden></div>' +
         '    <button id="sign-in"></button>' +
+        '    <button id="kebab-menu"></button>' +
         '    <button id="sign-out"></button>' +
+        '    <input type="checkbox" id="notifications-switch"></input>' +
         '  </div>' +
         '  <div id="signin-splashscreen"></div>' +
         '  <div id="intro-container" hidden>' +
@@ -36,21 +38,17 @@ describe('view', function() {
 
     const mockauth = new firebasemock.MockAuthentication();
     const mockfirestore = new firebasemock.MockFirestore();
+    const mockmessaging = new firebasemock.MockMessaging();
     window.firebase = new firebasemock.MockFirebaseSdk(
         // use null if your code does not use RTDB
         null,
-        // use null if your code does not use AUTHENTICATION
-        () => {
-          return mockauth;
-        },
-        // use null if your code does not use FIRESTORE
-        () => {
-          return mockfirestore;
-        },
+        () => mockauth,
+        () => mockfirestore,
         // use null if your code does not use STORAGE
         null,
-        // use null if your code does not use MESSAGING
-        null);
+        () => mockmessaging);
+
+    mockmessaging.getToken = () => Promise.resolve('messagingtoken');
 
     mockauth.onAuthStateChanged(applyNewAuthState);
 

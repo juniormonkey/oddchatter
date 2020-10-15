@@ -1,4 +1,4 @@
-name: Google Closure Compiler (Admin console)
+name: Compiler (Admin console)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  google-closure-compiler-admin:
+  compiler-admin:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

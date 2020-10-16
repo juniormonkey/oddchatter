@@ -176,11 +176,6 @@ main,
   #user-container #user-name {
     display: none;
   }
-
-  .mdl-button {
-    min-width: 36px;
-    padding: 0 5px;
-  }
 }
 
 .mdl-textfield__label::after {
@@ -209,6 +204,14 @@ main,
     'Hoefler Text',
     'Times New Roman',
     serif;
+  min-width: 48px;
+}
+
+@media screen and (max-width: 610px) {
+  .mdl-button {
+    min-width: 36px;
+    padding: 0 5px;
+  }
 }
 
 h1,

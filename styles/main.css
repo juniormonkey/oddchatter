@@ -70,6 +70,10 @@
   margin: 0 10px 0 0;
 }
 
+.one-button-form:first-child {
+  margin-left: 10px;
+}
+
 #message-form .mdl-textfield {
   width: calc(100% - 120px);
 }
@@ -274,6 +278,12 @@
 
 #youtube-stream-container {
   background: rgba(0, 0, 0, 0);
+}
+
+@media screen and (max-width: 610px) {
+  #youtube-stream-container {
+    display: none;
+  }
 }
 
 #hidden-audio {

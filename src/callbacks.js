@@ -113,4 +113,6 @@ export const CALLBACKS = [
                ui.applauseFormElement, ui.applauseButtonElement),
   new Callback('👎', '👎', ['boo1.mp4', 'boo2.mp4', 'boo3.mp4'],
                ui.booFormElement, ui.booButtonElement),
+  new Callback('STEEN', '🎙️', ['steen1.mp4', 'steen2.mp4', 'steen3.mp4'],
+               ui.steenFormElement, ui.steenButtonElement),
 ];

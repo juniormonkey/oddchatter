@@ -111,6 +111,8 @@ export function findDivToInsertBefore(timestamp) {
     document.getElementById('applause');
 /** @return {Element} */ export const booButtonElement = () =>
     document.getElementById('boo');
+/** @return {Element} */ export const steenButtonElement = () =>
+    document.getElementById('steen');
 /** @return {Element} */ export const userPicElement = () =>
     document.getElementById('user-pic');
 /** @return {Element} */ export const userNameElement = () =>
@@ -153,3 +155,5 @@ export function findDivToInsertBefore(timestamp) {
     document.getElementById('applause-form');
 /** @return {Element} */ export const booFormElement = () =>
     document.getElementById('boo-form');
+/** @return {Element} */ export const steenFormElement = () =>
+document.getElementById('steen-form');

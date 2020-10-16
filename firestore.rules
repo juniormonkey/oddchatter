@@ -51,6 +51,10 @@ service cloud.firestore {
       allow read;
       allow create, update, delete: if request.auth != null
     }
+    match /STEEN/{calloutId} {
+      allow read;
+      allow create, update, delete: if request.auth != null
+    }
     match /configuration/{configId} {
       allow read;
       allow create, update, delete: if request.auth != null && (

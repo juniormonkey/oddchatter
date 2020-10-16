@@ -2,7 +2,7 @@
 import MockDate from 'mockdate';
 
 import {Message} from '../src/messages.js';
-import {findDivToInsertBefore} from '../src/ui.js';
+import {addSizeToGoogleProfilePic, findDivToInsertBefore} from '../src/ui.js';
 
 const should = require('chai').should();
 
@@ -68,5 +68,34 @@ describe('ui', function() {
 
     const insertion5 = findDivToInsertBefore(message5.timestampMillis_());
     should.not.exist(insertion5);
+  });
+
+  it('adds size correctly to only Google profile pics', function() {
+    addSizeToGoogleProfilePic('/images/placeholder.png')
+        .should.eq('/images/placeholder.png');
+
+    addSizeToGoogleProfilePic('https://googleusercontent.com/image.png')
+        .should.eq('https://googleusercontent.com/image.png?sz=150');
+
+    addSizeToGoogleProfilePic('https://www.googleusercontent.com/image.png')
+        .should.eq('https://www.googleusercontent.com/image.png?sz=150');
+
+    addSizeToGoogleProfilePic('https://googleusercontent.com/image.png?foo=bar')
+        .should.eq('https://googleusercontent.com/image.png?foo=bar&sz=150');
+
+    addSizeToGoogleProfilePic('https://www.googleusercontent.com/image.png?foo=bar')
+        .should.eq('https://www.googleusercontent.com/image.png?foo=bar&sz=150');
+
+    addSizeToGoogleProfilePic('https://googleusercontent.com/image.png?sz=12345')
+        .should.eq('https://googleusercontent.com/image.png?sz=150');
+
+    addSizeToGoogleProfilePic('https://www.googleusercontent.com/image.png?sz=12345')
+        .should.eq('https://www.googleusercontent.com/image.png?sz=150');
+
+    addSizeToGoogleProfilePic('https://googleusercontent.com/image.png')
+        .should.eq('https://googleusercontent.com/image.png?sz=150');
+
+    addSizeToGoogleProfilePic('https://googleusercontent.com.hackers.org/phishing')
+        .should.eq('https://googleusercontent.com.hackers.org/phishing');
   });
 });

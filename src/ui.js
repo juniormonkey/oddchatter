@@ -32,10 +32,20 @@ export class IncrementingId {
  * @return {string} A new profile pic URL with the size param added.
  */
 export function addSizeToGoogleProfilePic(url) {
-  if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return `${url}?sz=150`;
+  try {
+    const parsedUrl = new URL(url);
+    if (/(.*\.)?googleusercontent\.com$/.test(parsedUrl.hostname)) {
+      parsedUrl.searchParams.set('sz', '150');
+    }
+    return parsedUrl.toString();
+  } catch (e) {
+    if (e instanceof TypeError) {
+        // 'url' was an Invalid URL.
+      return url;
+    } else {
+      throw e;
+    }
   }
-  return url;
 }
 
 /**

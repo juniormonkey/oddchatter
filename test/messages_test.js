@@ -123,7 +123,6 @@ describe('messages', function() {
     messageElements[3].id.should.equal('four');
   });
 
-  // ... if it's the newest message, and the author is the logged-in user.
   it('stays scrolled to the bottom when a new message appears', function() {
     MockDate.set(100000);
     createMessage('A', 'message A').display();
@@ -141,9 +140,10 @@ describe('messages', function() {
     document.getElementById('messages').scrollHeight = 500;
     // The clientHeight is the height of the visible area.
     document.getElementById('messages').clientHeight = 90;
-    // By default, elements have clientHeight 20, so this is within one message
-    // of the bottom: 400 + 90 > 500 - 20.
+    // MESSAGE_HEIGHT_PX = 70, so this is within one message of the bottom:
+    // 400 + 90 > 500 - 70.
 
+    MockDate.set(500000);
     createMessage('E', 'message E').display();
     document.getElementById('messages').scrollTop.should.equal(500);
   });
@@ -165,10 +165,11 @@ describe('messages', function() {
     document.getElementById('messages').scrollHeight = 500;
     // The clientHeight is the height of the visible area.
     document.getElementById('messages').clientHeight = 90;
-    // By default, elements have clientHeight 20, so this is not within one
-    // message of the bottom: 200 + 90 < 500 - 20.
+    // MESSAGE_HEIGHT_PX = 70, so this is not within one message of the
+    // bottom: 200 + 90 < 500 - 70.
 
     // testUid is the logged-in user.
+    MockDate.set(500000);
     createMessage('E', 'message E', 'testUid').display();
     document.getElementById('messages').scrollTop.should.equal(500);
   });
@@ -190,10 +191,11 @@ describe('messages', function() {
     document.getElementById('messages').scrollHeight = 500;
     // The clientHeight is the height of the visible area.
     document.getElementById('messages').clientHeight = 90;
-    // By default, elements have clientHeight 20, so this is not within one
-    // message of the bottom: 200 + 90 < 500 - 20.
+    // MESSAGE_HEIGHT_PX = 70, so this is not within one message of the
+    // bottom: 200 + 90 < 500 - 70.
 
     // By default, the message is someone else's; keep the scrollTop unchanged.
+    MockDate.set(500000);
     createMessage('E', 'message E').display();
     document.getElementById('messages').scrollTop.should.equal(200);
   });

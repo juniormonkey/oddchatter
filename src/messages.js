@@ -24,6 +24,8 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 const CALLBACK_STRINGS =
     callbacks.CALLBACKS.map(callback => callback.getMessage());
 
+const MESSAGE_HEIGHT_PX = 70;
+
 export class Message {
 
   /**
@@ -69,8 +71,6 @@ export class Message {
     if (!config.isAdminMode() && CALLBACK_STRINGS.includes(this.text)) {
       return;
     }
-    const div =
-        document.getElementById(this.id) || this.createAndInsertElement_();
     // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
@@ -78,12 +78,15 @@ export class Message {
          */
         ui.messageListElement().scrollTop >=
             (ui.messageListElement().scrollHeight -
-             ui.messageListElement().clientHeight - div.clientHeight) ||
+             ui.messageListElement().clientHeight - MESSAGE_HEIGHT_PX) ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
-        (div.nextElementSibling === null && this.authorUid === user.getUid());
+        (ui.findDivToInsertBefore(this.timestampMillis_()) === null &&
+            this.authorUid === user.getUid());
 
+    const div =
+        document.getElementById(this.id) || this.createAndInsertElement_();
     // profile picture
     if (this.authorPic) {
       div.querySelector('.pic').style.backgroundImage =

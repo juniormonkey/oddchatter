@@ -3,7 +3,7 @@
 rm -rf public/styles/*
 rm -rf public/scripts/*
 
-cp src public/scripts/src
+cp -Rf src public/scripts/
 
 cp -f node_modules/autolinker/dist/Autolinker.min.js* public/scripts/
 cp -f node_modules/dompurify/dist/purify.min.js* public/scripts/

@@ -10,10 +10,10 @@
     "stylelint": "stylelint styles/*",
     "build": "run-script-os",
     "build:windows": "compile.bat",
-    "build:linux:mac": "compile.sh",
+    "build:nix": "./compile.sh",
     "build-admin": "run-script-os",
     "build-admin:windows": "compile-admin.bat",
-    "build-admin:linux:mac": "compile-admin.sh"
+    "build-admin:nix": "./compile-admin.sh"
   },
   "repository": {
     "type": "git",

@@ -3,7 +3,7 @@
 rm -rf admin/styles/*
 rm -rf admin/scripts/*
 
-cp src admin/scripts/src
+cp -Rf src admin/scripts/
 
 cp -f node_modules/autolinker/dist/Autolinker.min.js* admin/scripts/
 cp -f node_modules/dompurify/dist/purify.min.js* admin/scripts/

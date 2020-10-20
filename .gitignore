@@ -12,3 +12,4 @@ admin/scripts/*
 admin/styles/*
 node_modules/*
 coverage/*
+.DS_Store

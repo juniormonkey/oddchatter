@@ -145,8 +145,11 @@ function saveMessage_(messageText) {
  */
 async function onMessageFormSubmit_(e) {
   e.preventDefault();
-  logging.logEvent(
-      'share', {'method': 'chat', 'content_type': 'freeform', 'content_id': ''});
+  logging.logEvent('share', {
+    'method': 'chat',
+    'content_type': 'freeform',
+    'content_id': '',
+  });
   await onMessageSubmitted_(ui.messageInputElement().value);
 }
 

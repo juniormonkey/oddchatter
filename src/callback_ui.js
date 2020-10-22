@@ -115,10 +115,6 @@ export class CallbackUi {
   displayVideo_(timestamp) {
     // Scroll down after displaying if we're already within one message of the
     // bottom.
-    const scrollToVideo = ui.messageListElement().scrollTop >=
-                          (ui.messageListElement().scrollHeight -
-                           ui.messageListElement().clientHeight - 60);
-
     const video =
         this.callback.videoUrls[Math.floor(Math.random() *
                                            this.callback.videoUrls.length)];
@@ -126,9 +122,6 @@ export class CallbackUi {
         CALLBACK_ID.next(), new Date(timestamp), '', this.callback.getByline(),
         'images/adventureharvey.jpg', '', `video/${video}`);
     message.display();
-    if (scrollToVideo) {
-      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
-    }
     document.getElementById(video).play();
   }
 }
@@ -172,10 +165,6 @@ class CallbackProgress {
   display() {
     // Scroll down after displaying if we're already within one message of the
     // bottom.
-    const scrollToProgressBar = ui.messageListElement().scrollTop >=
-                                (ui.messageListElement().scrollHeight -
-                                 ui.messageListElement().clientHeight - 60);
-
     if (!document.getElementById(this.id)) {
       const container = document.createElement('div');
       container.innerHTML = PROGRESS_TEMPLATE;
@@ -188,12 +177,11 @@ class CallbackProgress {
           this.callbackText;
 
       // Figure out where to insert new message.
-      const nextDiv = ui.findDivToInsertBefore(this.timestamp);
-      if (nextDiv) {
-        ui.messageListElement().insertBefore(this.div, nextDiv);
-      } else {
-        ui.messageListElement().appendChild(this.div);
+      let nextDiv = ui.findDivToInsertBefore(this.timestamp);
+      if (!nextDiv) {
+        nextDiv = ui.lastMessageElement();
       }
+      ui.messageListElement().insertBefore(this.div, nextDiv);
       // Show the card fading-in.
       setTimeout(() => {
         this.div.classList.add('visible');
@@ -216,8 +204,8 @@ class CallbackProgress {
       }, config.CONFIG.callback_window_ms);
     }
 
-    if (scrollToProgressBar) {
-      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
+    if (ui.messageListElement().dataset.scrolledToEnd) {
+      ui.lastMessageElement().scrollIntoView(false);
     }
   }
 
@@ -246,20 +234,15 @@ class CallbackProgress {
       progressBar.insertBefore(
           authorPic, this.div.querySelector('.callback-progress-callback'));
 
-      // TODO: scroll to the bottom if UID is the current user.
-
       // Scroll down after displaying ...
       const scrollToBottom =
           // ... if we're already within one message of the
           // bottom, or ...
-          (ui.messageListElement().scrollTop >=
-           (ui.messageListElement().scrollHeight -
-            ui.messageListElement().clientHeight - 60)) ||
+          ui.messageListElement().dataset.scrolledToEnd ||
           // ... if the author is the logged-in user.
           uid === user.getUid();
       if (scrollToBottom) {
-        ui.messageListElement().scrollTop =
-            ui.messageListElement().scrollHeight;
+        ui.lastMessageElement().scrollIntoView(false);
       }
     }
   }

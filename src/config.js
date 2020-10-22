@@ -108,7 +108,6 @@ export class Configuration {
    */
   saveToFirestore() {
     // Add a new configuration entry to the database.
-    /* eslint-disable quote-props */
     return window.firebase.firestore()
         .collection('configuration')
         .add({
@@ -125,7 +124,6 @@ export class Configuration {
         .catch((error) => {
           console.error('Error writing new message to database', error);
         });
-    /* eslint-enable quote-props */
   }
 }
 

@@ -99,8 +99,8 @@ describe('messages', function() {
     message1.display();
     message3.display();
 
-    const messageElements =
-        document.getElementById('messages').querySelectorAll('.message-container');
+    const messageElements = document.getElementById('messages')
+        .querySelectorAll('.message-container');
     messageElements.length.should.equal(4);
     messageElements[0].id.should.equal('one');
     messageElements[1].id.should.equal('two');

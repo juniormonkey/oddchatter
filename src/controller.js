@@ -104,8 +104,8 @@ function checkForCallbacks_(text) {
         .collection(callback.getCollection())
         .doc(user.getUid())
         .set({
-          profilePicUrl: user.getProfilePicUrl(),
-          timestamp: window.firebase.firestore.FieldValue.serverTimestamp(),
+          'profilePicUrl': user.getProfilePicUrl(),
+          'timestamp': window.firebase.firestore.FieldValue.serverTimestamp(),
         })
         .catch((error) => {
           console.error('Error writing new message to database', error);

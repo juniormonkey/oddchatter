@@ -79,3 +79,16 @@ firebase.analytics = function(app) {};
  * @interface
  */
 firebase.analytics.Analytics = function() {};
+
+/**
+ * Sends analytics event with given eventParams. This method automatically
+ * associates this logged event with this Firebase web app instance on this
+ * device. List of recommended event parameters can be found in the gtag.js
+ * reference documentation.
+ *
+ * @param {string} eventName Name of the event to send.
+ * @param {Object} eventParams Parameters for the event. See
+ *     https://firebase.google.com/docs/reference/js/firebase.analytics.Analytics#logevent
+ */
+firebase.analytics.Analytics.prototype.logEvent =
+    function(eventName, eventParams = {}) {};

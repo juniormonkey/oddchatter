@@ -74,7 +74,7 @@ function signIn_() {
   // Sign in Firebase with credential from the Google user.
   /** @const */ const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
-  logging.logEvent('login', {method: ''});
+  logging.logEvent('login', {'method': ''});
 }
 
 /**
@@ -145,8 +145,11 @@ function saveMessage_(messageText) {
  */
 async function onMessageFormSubmit_(e) {
   e.preventDefault();
-  logging.logEvent(
-      'share', {method: 'chat', content_type: 'freeform', content_id: ''});
+  logging.logEvent('share', {
+    'method': 'chat',
+    'content_type': 'freeform',
+    'content_id': '',
+  });
   await onMessageSubmitted_(ui.messageInputElement().value);
 }
 
@@ -159,9 +162,9 @@ async function onMessageFormSubmit_(e) {
 async function onCallbackFormSubmit_(callback, e) {
   e.preventDefault();
   logging.logEvent('share', {
-    method: 'chat',
-    content_type: callback.getCollection(),
-    content_id: '',
+    'method': 'chat',
+    'content_type': callback.getCollection(),
+    'content_id': '',
   });
   await onMessageSubmitted_(callback.getMessage());
   callback.buttonElement().setAttribute('disabled', 'true');

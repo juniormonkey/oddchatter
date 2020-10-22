@@ -67,7 +67,7 @@ export class CallbackUi {
           this.lastCalledTimestampMillis = lastTimestampMillis + 1000;
           this.displayVideo_(lastTimestampMillis + 1);
           logging.logEvent('screen_view',
-                           {screen_name: this.callback.getCollection()});
+                           {'screen_name': this.callback.getCollection()});
         } else {
           // Update progress bar, creating it first if necessary.
           const voices = docsWithinWindow.map(

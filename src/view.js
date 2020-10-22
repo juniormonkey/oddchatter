@@ -31,7 +31,7 @@ export function applyNewConfiguration(configuration) {
       ui.promoElement().removeAttribute('hidden');
       ui.outerContainerElement().setAttribute('hidden', true);
       ui.errorContainerElement().setAttribute('hidden', true);
-      logging.logEvent('screen_view', {screen_name: 'promo'});
+      logging.logEvent('screen_view', {'screen_name': 'promo'});
     }
     return;
   }
@@ -42,7 +42,7 @@ export function applyNewConfiguration(configuration) {
     ui.outerContainerElement().setAttribute('hidden', true);
     ui.promoElement().setAttribute('hidden', true);
     ui.errorLinkElement().setAttribute('href', configuration.fallback_url);
-    logging.logEvent('screen_view', {screen_name: 'error'});
+    logging.logEvent('screen_view', {'screen_name': 'error'});
     return;
   }
 
@@ -55,7 +55,7 @@ export function applyNewConfiguration(configuration) {
     if (ui.errorContainerElement()) {
       ui.errorContainerElement().setAttribute('hidden', true);
     }
-    logging.logEvent('screen_view', {screen_name: 'main'});
+    logging.logEvent('screen_view', {'screen_name': 'main'});
   }
 
   // If there's a YouTube stream ID, show the embedded player.
@@ -186,7 +186,7 @@ function showMessagesCard_() {
 
   messages.load(config.CONFIG.event_start);
 
-  logging.logEvent('screen_view', {screen_name: 'chat'});
+  logging.logEvent('screen_view', {'screen_name': 'chat'});
 }
 
 /**
@@ -197,7 +197,7 @@ function showMessagesCard_() {
 function showIntroduction_() {
   ui.introContainerElement().removeAttribute('hidden');
   ui.messagesCardContainerElement().setAttribute('hidden', true);
-  logging.logEvent('screen_view', {screen_name: 'introduction'});
+  logging.logEvent('screen_view', {'screen_name': 'introduction'});
 
   /* eslint-disable-next-line no-unused-vars */
   return new Promise((resolve, reject) => {

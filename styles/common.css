@@ -59,7 +59,7 @@ main,
 
 #messages {
   overflow-y: auto;
-  margin: 10px 0;
+  margin: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -263,4 +263,10 @@ h3 {
   line-height: 60px;
   margin-top: -60px;
   opacity: 0;
+}
+
+#scroll-down-container {
+  position: absolute;
+  background: white;
+  left: calc(50% - 95px);
 }

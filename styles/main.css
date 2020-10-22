@@ -29,7 +29,7 @@
 }
 
 #messages {
-  height: calc(100% - 130px);
+  height: calc(100% - 98px);
 }
 
 .callback-progress-bar .callback-progress-callback {
@@ -301,4 +301,8 @@
 
 .not-intersecting {
   border: 1px solid red;
+}
+
+#scroll-down-container {
+  top: calc(100% - 158px);
 }

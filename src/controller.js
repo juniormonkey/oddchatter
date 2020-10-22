@@ -56,6 +56,13 @@ export function init() {
       messageIntersectionOptions);
     messageIntersectionObserver.observe(
       /** @type {!Element} */ (ui.lastMessageElement()));
+
+    if (ui.scrollFormElement()) {
+      ui.scrollFormElement().addEventListener('submit', (e) => {
+        e.preventDefault();
+        ui.lastMessageElement().scrollIntoView(false);
+      });
+    }
   }
 }
 

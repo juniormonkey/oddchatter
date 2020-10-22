@@ -89,8 +89,12 @@ export function findDivToInsertBefore(timestamp) {
 export function messageIntersectionHandler(entries, _observer) {
   if (entries[0].isIntersecting) {
     messageListElement().dataset.scrolledToEnd = true;
+    scrollContainerElement().setAttribute('hidden', true);
   } else {
     delete messageListElement().dataset.scrolledToEnd;
+    if (messageListElement().querySelectorAll('.message').length > 0) {
+      scrollContainerElement().removeAttribute('hidden');
+    }
   }
 }
 
@@ -117,20 +121,6 @@ export function messageIntersectionHandler(entries, _observer) {
     document.getElementById('message');
 /** @return {Element} */ export const submitButtonElement = () =>
     document.getElementById('submit');
-/** @return {Element} */ export const scienceButtonElement = () =>
-    document.getElementById('science');
-/** @return {Element} */ export const artButtonElement = () =>
-    document.getElementById('art');
-/** @return {Element} */ export const mapsButtonElement = () =>
-    document.getElementById('maps');
-/** @return {Element} */ export const shipsButtonElement = () =>
-    document.getElementById('ships');
-/** @return {Element} */ export const applauseButtonElement = () =>
-    document.getElementById('applause');
-/** @return {Element} */ export const booButtonElement = () =>
-    document.getElementById('boo');
-/** @return {Element} */ export const steenButtonElement = () =>
-    document.getElementById('steen');
 /** @return {Element} */ export const userPicElement = () =>
     document.getElementById('user-pic');
 /** @return {Element} */ export const userNameElement = () =>
@@ -161,17 +151,36 @@ export function messageIntersectionHandler(entries, _observer) {
 /** @return {Element} */ export const hiddenAudioElement = () =>
     document.getElementById('hidden-audio');
 
+/** @return {Element} */ export const scienceButtonElement = () =>
+document.getElementById('science');
 /** @return {Element} */ export const scienceFormElement = () =>
     document.getElementById('science-form');
+/** @return {Element} */ export const artButtonElement = () =>
+    document.getElementById('art');
 /** @return {Element} */ export const artFormElement = () =>
     document.getElementById('art-form');
+/** @return {Element} */ export const mapsButtonElement = () =>
+    document.getElementById('maps');
 /** @return {Element} */ export const mapsFormElement = () =>
     document.getElementById('maps-form');
+/** @return {Element} */ export const shipsButtonElement = () =>
+    document.getElementById('ships');
 /** @return {Element} */ export const shipsFormElement = () =>
     document.getElementById('ships-form');
+/** @return {Element} */ export const applauseButtonElement = () =>
+    document.getElementById('applause');
 /** @return {Element} */ export const applauseFormElement = () =>
     document.getElementById('applause-form');
+/** @return {Element} */ export const booButtonElement = () =>
+    document.getElementById('boo');
 /** @return {Element} */ export const booFormElement = () =>
     document.getElementById('boo-form');
+/** @return {Element} */ export const steenButtonElement = () =>
+    document.getElementById('steen');
 /** @return {Element} */ export const steenFormElement = () =>
-document.getElementById('steen-form');
+    document.getElementById('steen-form');
+
+/** @return {Element} */ export const scrollFormElement = () =>
+    document.getElementById('scroll-down-form');
+/** @return {Element} */ export const scrollContainerElement = () =>
+    document.getElementById('scroll-down-container');

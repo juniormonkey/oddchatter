@@ -73,7 +73,7 @@ export class CallbackUi {
           const voices = docsWithinWindow.map(
               (doc) => ({
                 uid: doc.id,
-                profilePhoto: doc.data().profilePicUrl,
+                profilePhoto: doc.data()['profilePicUrl'],
               }));
           this.displayProgress_(lastTimestampMillis, voices,
                                 callbackWindowStartMillis);

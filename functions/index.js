@@ -16,7 +16,7 @@ exports.sendNotifications = functions.firestore.document('messages/{messageId}')
         notification: {
           title: `${snapshot.data().name} posted in Odd Chatter`,
           body: text.length <= 100 ? text : `${text.substring(0, 97) }...`,
-          icon: snapshot.data().profilePicUrl || '/images/profile_placeholder.png',
+          icon: snapshot.data()['profilePicUrl'] || '/images/profile_placeholder.png',
           click_action: `https://${process.env.GCLOUD_PROJECT}.web.app`,
         },
       };

@@ -9,7 +9,7 @@
 export function logEvent(eventName, eventParameters) {
   // Do nothing if analytics is not defined, eg because of an ad blocker or
   // something.
-  if (firebase.analytics instanceof Function) {
-    firebase.analytics().logEvent(eventName, eventParameters);
+  if (window.firebase.analytics instanceof Function) {
+    window.firebase.analytics().logEvent(eventName, eventParameters);
   }
 }

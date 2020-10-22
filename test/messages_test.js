@@ -1,3 +1,4 @@
+/* eslint-disable closure/no-unused-expressions */
 /* eslint-disable closure/no-undef */
 import MockDate from 'mockdate';
 
@@ -9,7 +10,12 @@ import {
 } from '../src/messages.js';
 
 const firebasemock = require('firebase-mock');
-require('chai').should();
+const sinon = require('sinon');
+const chai = require('chai');
+const sinonChai = require('sinon-chai');
+
+chai.should();
+chai.use(sinonChai);
 
 import Autolinker from 'autolinker';
 import createDOMPurify from 'dompurify';
@@ -25,33 +31,8 @@ function createVideoMessage(id) {
 }
 
 function mockScrolling() {
-  Object.defineProperty(HTMLElement.prototype, 'scrollTop', {
-    configurable: true,
-    get() {
-      return this._scrollTop || 0;
-    },
-    set(val) {
-      this._scrollTop = val;
-    },
-  });
-  Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
-    configurable: true,
-    get() {
-      return this._scrollHeight || 0;
-    },
-    set(val) {
-      this._scrollHeight = val;
-    },
-  });
-  Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
-    configurable: true,
-    get() {
-      return this._clientHeight || 20;
-    },
-    set(val) {
-      this._clientHeight = val;
-    },
-  });
+  window.Element.prototype.scrollIntoView = function() {};
+  sinon.stub(Element.prototype, 'scrollIntoView');
 }
 
 describe('messages', function() {
@@ -60,7 +41,9 @@ describe('messages', function() {
     global.DOMPurify = createDOMPurify(window);
 
     document.body.innerHTML =
-        '<div id="messages"></div>' +
+        '<div id="messages">' +
+        '  <div id="last-message">&nbsp;</div>' +
+        '</div>' +
         '<form id="message-form">' +
         '  <input type="text" id="message">' +
         '  <button id="submit" type="submit">Send</button>' +
@@ -96,6 +79,7 @@ describe('messages', function() {
   });
 
   afterEach(function() {
+    sinon.restore();
     document.body.innerHTML = '';
     MockDate.reset();
   });
@@ -115,7 +99,8 @@ describe('messages', function() {
     message1.display();
     message3.display();
 
-    const messageElements = document.getElementById('messages').children;
+    const messageElements = document.getElementById('messages')
+        .querySelectorAll('.message-container');
     messageElements.length.should.equal(4);
     messageElements[0].id.should.equal('one');
     messageElements[1].id.should.equal('two');
@@ -133,19 +118,12 @@ describe('messages', function() {
     MockDate.set(400000);
     createMessage('D', 'message D').display();
 
-    // The scrollTop is the distance in pixels from the top of the element to
-    // the top of the visible area.
-    document.getElementById('messages').scrollTop = 400;
-    // The scrollHeight is the height of the scrollable element.
-    document.getElementById('messages').scrollHeight = 500;
-    // The clientHeight is the height of the visible area.
-    document.getElementById('messages').clientHeight = 90;
-    // MESSAGE_HEIGHT_PX = 70, so this is within one message of the bottom:
-    // 400 + 90 > 500 - 70.
+    document.getElementById('messages').dataset.scrolledToEnd = true;
 
     MockDate.set(500000);
     createMessage('E', 'message E').display();
-    document.getElementById('messages').scrollTop.should.equal(500);
+    document.getElementById('last-message').scrollIntoView
+        .should.have.been.calledOnce;
   });
 
   it('scrolls to the bottom when the newest message is your own', function() {
@@ -158,20 +136,13 @@ describe('messages', function() {
     MockDate.set(400000);
     createMessage('D', 'message D').display();
 
-    // The scrollTop is the distance in pixels from the top of the element to
-    // the top of the visible area.
-    document.getElementById('messages').scrollTop = 200;
-    // The scrollHeight is the height of the scrollable element.
-    document.getElementById('messages').scrollHeight = 500;
-    // The clientHeight is the height of the visible area.
-    document.getElementById('messages').clientHeight = 90;
-    // MESSAGE_HEIGHT_PX = 70, so this is not within one message of the
-    // bottom: 200 + 90 < 500 - 70.
+    delete document.getElementById('messages').dataset.scrolledToEnd;
 
     // testUid is the logged-in user.
     MockDate.set(500000);
     createMessage('E', 'message E', 'testUid').display();
-    document.getElementById('messages').scrollTop.should.equal(500);
+    document.getElementById('last-message').scrollIntoView
+        .should.have.been.calledOnce;
   });
 
   it('stays scrolled up when the newest message is not yours', function() {
@@ -184,20 +155,13 @@ describe('messages', function() {
     MockDate.set(400000);
     createMessage('D', 'message D').display();
 
-    // The scrollTop is the distance in pixels from the top of the element to
-    // the top of the visible area.
-    document.getElementById('messages').scrollTop = 200;
-    // The scrollHeight is the height of the scrollable element.
-    document.getElementById('messages').scrollHeight = 500;
-    // The clientHeight is the height of the visible area.
-    document.getElementById('messages').clientHeight = 90;
-    // MESSAGE_HEIGHT_PX = 70, so this is not within one message of the
-    // bottom: 200 + 90 < 500 - 70.
+    delete document.getElementById('messages').dataset.scrolledToEnd;
 
-    // By default, the message is someone else's; keep the scrollTop unchanged.
+    // By default, the message is someone else's; don't scroll into view.
     MockDate.set(500000);
     createMessage('E', 'message E').display();
-    document.getElementById('messages').scrollTop.should.equal(200);
+    document.getElementById('last-message').scrollIntoView
+        .should.not.have.been.called;
   });
 
   // Callback strings are handled by callbacks.js.
@@ -211,22 +175,26 @@ describe('messages', function() {
     MockDate.set(400000);
     createMessage('D', 'message D').display();
 
-    document.getElementById('messages').children.length.should.equal(4);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(4);
 
     MockDate.set(350000);
     createMessage('1', 'message one').display();
 
-    document.getElementById('messages').children.length.should.equal(5);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(5);
 
     MockDate.set(375000);
     createMessage('2', 'SHIPS!!').display();
 
-    document.getElementById('messages').children.length.should.equal(5);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(5);
 
     MockDate.set(385000);
     createMessage('3', 'message three').display();
 
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
   });
 
   it('shows callback messages in admin mode', function() {
@@ -240,22 +208,26 @@ describe('messages', function() {
     MockDate.set(400000);
     createMessage('D', 'message D').display();
 
-    document.getElementById('messages').children.length.should.equal(4);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(4);
 
     MockDate.set(350000);
     createMessage('1', 'message one').display();
 
-    document.getElementById('messages').children.length.should.equal(5);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(5);
 
     MockDate.set(375000);
     createMessage('2', 'SHIPS!!').display();
 
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     MockDate.set(385000);
     createMessage('3', 'message three').display();
 
-    document.getElementById('messages').children.length.should.equal(7);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(7);
   });
 
   it('sanitizes malicious HTML', function() {
@@ -263,7 +235,8 @@ describe('messages', function() {
     createMessage('B', '<safe>').display();
     createMessage('C', 'very safe').display();
 
-    document.getElementById('messages').children.length.should.equal(3);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(3);
 
     document.getElementById('A')
         .querySelector('.message')
@@ -285,7 +258,8 @@ describe('messages', function() {
     createMessage('E', 'LONG: https://www.oddsalon.com/donate').display();
     createMessage('F', 'SHORT: oddsalon.com').display();
 
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     document.getElementById('A')
         .querySelector('.message')

@@ -57,7 +57,8 @@ export function addSizeToGoogleProfilePic(url) {
  *     null if the new message should be appended at the end of the list.
  */
 export function findDivToInsertBefore(timestamp) {
-  const existingMessages = messageListElement().children;
+  const existingMessages =
+      messageListElement().querySelectorAll('.message-container');
   if (existingMessages.length === 0) {
     return null;
   } else {
@@ -88,6 +89,21 @@ export function findDivToInsertBefore(timestamp) {
   }
 }
 
+/**
+ * A handler function for use with an IntersectionObserver.
+ *
+ * @param {Array<IntersectionObserverEntry>} entries Targets reporting a
+ *     change in their intersection status.
+ * @param {IntersectionObserver} _observer The calling IntersectionObserver.
+ */
+export function messageIntersectionHandler(entries, _observer) {
+  if (entries[0].isIntersecting) {
+    messageListElement().dataset.scrolledToEnd = true;
+  } else {
+    delete messageListElement().dataset.scrolledToEnd;
+  }
+}
+
 // Shortcuts to DOM Elements.
 /** @return {Element} */ export const outerContainerElement = () =>
     document.getElementById('outer-container');
@@ -103,6 +119,8 @@ export function findDivToInsertBefore(timestamp) {
     document.getElementById('intro-button');
 /** @return {Element} */ export const messageListElement = () =>
     document.getElementById('messages');
+/** @return {Element} */ export const lastMessageElement = () =>
+    document.getElementById('last-message');
 /** @return {Element} */ export const messageFormElement = () =>
     document.getElementById('message-form');
 /** @return {Element} */ export const messageInputElement = () =>

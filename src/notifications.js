@@ -7,7 +7,6 @@ export async function saveMessagingDeviceToken() {
   try {
     const currentToken = await window.firebase.messaging().getToken();
     if (currentToken) {
-      /* eslint-disable quote-props */
       window.firebase
           .firestore()
           .collection('fcmTokens')
@@ -32,7 +31,6 @@ export async function clearMessagingDeviceToken() {
   try {
     const currentToken = await window.firebase.messaging().getToken();
     if (currentToken) {
-      /* eslint-disable quote-props */
       window.firebase
           .firestore()
           .collection('fcmTokens')

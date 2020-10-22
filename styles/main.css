@@ -28,6 +28,10 @@
   transition: width 1s ease-in-out;
 }
 
+#messages {
+  height: calc(100% - 130px);
+}
+
 .callback-progress-bar .callback-progress-callback {
   height: 25px;
   float: right;
@@ -293,4 +297,8 @@
 
 .notifications-label {
   vertical-align: top;
+}
+
+.not-intersecting {
+  border: 1px solid red;
 }

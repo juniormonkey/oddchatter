@@ -24,8 +24,6 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 const CALLBACK_STRINGS =
     callbacks.CALLBACKS.map(callback => callback.getMessage());
 
-const MESSAGE_HEIGHT_PX = 70;
-
 export class Message {
 
   /**
@@ -71,22 +69,22 @@ export class Message {
     if (!config.isAdminMode() && CALLBACK_STRINGS.includes(this.text)) {
       return;
     }
+    const nextMessage = ui.findDivToInsertBefore(this.timestampMillis_());
+
     // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
          * ... if we're already within one message of the bottom, or ...
          */
-        ui.messageListElement().scrollTop >=
-            (ui.messageListElement().scrollHeight -
-             ui.messageListElement().clientHeight - MESSAGE_HEIGHT_PX) ||
+        ui.messageListElement().dataset.scrolledToEnd ||
         /*
          * ... if it's the newest message, and the author is the logged-in user.
          */
-        (ui.findDivToInsertBefore(this.timestampMillis_()) === null &&
-            this.authorUid === user.getUid());
+        (nextMessage === null && this.authorUid === user.getUid());
 
     const div =
-        document.getElementById(this.id) || this.createAndInsertElement_();
+      document.getElementById(this.id) ||
+      this.createAndInsertElement_(nextMessage);
     // profile picture
     if (this.authorPic) {
       div.querySelector('.pic').style.backgroundImage =
@@ -138,12 +136,6 @@ export class Message {
           messageElement.innerHTML.replace(/\n/g, '<br>');
     } else if (this.videoUrl) { // If the message is a video.
       const video = document.createElement('video');
-      video.addEventListener('load', () => {
-        if (scrollAfterDisplaying) {
-          ui.messageListElement().scrollTop =
-              ui.messageListElement().scrollHeight;
-        }
-      });
       video.playsInline = true;
       video.autoplay = true;
       video.muted = true;
@@ -158,8 +150,7 @@ export class Message {
       video.appendChild(fallback);
       video.onloadedmetadata = () => {
         if (scrollAfterDisplaying) {
-          ui.messageListElement().scrollTop =
-              ui.messageListElement().scrollHeight;
+          ui.lastMessageElement().scrollIntoView(false);
         }
       };
       messageElement.innerHTML = '';
@@ -170,7 +161,7 @@ export class Message {
       div.classList.add('visible');
     }, 1);
     if (scrollAfterDisplaying) {
-      ui.messageListElement().scrollTop = ui.messageListElement().scrollHeight;
+      ui.lastMessageElement().scrollIntoView(false);
     }
     if (ui.messageInputElement()) {
       ui.messageInputElement().focus();
@@ -179,11 +170,12 @@ export class Message {
 
   /**
    * Creates a new Message in the UI.
+   * @param {Node} nextDiv The div before which to insert the new message.
    *
    * @return {Node} The new message element.
    * @private
    */
-  createAndInsertElement_() {
+  createAndInsertElement_(nextDiv) {
     const container = document.createElement('div');
     container.innerHTML = MESSAGE_TEMPLATE;
     const div = container.firstChild;
@@ -191,13 +183,10 @@ export class Message {
 
     div.setAttribute('timestamp', this.timestampMillis_());
 
-    // Figure out where to insert new message.
-    const nextDiv = ui.findDivToInsertBefore(this.timestampMillis_());
-    if (nextDiv) {
-      ui.messageListElement().insertBefore(div, nextDiv);
-    } else {
-      ui.messageListElement().appendChild(div);
+    if (!nextDiv) {
+      nextDiv = ui.lastMessageElement();
     }
+    ui.messageListElement().insertBefore(div, nextDiv);
 
     return div;
   }
@@ -239,7 +228,7 @@ let unsubscribe_ = [];
 export function load(oldestTimestamp = undefined, newestTimestamp = undefined) {
   // Create the query to load the last 12 messages and listen for new
   // ones.
-  let query = firebase.firestore().collection('messages').limit(8);
+  let query = firebase.firestore().collection('messages').limit(12);
 
   if (oldestTimestamp) {
     query = query.where('timestamp', '>', oldestTimestamp);

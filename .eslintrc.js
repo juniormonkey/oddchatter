@@ -12,6 +12,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'quote-props': 'off',
     'no-console': [
       'error',
       {
@@ -19,6 +20,12 @@ module.exports = {
           'error',
         ]
       },
+    ],
+    'no-unused-vars': [
+      'error',
+      {
+         'argsIgnorePattern': '^_',
+      }
     ],
   },
   globals: {

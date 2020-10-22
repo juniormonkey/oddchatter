@@ -17,6 +17,12 @@ function main() {
     return;
   }
 
+  // Enable Firebase performance monitoring.
+  firebase.performance();
+
+  // Enable Firebase analytics.
+  firebase.analytics();
+
   // Initialize the UI controller.
   controller.init();
 
@@ -26,9 +32,6 @@ function main() {
   // Load the configuration from Firestore.
   config.CONFIG.addConfigurationChangeListener(view.applyNewConfiguration);
   config.CONFIG.loadFromFirestore();
-
-  // Enable Firebase performance monitoring.
-  firebase.performance();
 }
 
 main();

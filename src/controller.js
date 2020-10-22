@@ -43,6 +43,20 @@ export function init() {
     ui.messageInputElement().addEventListener('keyup', toggleButton_);
     ui.messageInputElement().addEventListener('change', toggleButton_);
   }
+
+  // Handle message scrolling.
+  if (ui.lastMessageElement()) {
+    const messageIntersectionOptions = {
+      'root': ui.messageListElement(),
+      'rootMargin': '0px',
+      'threshold': 0.1,
+    };
+    const messageIntersectionObserver = new window.IntersectionObserver(
+      ui.messageIntersectionHandler,
+      messageIntersectionOptions);
+    messageIntersectionObserver.observe(
+      /** @type {!Element} */ (ui.lastMessageElement()));
+  }
 }
 
 /**
@@ -103,7 +117,6 @@ function saveMessage_(messageText) {
   checkForCallbacks_(messageText);
 
   // Add a new message entry to the database.
-  /* eslint-disable quote-props */
   return window.firebase.firestore()
       .collection('messages')
       .add({
@@ -116,7 +129,6 @@ function saveMessage_(messageText) {
       .catch((error) => {
         console.error('Error writing new message to database', error);
       });
-  /* eslint-enable quote-props */
 }
 
 /**

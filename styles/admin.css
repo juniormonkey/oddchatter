@@ -34,3 +34,7 @@
   border-top: none;
   padding-top: 0;
 }
+
+#scroll-down-container {
+  top: calc(100% - 46px);
+}

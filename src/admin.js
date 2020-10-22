@@ -18,6 +18,12 @@ function main() {
     return;
   }
 
+  // Enable Firebase performance monitoring.
+  firebase.performance();
+
+  // Enable Firebase analytics.
+  firebase.analytics();
+
   // Initialize the UI controller
   controller.init();
 

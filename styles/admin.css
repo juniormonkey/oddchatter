@@ -50,3 +50,52 @@
   display: flex;
   flex-direction: column;
 }
+
+.user-container {
+  display: block;
+  margin-top: 10px;
+  border-top: 1px solid #f3f3f3;
+  padding-top: 10px;
+  transition: opacity 1s ease-in-out;
+}
+
+.user-container:first-of-type {
+  border-top-width: 0;
+}
+
+.user-container .pic {
+  background-image: url('/images/profile_placeholder.png');
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  background-size: 30px;
+  border-radius: 20px;
+}
+
+.user-container .spacing {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.user-container .name {
+  display: table-cell;
+  width: calc(100% - 40px);
+  padding: 5px 0 5px 10px;
+}
+
+.user-container .byline {
+  padding-left: 40px;
+}
+
+.user-container .email,
+.user-container .admin {
+  padding-right: 10px;
+  color: #bbb;
+  font-style: italic;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.user-container .admin {
+  float: right;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable closure/no-unused-expressions */
 /**
  * @fileoverview externs for odd chatter.
  * @externs
@@ -92,3 +93,46 @@ firebase.analytics.Analytics = function() {};
  */
 firebase.analytics.Analytics.prototype.logEvent =
     function(eventName, eventParams = {}) {};
+
+// eslint-disable-next-line closure/jsdoc
+/**
+ * The Cloud Functions for Firebase service interface.
+ * @namespace
+ *
+ * @return {!firebase.functions.Functions}
+ */
+firebase.functions = function() {};
+
+/**
+ * The Cloud Functions for Firebase service interface.
+ *
+ * Do not call this constructor directly. Instead, use firebase.functions().
+ *
+ * @interface
+ */
+firebase.functions.Functions = function() {};
+
+// eslint-disable-next-line closure/jsdoc
+/**
+ * Gets an HttpsCallable instance that refers to the function with the given
+ * name.
+ *
+ * @param {string} name The name of the https callable function.
+ * @param {Object=} options The options for this HttpsCallable instance.
+ * @return {function(Object=): Promise<firebase.functions.HttpsCallableResult>}
+ *     The HttpsCallable instance.
+ */
+firebase.functions.Functions.prototype.httpsCallable =
+    function(name, options = null) {};
+
+/**
+ * An HttpsCallableResult wraps a single result from a function call.
+ *
+ * @interface
+ */
+firebase.functions.HttpsCallableResult = function() {};
+
+/**
+ * @type {Object}
+ */
+firebase.functions.HttpsCallableResult.prototype.data;

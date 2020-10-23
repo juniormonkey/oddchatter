@@ -4,6 +4,7 @@
 
 import * as config from './config.js';
 import * as controller from './controller.js';
+import * as ui from './ui.js';
 import * as view from './view.js';
 
 function main() {
@@ -23,6 +24,9 @@ function main() {
 
   // Enable Firebase analytics.
   firebase.analytics();
+
+  // Initialize Cloud Functions through Firebase.
+  firebase.functions();
 
   // Initialize the UI controller
   controller.init();
@@ -111,9 +115,51 @@ function main() {
 
   config.CONFIG.loadFromFirestore();
 
+  const listUsers = firebase.functions().httpsCallable('listUsers');
+  listUsers().then((result) => {
+    // Read result of the Cloud Function.
+    /** @type Array<Object> */ (result.data).forEach((jsonUser) => {
+      const displayUser = new User(jsonUser);
+      displayUser.display();
+    });
+  });
+
   // - only accessible to admin users - TODO: can Firebase restrict new users?
   // - list of users, with block button - TODO: is there a good UI for this?
   // - different background or header or something to emphasise admin mode
+}
+
+const USER_TEMPLATE = '<div class="user-container">' +
+                      '<div class="spacing"><div class="pic"></div></div>' +
+                      '<div class="name"></div>' +
+                      '  <div class="byline">' +
+                      '    <div class="email"></div>' +
+                      '    <div class="admin">' +
+                      /* TODO: enable/disable link */
+                      /* TODO: admin checkmark */
+                      '    </div>' +
+                      '  </div>' +
+                      '</div>';
+
+class User {
+  constructor(firestoreObject) {
+    this.displayName = firestoreObject['displayName'];
+    this.email = firestoreObject['email'];
+    this.photoURL = firestoreObject['photoURL'];
+  }
+
+  display() {
+    const container = document.createElement('div');
+    container.innerHTML = USER_TEMPLATE;
+    const div = container.firstChild;
+    div.querySelector('.name').textContent = this.displayName;
+    div.querySelector('.email').textContent = this.email;
+    if (this.photoURL) {
+      div.querySelector('.pic').style.backgroundImage =
+          `url(${ui.addSizeToGoogleProfilePic(this.photoURL)})`;
+    }
+    usersListElement().appendChild(div);
+  }
 }
 
 /**
@@ -251,5 +297,8 @@ function enableDatetimeInput(datetimeInput, defaultValue) {
     document.getElementById('youtube-chat-url');
 /** @return {Element} */ const youtubeChatFormElement = () =>
     document.getElementById('youtube-chat-form');
+
+/** @return {Element} */ const usersListElement = () =>
+    document.getElementById('users');
 
 main();

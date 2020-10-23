@@ -57,4 +57,28 @@ function cleanupTokens(response, tokens) {
   });
   return Promise.all(tokensDelete);
 }
-   
+
+exports.listUsers = functions.https.onCall((data, context) => {
+  return listAllUsers();
+});
+
+async function listAllUsers(nextPageToken) {
+  const allUsers = []
+
+  // List batch of users, 1000 at a time.
+  try {
+  const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
+  listUsersResult.users.forEach((userRecord) => {
+    allUsers.push(userRecord.toJSON());
+    });
+    if (listUsersResult.pageToken) {
+      // List next batch of users.
+      allUsers.concat(listAllUsers(listUsersResult.pageToken));
+    }
+  } catch (error) {
+    console.error('Error listing users:', error);
+    throw new functions.https.HttpsError('internal', error);
+  }
+  
+  return allUsers;
+}

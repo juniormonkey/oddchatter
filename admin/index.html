@@ -116,7 +116,7 @@
           <!-- Messages container -->
           <div
             id="messages-card"
-            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-desktop"
           >
             <div class="mdl-card__supporting-text mdl-color-text--grey-900">
               <div id="messages">
@@ -133,7 +133,7 @@
           </div>
           <div
             id="config-cell"
-            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-desktop"
           >
             <div class="config-container">
               <div class="settings-description">
@@ -167,8 +167,7 @@
             </div>
             <div class="config-container">
               <div class="settings-description">
-                When the app is disabled, we show a promo for the upcoming Odd
-                Salon instead.
+                When disabled, we show a promo for the upcoming Odd Salon.
               </div>
               <label
                 class="mdl-switch mdl-js-switch"
@@ -184,8 +183,7 @@
                 <span class="mdl-switch__label">Enable Odd Chatter</span>
               </label>
               <div class="settings-description">
-                Set the start time of the event. No messages from before this
-                time will be shown.
+                No messages from before this time will be shown.
               </div>
               <form id="event-start-form" class="configuration-form">
                 <div
@@ -212,9 +210,8 @@
                 </button>
               </form>
               <div class="settings-description">
-                Callback videos are triggered by more than a threshold of voices
-                saying the same thing within a specific time window. Adjust
-                these values here.
+                Videos are triggered by a number of voices saying the same 
+                thing within a time window. Adjust these values here.
               </div>
               <form id="callback-form" class="configuration-form" action="#">
                 <div
@@ -262,9 +259,9 @@
                 <a
                   href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817"
                 >
-                  YouTube video ID
+                  video ID
                 </a>
-                here to show the video embedded in the Odd Chatter page.
+                here to embed the video in the Odd Chatter page.
               </div>
               <form
                 id="youtube-stream-form"
@@ -299,9 +296,9 @@
                 <a
                   href="https://gist.github.com/jakebellacera/d81bbf12b99448188f183141e6696817"
                 >
-                  YouTube video ID
+                  video ID
                 </a>
-                here to show the YouTube chat embedded in the Odd Chatter page.
+                here to embed the YouTube chat in the page.
               </div>
               <form
                 id="youtube-chat-form"
@@ -333,8 +330,17 @@
               </form>
             </div>
           </div>
+          <div
+            id="users-card"
+            class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-desktop"
+          >
+            <div class="mdl-card__supporting-text mdl-color-text--grey-900">
+              <div id="users">
+                TODO: users.
+              </div>
+            </div>
+          </div>
         </div>
-
         <div
           id="signin-splashscreen"
           class="mdl-cell mdl-cell--12-col mdl-grid"

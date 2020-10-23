@@ -19,7 +19,6 @@
 
 .config-container {
   padding: 10px 10px 0 10px;
-  margin-bottom: 10px;
   background: linear-gradient(white, #f9f9f9);
 }
 
@@ -37,4 +36,17 @@
 
 #scroll-down-container {
   top: calc(100% - 46px);
+}
+
+#users-card {
+  height: 100%;
+  padding-bottom: 0;
+}
+
+#users {
+  overflow-y: auto;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }

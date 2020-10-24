@@ -111,7 +111,8 @@ export class Message {
       deleteLine.className = 'admin';
       deleteLine.setAttribute('href', '#');
       deleteLine.textContent = 'delete';
-      deleteLine.addEventListener('click', () => {
+      deleteLine.addEventListener('click', (e) => {
+        e.preventDefault();
         firebase.firestore()
             .collection('messages')
             .doc(this.id)

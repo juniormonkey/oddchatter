@@ -133,32 +133,71 @@ const USER_TEMPLATE = '<div class="user-container">' +
                       '<div class="spacing"><div class="pic"></div></div>' +
                       '<div class="name"></div>' +
                       '  <div class="byline">' +
-                      '    <div class="email"></div>' +
                       '    <div class="admin">' +
-                      /* TODO: enable/disable link */
-                      /* TODO: admin checkmark */
+                      '      <a class="disabled-toggle" href="#"></a>' +
+                      '      / ' +
+                      '      <a class="admin-toggle" href="#"></a>' +
                       '    </div>' +
+                      '    <div class="email"></div>' +
                       '  </div>' +
                       '</div>';
 
 class User {
   constructor(firestoreObject) {
+    console.log('user: ', firestoreObject);
     this.displayName = firestoreObject['displayName'];
     this.email = firestoreObject['email'];
     this.photoURL = firestoreObject['photoURL'];
+    this.uid = firestoreObject['uid'];
+    this.disabled = firestoreObject['disabled'];
+    this.isAdmin = firestoreObject['customClaims'] &&
+        firestoreObject['customClaims']['admin'];
+
+    this.disableUser = firebase.functions().httpsCallable('disableUser');
+    this.setAdmin = firebase.functions().httpsCallable('setAdmin');
+
+    this.div = null;
   }
 
   display() {
-    const container = document.createElement('div');
-    container.innerHTML = USER_TEMPLATE;
-    const div = container.firstChild;
-    div.querySelector('.name').textContent = this.displayName;
-    div.querySelector('.email').textContent = this.email;
+    if (!this.div) {
+      const container = document.createElement('div');
+      container.innerHTML = USER_TEMPLATE;
+      this.div = container.firstChild;
+      usersListElement().appendChild(this.div);
+    }
+
+    this.div.querySelector('.name').textContent = this.displayName;
+    this.div.querySelector('.email').textContent = this.email;
     if (this.photoURL) {
-      div.querySelector('.pic').style.backgroundImage =
+      this.div.querySelector('.pic').style.backgroundImage =
           `url(${ui.addSizeToGoogleProfilePic(this.photoURL)})`;
     }
-    usersListElement().appendChild(div);
+
+    const disabledToggle = this.div.querySelector('.disabled-toggle');
+    disabledToggle.textContent = `disabled? ${this.disabled ? 'Y' : 'N'}`;
+    disabledToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.disableUser({'uid': this.uid, 'disabled': !this.disabled})
+          .then((newData) => {
+            console.log('new data: ', newData);
+            this.disabled = newData['data']['disabled'];
+            this.display();
+          });
+    });
+
+    const adminToggle = this.div.querySelector('.admin-toggle');
+    adminToggle.textContent = `admin? ${this.isAdmin ? 'Y' : 'N'}`;
+    adminToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.setAdmin({'uid': this.uid, 'isAdmin': !this.isAdmin})
+          .then((newData) => {
+            console.log('new data: ', newData);
+            this.isAdmin = newData['data']['customClaims'] &&
+                newData['data']['customClaims']['admin'];
+            this.display();
+          });
+    });
   }
 }
 

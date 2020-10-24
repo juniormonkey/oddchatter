@@ -5,11 +5,11 @@
 }
 
 .configuration-form .mdl-textfield {
-  width: calc(100% - 120px);
+  width: calc(100% - 80px);
 }
 
 .configuration-form button {
-  width: 100px;
+  width: 60px;
   margin: 0 0 0 10px;
 }
 

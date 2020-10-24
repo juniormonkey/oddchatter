@@ -82,3 +82,30 @@ async function listAllUsers(nextPageToken) {
   
   return allUsers;
 }
+
+exports.disableUser = functions.https.onCall(async (data, context) => {
+  const uid = data.uid;
+  const disabled = data.disabled;
+
+  try {
+    const userRecord = await admin.auth().updateUser(uid, {disabled: disabled});
+    return userRecord.toJSON();
+  } catch (error) {
+    console.error('Error in disableUser():', error);
+    throw new functions.https.HttpsError('internal', error);
+  }
+});
+
+exports.setAdmin = functions.https.onCall(async (data, context) => {
+  const uid = data.uid;
+  const isAdmin = data.isAdmin;
+
+  try {
+    await admin.auth().setCustomUserClaims(uid, {admin: isAdmin});
+    const userRecord = await admin.auth().getUser(uid);
+    return userRecord.toJSON();  
+  } catch (error) {
+    console.error('Error in setAdmin():', error);
+    throw new functions.https.HttpsError('internal', error);
+  }
+});

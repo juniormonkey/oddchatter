@@ -21,13 +21,7 @@
         "key"  : "SourceMap",
         "value" : "/scripts/main.js.map"
       } ]
-    } ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    } ]
   }, {
     "site": "odd-chatter-dev",
     "target": "dev",
@@ -44,16 +38,7 @@
         "key"  : "SourceMap",
         "value" : "/scripts/main.js.map"
       } ]
-    } ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "predeploy": [
-      "npm run build"
-    ]
+    } ]
   } , {
     "site": "odd-chatter-admin",
     "target": "admin",
@@ -73,16 +58,7 @@
         "key"  : "SourceMap",
         "value" : "/scripts/admin.js.map"
       } ]
-    } ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "predeploy": [
-      "npm run build-admin"
-    ]
+    } ]
   } ],
   "functions": {
     "predeploy": [

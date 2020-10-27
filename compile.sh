@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 
 rm -rf public/styles/*
 rm -rf public/scripts/*

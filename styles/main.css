@@ -116,7 +116,7 @@
 }
 
 #promo-image {
-  background-image: url('/images/horror.jpg');
+  background-image: url('/images/above-and-beyond.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -179,8 +179,8 @@
   }
 
   #promo-image {
-    background-image: url('/images/horror-mobile.jpg');
-    height: 300px;
+    background-image: url('/images/above-and-beyond.jpg');
+    height: 150px;
     width: 300px;
   }
 

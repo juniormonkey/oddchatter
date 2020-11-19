@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "${param:RTDB_PATH}": {
+      "$user_uid": {
+        ".read": "auth.uid == $user_uid",
+        ".write": "auth.uid == $user_uid",
+      }
+    }
+  }
+}

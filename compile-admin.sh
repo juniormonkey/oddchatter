@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 
 rm -rf admin/styles/*
 rm -rf admin/scripts/*

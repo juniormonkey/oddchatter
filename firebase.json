@@ -4,7 +4,6 @@
   },
   "hosting": [ {
     "site": "odd-chatter",
-    "target": "release",
     "public": "./release",
     "ignore": [
       "release/scripts/src"
@@ -24,7 +23,6 @@
     } ]
   }, {
     "site": "odd-chatter-dev",
-    "target": "dev",
     "public": "./public",
     "headers": [{
       "source" : "**/*.@(js|html)",
@@ -41,7 +39,6 @@
     } ]
   } , {
     "site": "odd-chatter-admin",
-    "target": "admin",
     "public": "./admin",
     "ignore": [
       "admin/scripts/src"

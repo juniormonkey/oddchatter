@@ -72,5 +72,17 @@ service cloud.firestore {
       allow read: if false;
       allow write;
     }
+    // Presence: see https://dev-partners.googlesource.com/samples/firebase/extensions-alpha/+/refs/heads/master/firestore-detect-presence/sample-app/firestore.rules
+    match /presence/{uid} {
+      allow read;
+    }
+    match /sups/{supId} {
+      allow read: if request.auth.uid == resource.data.toUid;
+      allow create: if request.auth != null && request.resource.data.keys() == ['toUid'] && isOnline(request.resource.data.toUid);
+      allow delete: if request.auth.uid == resource.data.toUid;
+    }
+    function isOnline(uid) {
+      return get(/databases/$(database)/documents/presence/$(uid)).data.sessions != {};
+    }
   }
 }

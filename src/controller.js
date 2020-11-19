@@ -6,6 +6,7 @@
 import * as callbacks from './callbacks.js';
 import * as logging from './logging.js';
 import * as notifications from './notifications.js';
+import * as presence from './presence.js';
 import * as ui from './ui.js';
 import * as user from './user.js';
 
@@ -82,8 +83,14 @@ function signIn_() {
  * @private
  */
 function signOut_() {
-  // Sign out of Firebase.
-  firebase.auth().signOut();
+
+  // When the user signs out, take their session offline first; they will
+  // still be authenticated, meaning Security Rules allow us to clean up
+  // Realtime Database records:
+  presence.sessionManager().goOffline().then(() =>
+    // AFTER disconnecting their session, use Authentication for sign-out.
+    // The ordering is important for database records to be properly cleaned up.
+    firebase.auth().signOut());
 }
 
 /**
@@ -200,7 +207,7 @@ function checkSignedInWithMessage_() {
   // Display a message to the user using a Toast.
   const data = {message: 'You must sign-in first', timeout: 2000};
   /** @type {MaterialSnackbar} */ (
-      ui.signInSnackbarElement()['MaterialSnackbar'])
+  ui.signInSnackbarElement()['MaterialSnackbar'])
       .showSnackbar(data);
   return false;
 }

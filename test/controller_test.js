@@ -93,24 +93,19 @@ describe('controller', function() {
         '  </div>' +
         '</div>';
 
+    const mockdb = new firebasemock.MockFirebase();
     const mockauth = new firebasemock.MockAuthentication();
     const mockfirestore = new firebasemock.MockFirestore();
     window.firebase = new firebasemock.MockFirebaseSdk(
-        // use null if your code does not use RTDB
-        null,
-        // use null if your code does not use AUTHENTICATION
-        () => {
-          return mockauth;
-        },
-        // use null if your code does not use FIRESTORE
-        () => {
-          return mockfirestore;
-        },
+        (path) => (path ? mockdb.child(path) : mockdb),
+        () => mockauth,
+        () => mockfirestore,
         // use null if your code does not use STORAGE
         null,
         // use null if your code does not use MESSAGING
         null);
 
+    mockdb.autoFlush();
     mockfirestore.autoFlush();
 
     mockauth.createUser({email: 'user@one.com', password: 't3st1'});

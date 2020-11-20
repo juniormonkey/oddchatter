@@ -108,11 +108,56 @@ describe('controller', function() {
     mockdb.autoFlush();
     mockfirestore.autoFlush();
 
-    mockauth.createUser({email: 'user@one.com', password: 't3st1'});
-    mockauth.createUser({email: 'user@two.com', password: 'test2'});
-    mockauth.createUser({email: 'user@three.com', password: 't3st'});
-    mockauth.createUser({email: 'user@four.com', password: '4test'});
-    mockauth.createUser({email: 'user@five.com', password: 'te5t'});
+    mockauth.createUser({
+      email: 'user@one.com',
+      password: 't3st1',
+      // Workaround for https://github.com/dmurvihill/firebase-mock/issues/67
+      _tokenValidity: {
+        issuedAtTime: new Date(),
+        authTime: new Date(1970, 1, 1),
+        expirationTime: new Date(3000, 1, 1),
+      },
+    });
+    mockauth.createUser({
+      email: 'user@two.com',
+      password: 'test2',
+      // Workaround for https://github.com/dmurvihill/firebase-mock/issues/67
+      _tokenValidity: {
+        issuedAtTime: new Date(),
+        authTime: new Date(1970, 1, 1),
+        expirationTime: new Date(3000, 1, 1),
+      },
+    });
+    mockauth.createUser({
+      email: 'user@three.com',
+      password: 't3st',
+      // Workaround for https://github.com/dmurvihill/firebase-mock/issues/67
+      _tokenValidity: {
+        issuedAtTime: new Date(),
+        authTime: new Date(1970, 1, 1),
+        expirationTime: new Date(3000, 1, 1),
+      },
+    });
+    mockauth.createUser({
+      email: 'user@four.com',
+      password: '4test',
+      // Workaround for https://github.com/dmurvihill/firebase-mock/issues/67
+      _tokenValidity: {
+        issuedAtTime: new Date(),
+        authTime: new Date(1970, 1, 1),
+        expirationTime: new Date(3000, 1, 1),
+      },
+    });
+    mockauth.createUser({
+      email: 'user@five.com',
+      password: 'te5t',
+      // Workaround for https://github.com/dmurvihill/firebase-mock/issues/67
+      _tokenValidity: {
+        issuedAtTime: new Date(),
+        authTime: new Date(1970, 1, 1),
+        expirationTime: new Date(3000, 1, 1),
+      },
+    });
     mockauth.flush();
 
     CONFIG.copyFromFirestoreData_({

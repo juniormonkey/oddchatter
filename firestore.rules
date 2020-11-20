@@ -72,8 +72,7 @@ service cloud.firestore {
       allow read: if false;
       allow write;
     }
-    // Presence: see https://dev-partners.googlesource.com/samples/firebase/extensions-alpha/+/refs/heads/master/firestore-detect-presence/sample-app/firestore.rules
-    match /presence/{uid} {
+    match /_user_presence/{uid} {
       allow read;
     }
     match /sups/{supId} {

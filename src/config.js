@@ -22,6 +22,7 @@ export class Configuration {
     this.fallback_url = '';
     this.callback_window_ms = DEFAULT_CALLBACK_WINDOW_MS;
     this.callback_threshold = DEFAULT_CALLBACK_THRESHOLD;
+    this.active_users = 0;
     this.youtube_video = '';
     this.youtube_chat = '';
     this.admin_users = [];
@@ -100,6 +101,23 @@ export class Configuration {
         (error) => {
           console.error('Error querying Firestore: ', error);
         });
+
+    const presence = window.firebase.firestore()
+                         .collection('_user_presence')
+                         .where('sessions', '>', {});
+    presence.onSnapshot(
+      (snapshot) => {
+        if (snapshot.size > 0) {
+          config.active_users = snapshot.docs.length;
+
+          for (const listener of this.change_listeners) {
+            listener(config);
+          }
+        }
+      },
+      (error) => {
+        console.error('Error querying Firestore: ', error);
+      });
   }
 
   /**

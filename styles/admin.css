@@ -38,3 +38,8 @@
 #scroll-down-container {
   top: calc(100% - 46px);
 }
+
+.active-users {
+  padding-bottom: 5px;
+  font-weight: bold;
+}

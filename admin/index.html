@@ -220,7 +220,20 @@
                 these values here.
               </div>
               <form id="callback-form" class="configuration-form" action="#">
-                <div
+                <label
+                  class="mdl-switch mdl-js-switch"
+                  style="margin-bottom: 5px"
+                  for="threshold-is-percentage"
+                >
+                  <input
+                    type="checkbox"
+                    id="threshold-is-percentage"
+                    class="mdl-switch__input"
+                    disabled
+                  />
+                  <span class="mdl-switch__label">Use the threshold as a percentage of online users</span>
+                </label>
+                  <div
                   class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
                 >
                   <input
@@ -232,7 +245,7 @@
                     disabled
                   />
                   <label class="mdl-textfield__label" for="youtube-chat-url">
-                    Number of voices it takes to trigger a video
+                    Number or percentage of voices it takes to trigger a video
                   </label>
                 </div>
                 <div

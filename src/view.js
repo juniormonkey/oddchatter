@@ -237,7 +237,7 @@ function loadCallbacks_() {
     const query = window.firebase.firestore()
                       .collection(callback.callback.getCollection())
                       .orderBy('timestamp', 'desc')
-                      .limit(config.CONFIG.callback_threshold);
+                      .limit(config.CONFIG.callbackThreshold());
 
     callback.unsubscribeFromFirestore = query.onSnapshot(
         (snapshot) => {

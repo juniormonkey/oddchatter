@@ -58,7 +58,7 @@ export class CallbackUi {
       if (lastTimestampMillis > 0) {
         // If the number of voices is above the threshold, hide the progress bar
         // and play the video.
-        if (docsWithinWindow.length >= config.CONFIG.callback_threshold) {
+        if (docsWithinWindow.length >= config.CONFIG.callbackThreshold()) {
           if (this.progressBar) {
             this.progressBar.div.remove();
             this.progressBar = null;
@@ -222,7 +222,7 @@ class CallbackProgress {
 
       // Adjust the width of the progress bar.
       progressBar.style.width =
-          `${100 * this.voices.length / config.CONFIG.callback_threshold}%`;
+          `${100 * this.voices.length / config.CONFIG.callbackThreshold()}%`;
 
       // Add the profile photo to the progress bar.
       const authorPic = document.createElement('div');

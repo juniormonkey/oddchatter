@@ -33,6 +33,8 @@ function main() {
   // Load the configuration from Firestore
   config.CONFIG.addConfigurationChangeListener(view.applyNewConfiguration);
   config.CONFIG.addConfigurationChangeListener((configuration) => {
+    userCountElement().textContent = configuration.active_users;
+
     // - on/off switch that enables/disables the app.
     enableSwitchElement().checked = configuration.enabled_;
     enableSwitchElement().removeAttribute('disabled');
@@ -62,10 +64,21 @@ function main() {
         },
     );
 
+    thresholdIsPercentageElement().checked =
+        configuration.threshold_is_percentage;
+    thresholdIsPercentageElement().removeAttribute('disabled');
+    /** @type {MaterialSwitch} */ (
+        thresholdIsPercentageElement().parentNode['MaterialSwitch'])
+        .boundChangeHandler();
+    thresholdIsPercentageElement().addEventListener('click', (e) => {
+      configuration.threshold_is_percentage = e.target.checked;
+      configuration.saveToFirestore();
+    });
+
     enableWithDefault2(
         callbackFormElement(),
         callbackThresholdElement(),
-        configuration.callback_threshold,
+        configuration.callback_threshold_raw,
         callbackWindowElement(),
         configuration.callback_window_ms,
         (callbackThreshold, callbackWindowMs) => {
@@ -85,7 +98,7 @@ function main() {
             );
             return;
           }
-          configuration.callback_threshold = +callbackThreshold;
+          configuration.callback_threshold_raw = +callbackThreshold;
           configuration.callback_window_ms = +callbackWindowMs;
         },
     );
@@ -231,12 +244,17 @@ function enableDatetimeInput(datetimeInput, defaultValue) {
 /** @return {Element} */ const fallbackFormElement = () =>
     document.getElementById('fallback-form');
 
+/** @return {Element} */ const userCountElement = () =>
+    document.getElementById('user-count');
+
 /** @return {Element} */ const enableSwitchElement = () =>
     document.getElementById('enabled');
 /** @return {Element} */ const eventStartElement = () =>
     document.getElementById('event-start');
 /** @return {Element} */ const eventStartFormElement = () =>
     document.getElementById('event-start-form');
+/** @return {Element} */ const thresholdIsPercentageElement = () =>
+    document.getElementById('threshold-is-percentage');
 /** @return {Element} */ const callbackThresholdElement = () =>
     document.getElementById('callback-threshold');
 /** @return {Element} */ const callbackWindowElement = () =>

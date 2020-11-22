@@ -21,7 +21,9 @@ export class Configuration {
     this.intro_seen = false;
     this.fallback_url = '';
     this.callback_window_ms = DEFAULT_CALLBACK_WINDOW_MS;
-    this.callback_threshold = DEFAULT_CALLBACK_THRESHOLD;
+    this.callback_threshold_raw = DEFAULT_CALLBACK_THRESHOLD;
+    this.threshold_is_percentage = false;
+    this.active_users = 0;
     this.youtube_video = '';
     this.youtube_chat = '';
     this.admin_users = [];
@@ -55,9 +57,13 @@ export class Configuration {
     this.callback_window_ms = data.hasOwnProperty('config') ?
                                   data['callback_window_ms'] :
                                   this.callback_window_ms;
-    this.callback_threshold = data.hasOwnProperty('callback_threshold') ?
-                                  data['callback_threshold'] :
-                                  this.callback_threshold;
+    this.callback_threshold_raw = data.hasOwnProperty('callback_threshold') ?
+                                      data['callback_threshold'] :
+                                      this.callback_threshold_raw;
+    this.threshold_is_percentage =
+        data.hasOwnProperty('threshold_is_percentage') ?
+            data['threshold_is_percentage'] :
+            this.threshold_is_percentage;
     this.admin_users = data.hasOwnProperty('admin_users') ?
                            data['admin_users'] :
                            this.admin_users;
@@ -75,6 +81,17 @@ export class Configuration {
    */
   enabled() {
     return this.enabled_ || DEBUG_MODE || ADMIN_MODE;
+  }
+
+  /**
+   * @return {number} The minimum number of voices that need to send a
+   * callback within callback_window_ms for the app to play the
+   * callback's video.
+   */
+  callbackThreshold() {
+    return this.threshold_is_percentage ?
+      Math.floor(this.active_users * (this.callback_threshold_raw / 100)) :
+      this.callback_threshold_raw;
   }
 
   /**
@@ -100,6 +117,23 @@ export class Configuration {
         (error) => {
           console.error('Error querying Firestore: ', error);
         });
+
+    const presence = window.firebase.firestore()
+                         .collection('_user_presence')
+                         .where('sessions', '>', {});
+    presence.onSnapshot(
+        (snapshot) => {
+          if (snapshot.size > 0) {
+            config.active_users = snapshot.docs.length;
+
+            for (const listener of this.change_listeners) {
+              listener(config);
+            }
+          }
+        },
+        (error) => {
+          console.error('Error querying Firestore: ', error);
+        });
   }
 
   /**
@@ -115,7 +149,8 @@ export class Configuration {
           'event_start': this.event_start,
           'fallback_url': this.fallback_url,
           'callback_window_ms': this.callback_window_ms,
-          'callback_threshold': this.callback_threshold,
+          'callback_threshold': this.callback_threshold_raw,
+          'threshold_is_percentage': this.threshold_is_percentage,
           'admin_users': this.admin_users,
           'youtube_video': this.youtube_video,
           'youtube_chat': this.youtube_chat,

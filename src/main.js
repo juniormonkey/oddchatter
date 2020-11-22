@@ -4,6 +4,7 @@
 
 import * as config from './config.js';
 import * as controller from './controller.js';
+import * as presence from './presence.js';
 import * as view from './view.js';
 
 function main() {
@@ -25,6 +26,9 @@ function main() {
 
   // Initialize the UI controller.
   controller.init();
+
+  // Initialize the session manager.
+  presence.sessionManager();
 
   // initialize Firebase and load the messages.
   firebase.auth().onAuthStateChanged(view.applyNewAuthState);

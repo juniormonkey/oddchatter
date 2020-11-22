@@ -9,6 +9,7 @@ import * as config from './config.js';
 import * as logging from './logging.js';
 import * as messages from './messages.js';
 import * as notifications from './notifications.js';
+import * as presence from './presence.js';
 import * as ui from './ui.js';
 import * as user from './user.js';
 
@@ -106,6 +107,8 @@ export function applyNewConfiguration(configuration) {
  */
 export async function applyNewAuthState(firebaseUser) {
   if (firebaseUser) { // User is signed in!
+    presence.sessionManager().goOnline();
+
     // Get the signed-in user's profile pic and name.
     const profilePicUrl = user.getProfilePicUrl();
     const userName = user.getUserName();
@@ -234,7 +237,7 @@ function loadCallbacks_() {
     const query = window.firebase.firestore()
                       .collection(callback.callback.getCollection())
                       .orderBy('timestamp', 'desc')
-                      .limit(config.CONFIG.callback_threshold);
+                      .limit(config.CONFIG.callbackThreshold());
 
     callback.unsubscribeFromFirestore = query.onSnapshot(
         (snapshot) => {

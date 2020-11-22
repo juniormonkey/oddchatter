@@ -166,6 +166,9 @@
               </form>
             </div>
             <div class="config-container">
+              <div class="active-users">
+                <span id="user-count">0</span> users currently chatting
+              </div>
               <div class="settings-description">
                 When the app is disabled, we show a promo for the upcoming Odd
                 Salon instead.
@@ -217,7 +220,20 @@
                 these values here.
               </div>
               <form id="callback-form" class="configuration-form" action="#">
-                <div
+                <label
+                  class="mdl-switch mdl-js-switch"
+                  style="margin-bottom: 5px"
+                  for="threshold-is-percentage"
+                >
+                  <input
+                    type="checkbox"
+                    id="threshold-is-percentage"
+                    class="mdl-switch__input"
+                    disabled
+                  />
+                  <span class="mdl-switch__label">Use the threshold as a percentage of online users</span>
+                </label>
+                  <div
                   class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
                 >
                   <input
@@ -229,7 +245,7 @@
                     disabled
                   />
                   <label class="mdl-textfield__label" for="youtube-chat-url">
-                    Number of voices it takes to trigger a video
+                    Number or percentage of voices it takes to trigger a video
                   </label>
                 </div>
                 <div
@@ -355,11 +371,12 @@
     </div>
 
     <!-- Import and configure the Firebase SDK -->
-    <script src="/__/firebase/7.19.0/firebase-app.js"></script>
-    <script src="/__/firebase/7.19.0/firebase-analytics.js"></script>
-    <script src="/__/firebase/7.19.0/firebase-auth.js"></script>
-    <script src="/__/firebase/7.19.0/firebase-firestore.js"></script>
-    <script src="/__/firebase/7.19.0/firebase-performance.js"></script>
+    <script src="/__/firebase/8.0.2/firebase-app.js"></script>
+    <script src="/__/firebase/8.0.2/firebase-analytics.js"></script>
+    <script src="/__/firebase/8.0.2/firebase-auth.js"></script>
+    <script src="/__/firebase/8.0.2/firebase-database.js"></script>
+    <script src="/__/firebase/8.0.2/firebase-firestore.js"></script>
+    <script src="/__/firebase/8.0.2/firebase-performance.js"></script>
     <script src="/__/firebase/init.js"></script>
 
     <!-- Import Autolinker and DOMPurify -->

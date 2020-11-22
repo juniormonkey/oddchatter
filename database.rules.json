@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "_firebase_extensions": {
+      "presence": {
+        "$uid": {
+          "sessions": {
+            "$sessionId": {
+              ".read": false,
+              ".write": "$uid === auth.uid",
+              ".validate": "newData.val() == true"
+            }
+          }
+        }
+      }
+    }
+  }
+}

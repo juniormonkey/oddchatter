@@ -14,7 +14,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Odd Chatter</title>
 
   <!-- Disable tap highlight on IE -->
@@ -74,8 +74,8 @@
 <div id="outer-container" hidden class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <!-- Header section containing logo -->
   <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
-    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
-      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-grid">
+      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone">
         <h3><img src="images/harvey.jpg" class="inline-icon">Odd Chatter</h3>
       </div>
       <div id="user-container">
@@ -106,10 +106,10 @@
   </header>
 
   <main class="public-works mdl-layout__content mdl-color--grey-800">
-    <div hidden id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
+    <div hidden id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-grid">
 
       <!-- Messages container -->
-      <div id="messages-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+      <div id="messages-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--top mdl-cell--12-col mdl-cell--6-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone">
         <div class="mdl-card__supporting-text mdl-color-text--grey-900">
           <div id="messages">
             <div id="last-message">&nbsp;</div>
@@ -170,7 +170,7 @@
       </div>
 
       <!-- YT Live Stream container -->
-      <div id="youtube-stream-container" hidden class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+      <div id="youtube-stream-container" hidden class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--top mdl-cell--12-col mdl-cell--6-col-desktop mdl-cell--hide-tablet mdl-cell--hide-phone">
         <iframe hidden
                 id="youtube-video"
                 width="560"
@@ -220,12 +220,13 @@
 <div id="hidden-audio"></div>
 
 <!-- Import and configure the Firebase SDK -->
-<script src="/__/firebase/7.23.0/firebase-app.js"></script>
-<script src="/__/firebase/7.23.0/firebase-analytics.js"></script>
-<script src="/__/firebase/7.23.0/firebase-auth.js"></script>
-<script src="/__/firebase/7.23.0/firebase-firestore.js"></script>
-<script src="/__/firebase/7.23.0/firebase-messaging.js"></script>
-<script src="/__/firebase/7.23.0/firebase-performance.js"></script>
+<script src="/__/firebase/8.0.2/firebase-app.js"></script>
+<script src="/__/firebase/8.0.2/firebase-analytics.js"></script>
+<script src="/__/firebase/8.0.2/firebase-auth.js"></script>
+<script src="/__/firebase/8.0.2/firebase-database.js"></script>
+<script src="/__/firebase/8.0.2/firebase-firestore.js"></script>
+<script src="/__/firebase/8.0.2/firebase-messaging.js"></script>
+<script src="/__/firebase/8.0.2/firebase-performance.js"></script>
 <script src="/__/firebase/init.js"></script>
 
 <!-- Import Autolinker and DOMPurify -->

@@ -15,16 +15,24 @@ export class Callback {
    *     The HTML form that submits the callback chat message.
    * @param {function(): Element} buttonElement The HTML button that submits the
    *     form.
+   * @param {number=} weight Optional, a multiplier to apply to the callback
+   *     window size and threshold.
    */
-  constructor(text, buttonText, videoUrls, formElement, buttonElement) {
+  constructor(text,
+              buttonText,
+              videoUrls,
+              formElement,
+              buttonElement,
+              weight = 1) {
     this.text = text;
     this.buttonText = buttonText;
     this.videoUrls = videoUrls;
     this.formElement = formElement;
     this.buttonElement = buttonElement;
+    this.weight = weight;
     /** @type {number} */
     this.lastCalledTimestampMillis =
-        Date.now() - config.CONFIG.callback_window_ms;
+        Date.now() - config.CONFIG.callbackWindowMs(weight);
   }
 
   /**
@@ -110,7 +118,8 @@ export const CALLBACKS = [
     ],
                ui.shipsFormElement, ui.shipsButtonElement),
   new Callback('👏', '👏', ['applause1.mp4', 'applause2.mp4', 'applause3.mp4'],
-               ui.applauseFormElement, ui.applauseButtonElement),
+               ui.applauseFormElement, ui.applauseButtonElement,
+               /* weight = */ 2),
   new Callback('👎', '👎', ['boo1.mp4', 'boo2.mp4', 'boo3.mp4'],
                ui.booFormElement, ui.booButtonElement),
   new Callback('STEEN', '🎙️', ['steen1.mp4', 'steen2.mp4', 'steen3.mp4'],

@@ -78,9 +78,9 @@ function main() {
     enableWithDefault2(
         callbackFormElement(),
         callbackThresholdElement(),
-        configuration.callback_threshold_raw,
+        configuration.callback_threshold_base,
         callbackWindowElement(),
-        configuration.callback_window_ms,
+        configuration.callback_window_ms_base,
         (callbackThreshold, callbackWindowMs) => {
           if (isNaN(parseInt(callbackThreshold, 10)) ||
               isNaN(+callbackThreshold)) {
@@ -98,8 +98,8 @@ function main() {
             );
             return;
           }
-          configuration.callback_threshold_raw = +callbackThreshold;
-          configuration.callback_window_ms = +callbackWindowMs;
+          configuration.callback_threshold_base = +callbackThreshold;
+          configuration.callback_window_ms_base = +callbackWindowMs;
         },
     );
 

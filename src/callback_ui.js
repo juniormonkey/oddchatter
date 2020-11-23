@@ -99,7 +99,10 @@ export class CallbackUi {
     if (!this.progressBar ||
         this.progressBar.timestamp < callbackWindowStartMillis) {
       this.progressBar = new CallbackProgress(
-          this.callback.buttonText, this.callback.getByline(), timestamp);
+          this.callback.buttonText,
+          this.callback.getByline(),
+          timestamp,
+          this.callback.weight);
       this.progressBar.display();
     }
     for (const voice of voices) {
@@ -153,11 +156,12 @@ class CallbackProgress {
    * @param {number=} weight Optional, a multiplier to apply to the callback
    *     window size and threshold.
    */
-  constructor(callbackEmoji, callbackText, timestamp) {
+  constructor(callbackEmoji, callbackText, timestamp, weight) {
     this.id = CALLBACK_ID.next();
     this.callbackEmoji = callbackEmoji;
     this.callbackText = callbackText;
     this.timestamp = timestamp;
+    this.weight = weight;
     this.div = null;
     this.voices = [];
   }

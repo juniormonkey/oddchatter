@@ -56,6 +56,25 @@
         "value" : "/scripts/admin.js.map"
       } ]
     } ]
+  } , {
+    "site": "odd-chatter-admin-dev",
+    "public": "./admin",
+    "ignore": [
+      "admin/scripts/src"
+    ],
+    "headers": [ {
+      "source" : "**/*.@(js|css|html)",
+      "headers" : [ {
+        "key" : "Cache-Control",
+        "value" : "max-age=0"
+      } ]
+    }, {
+      "source" : "**/*.@(js)",
+      "headers" : [ {
+        "key"  : "SourceMap",
+        "value" : "/scripts/admin.js.map"
+      } ]
+    } ]
   } ],
   "functions": {
     "predeploy": [

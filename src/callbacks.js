@@ -15,16 +15,24 @@ export class Callback {
    *     The HTML form that submits the callback chat message.
    * @param {function(): Element} buttonElement The HTML button that submits the
    *     form.
+   * @param {number=} weight Optional, a multiplier to apply to the callback
+   *     window size and threshold.
    */
-  constructor(text, buttonText, videoUrls, formElement, buttonElement) {
+  constructor(text,
+              buttonText,
+              videoUrls,
+              formElement,
+              buttonElement,
+              weight = 1) {
     this.text = text;
     this.buttonText = buttonText;
     this.videoUrls = videoUrls;
     this.formElement = formElement;
     this.buttonElement = buttonElement;
+    this.weight = weight;
     /** @type {number} */
     this.lastCalledTimestampMillis =
-        Date.now() - config.CONFIG.callbackWindowMs();
+        Date.now() - config.CONFIG.callbackWindowMs(weight);
   }
 
   /**

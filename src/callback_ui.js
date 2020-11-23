@@ -17,7 +17,7 @@ export class CallbackUi {
     this.callback = callback;
     /** @type {number} */
     this.lastCalledTimestampMillis =
-        Date.now() - config.CONFIG.callbackWindowMs();
+        Date.now() - config.CONFIG.callbackWindowMs(this.callback.weight);
     /** @type {function()|null} */
     this.unsubscribeFromFirestore = null;
     /** @type {CallbackProgress} The current progress bar. */
@@ -49,7 +49,8 @@ export class CallbackUi {
     /** @const {number} */
     const callbackWindowStartMillis =
         Math.max(this.lastCalledTimestampMillis,
-                 Date.now() - config.CONFIG.callbackWindowMs());
+                 Date.now() -
+                 config.CONFIG.callbackWindowMs(this.callback.weight));
     /** @const {Array<firebase.firestore.QueryDocumentSnapshot>} */
     const docsWithinWindow = docs.filter(
         doc => getTimestampMillis_(doc.data()) > callbackWindowStartMillis);
@@ -58,7 +59,8 @@ export class CallbackUi {
       if (lastTimestampMillis > 0) {
         // If the number of voices is above the threshold, hide the progress bar
         // and play the video.
-        if (docsWithinWindow.length >= config.CONFIG.callbackThreshold()) {
+        if (docsWithinWindow.length >=
+            config.CONFIG.callbackThreshold(this.callback.weight)) {
           if (this.progressBar) {
             this.progressBar.div.remove();
             this.progressBar = null;
@@ -148,6 +150,8 @@ class CallbackProgress {
    * @param {string} callbackText The full callback to use in the progress bar.
    * @param {number} timestamp The timestamp to display, in milliseconds since
    *     epoch.
+   * @param {number=} weight Optional, a multiplier to apply to the callback
+   *     window size and threshold.
    */
   constructor(callbackEmoji, callbackText, timestamp) {
     this.id = CALLBACK_ID.next();
@@ -191,7 +195,8 @@ class CallbackProgress {
       setTimeout(() => {
         const progressBar = this.div.querySelector('.callback-progress-bar');
         progressBar.style.transition =
-            `opacity ${config.CONFIG.callbackWindowMs() - 1000}ms ease-in`;
+            `opacity ${config.CONFIG.callbackWindowMs(this.weight) -
+                       1000}ms ease-in`;
         progressBar.style.opacity = 0;
       }, 1001);
 
@@ -201,7 +206,7 @@ class CallbackProgress {
         progressBar.classList.remove('callback-progress-bar');
         progressBar.classList.add('callback-progress-bar-expired');
         progressBar.removeAttribute('style');
-      }, config.CONFIG.callbackWindowMs());
+      }, config.CONFIG.callbackWindowMs(this.weight));
     }
 
     if (ui.messageListElement().dataset.scrolledToEnd) {
@@ -222,7 +227,8 @@ class CallbackProgress {
 
       // Adjust the width of the progress bar.
       progressBar.style.width =
-          `${100 * this.voices.length / config.CONFIG.callbackThreshold()}%`;
+          `${100 * this.voices.length /
+            config.CONFIG.callbackThreshold(this.weight)}%`;
 
       // Add the profile photo to the progress bar.
       const authorPic = document.createElement('div');

@@ -89,9 +89,9 @@ export class Configuration {
    * callback's video.
    */
   callbackThreshold() {
-    return this.threshold_is_percentage ?
+    return Math.max(1, this.threshold_is_percentage ?
       Math.floor(this.active_users * (this.callback_threshold_raw / 100)) :
-      this.callback_threshold_raw;
+      this.callback_threshold_raw);
   }
 
   /**

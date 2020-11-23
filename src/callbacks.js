@@ -24,7 +24,7 @@ export class Callback {
     this.buttonElement = buttonElement;
     /** @type {number} */
     this.lastCalledTimestampMillis =
-        Date.now() - config.CONFIG.callback_window_ms;
+        Date.now() - config.CONFIG.callbackWindowMs();
   }
 
   /**

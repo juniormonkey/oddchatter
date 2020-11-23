@@ -17,7 +17,7 @@ export class CallbackUi {
     this.callback = callback;
     /** @type {number} */
     this.lastCalledTimestampMillis =
-        Date.now() - config.CONFIG.callback_window_ms;
+        Date.now() - config.CONFIG.callbackWindowMs();
     /** @type {function()|null} */
     this.unsubscribeFromFirestore = null;
     /** @type {CallbackProgress} The current progress bar. */
@@ -49,7 +49,7 @@ export class CallbackUi {
     /** @const {number} */
     const callbackWindowStartMillis =
         Math.max(this.lastCalledTimestampMillis,
-                 Date.now() - config.CONFIG.callback_window_ms);
+                 Date.now() - config.CONFIG.callbackWindowMs());
     /** @const {Array<firebase.firestore.QueryDocumentSnapshot>} */
     const docsWithinWindow = docs.filter(
         doc => getTimestampMillis_(doc.data()) > callbackWindowStartMillis);
@@ -191,7 +191,7 @@ class CallbackProgress {
       setTimeout(() => {
         const progressBar = this.div.querySelector('.callback-progress-bar');
         progressBar.style.transition =
-            `opacity ${config.CONFIG.callback_window_ms - 1000}ms ease-in`;
+            `opacity ${config.CONFIG.callbackWindowMs() - 1000}ms ease-in`;
         progressBar.style.opacity = 0;
       }, 1001);
 
@@ -201,7 +201,7 @@ class CallbackProgress {
         progressBar.classList.remove('callback-progress-bar');
         progressBar.classList.add('callback-progress-bar-expired');
         progressBar.removeAttribute('style');
-      }, config.CONFIG.callback_window_ms);
+      }, config.CONFIG.callbackWindowMs());
     }
 
     if (ui.messageListElement().dataset.scrolledToEnd) {

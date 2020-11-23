@@ -115,8 +115,8 @@ The production link that we send to Odd Salon attendees is https://odd-chatter.w
 
    * `timestamp`, firebase.firestore.Timestamp: the app always uses the most recent document.
    * `admin_users`, array of string: UIDs of users who should see a 'delete' link next to each message (this should correspond to the uids in the ACLs in firestore.rules.)
-   * `callback_threshold`, number: the minimum number (if `threshold_is_percentage` is `false`) or percentage (if `threshold_is_percentage` is `true`) of users who need to say the same callback within `callback_window_ms` milliseconds for the video to play.
-   * `callback_window_ms`, number: the length of the window in milliseconds within which `callback_threshold` users need to say the same callback for the video to play.
+   * `callback_threshold`, number: the minimum number (if `threshold_is_percentage` is `false`) or percentage (if `threshold_is_percentage` is `true`) of users who need to say the same callback within `callback_window_ms` milliseconds for the video to play. A callback can optionally specify a `weight` which is a multiplier that is applied to both this and `callback_window_ms`.
+   * `callback_window_ms`, number: the length of the window in milliseconds within which `callback_threshold` users need to say the same callback for the video to play. A callback can optionally specify a `weight` which is a multiplier that is applied to both this and `callback_threshold`.
    * `enabled`, boolean: when this is false, the app stays displaying the splash screen. This allows us to enable and disable the app before and after an Odd Salon.
    * `fallback_url`, string: a URL to fall back to in an emergency. If this is non-empty, the app shows an error screen with a link to this URL.
    * `youtube_chat`, string: the video ID of a YouTube live stream. If this is non-empty, the right half of the desktop UI will embed the YouTube chat widget for that stream. If `youtube_video` is also set, the chat will appear below the embedded video.

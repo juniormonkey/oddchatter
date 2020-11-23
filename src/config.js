@@ -20,8 +20,8 @@ export class Configuration {
     this.event_start = null;
     this.intro_seen = false;
     this.fallback_url = '';
-    this.callback_window_ms = DEFAULT_CALLBACK_WINDOW_MS;
-    this.callback_threshold_raw = DEFAULT_CALLBACK_THRESHOLD;
+    this.callback_window_ms_base = DEFAULT_CALLBACK_WINDOW_MS;
+    this.callback_threshold_base = DEFAULT_CALLBACK_THRESHOLD;
     this.threshold_is_percentage = false;
     this.active_users = 0;
     this.youtube_video = '';
@@ -54,12 +54,12 @@ export class Configuration {
     this.fallback_url = data.hasOwnProperty('fallback_url') ?
                             data['fallback_url'] :
                             this.fallback_url;
-    this.callback_window_ms = data.hasOwnProperty('config') ?
+    this.callback_window_ms_base = data.hasOwnProperty('config') ?
                                   data['callback_window_ms'] :
-                                  this.callback_window_ms;
-    this.callback_threshold_raw = data.hasOwnProperty('callback_threshold') ?
+                                  this.callback_window_ms_base;
+    this.callback_threshold_base = data.hasOwnProperty('callback_threshold') ?
                                       data['callback_threshold'] :
-                                      this.callback_threshold_raw;
+                                      this.callback_threshold_base;
     this.threshold_is_percentage =
         data.hasOwnProperty('threshold_is_percentage') ?
             data['threshold_is_percentage'] :
@@ -84,14 +84,31 @@ export class Configuration {
   }
 
   /**
+   * @param {number=} weight Optional, a multiplier to apply to the returned
+   * window size.
+   * @return {number} The amount of time in ms within which a minimum of
+   * callbackThreshold() of voices need to send a callback for the app to
+   * play the callback's video.
+   */
+  callbackWindowMs(weight = 1) {
+    return weight * this.callback_window_ms_base;
+  }
+
+  /**
+   * @param {number=} weight Optional, a multiplier to apply to the returned
+   * threshold.
    * @return {number} The minimum number of voices that need to send a
-   * callback within callback_window_ms for the app to play the
+   * callback within callbackWindowMs() for the app to play the
    * callback's video.
    */
-  callbackThreshold() {
-    return Math.max(1, this.threshold_is_percentage ?
-      Math.floor(this.active_users * (this.callback_threshold_raw / 100)) :
-      this.callback_threshold_raw);
+  callbackThreshold(weight = 1) {
+    return Math.max(
+      1,
+      weight *
+        (this.threshold_is_percentage ?
+          Math.floor(this.active_users * (this.callback_threshold_base / 100)) :
+          this.callback_threshold_base),
+    );
   }
 
   /**
@@ -148,8 +165,8 @@ export class Configuration {
           'enabled': this.enabled_,
           'event_start': this.event_start,
           'fallback_url': this.fallback_url,
-          'callback_window_ms': this.callback_window_ms,
-          'callback_threshold': this.callback_threshold_raw,
+          'callback_window_ms': this.callback_window_ms_base,
+          'callback_threshold': this.callback_threshold_base,
           'threshold_is_percentage': this.threshold_is_percentage,
           'admin_users': this.admin_users,
           'youtube_video': this.youtube_video,

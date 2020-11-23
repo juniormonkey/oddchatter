@@ -96,7 +96,7 @@ describe('callbacks', function() {
     });
 
     CONFIG.threshold_is_percentage = false;
-    CONFIG.callback_threshold_raw = 3;
+    CONFIG.callback_threshold_base = 3;
   });
 
   afterEach(function() {
@@ -189,7 +189,7 @@ describe('callbacks', function() {
 
   it('correctly calculates width when threshold is percentage', function() {
     CONFIG.threshold_is_percentage = true;
-    CONFIG.callback_threshold_raw = 15;
+    CONFIG.callback_threshold_base = 15;
     // Assume 21 active users: 15% of 21 (as an integer) is 3.
     CONFIG.active_users = 21;
 

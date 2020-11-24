@@ -29,7 +29,7 @@
 }
 
 #messages {
-  height: calc(100% - 98px);
+  height: calc(100% - 110px);
 }
 
 .callback-progress-bar .callback-progress-callback {
@@ -70,20 +70,26 @@
 }
 
 .one-button-form {
-  display: inline-block;
+  display: block;
+  width: calc(100% / 7);
   margin: 0 10px 0 0;
 }
 
-.one-button-form:first-child {
-  margin-left: 10px;
+.one-button-form:last-child {
+  margin-right: 0;
+}
+
+.one-button-form button {
+  height: 42px;
+  width: 100%;
+  display: block;
 }
 
 #message-form .mdl-textfield {
-  width: calc(100% - 120px);
+  width: calc(100% - 113px);
 }
 
-#message-form button,
-#image-form button {
+#message-form button {
   width: 100px;
   margin: 0 0 0 10px;
 }

@@ -33,8 +33,6 @@ function main() {
   // Load the configuration from Firestore
   config.CONFIG.addConfigurationChangeListener(view.applyNewConfiguration);
   config.CONFIG.addConfigurationChangeListener((configuration) => {
-    userCountElement().textContent = configuration.active_users;
-
     // - on/off switch that enables/disables the app.
     enableSwitchElement().checked = configuration.enabled_;
     enableSwitchElement().removeAttribute('disabled');
@@ -243,9 +241,6 @@ function enableDatetimeInput(datetimeInput, defaultValue) {
     document.getElementById('fallback-url');
 /** @return {Element} */ const fallbackFormElement = () =>
     document.getElementById('fallback-form');
-
-/** @return {Element} */ const userCountElement = () =>
-    document.getElementById('user-count');
 
 /** @return {Element} */ const enableSwitchElement = () =>
     document.getElementById('enabled');

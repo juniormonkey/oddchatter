@@ -312,3 +312,11 @@
 #scroll-down-container {
   top: calc(100% - 158px);
 }
+
+.active-users {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: right;
+  width: 100%;
+}

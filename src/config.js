@@ -103,7 +103,7 @@ export class Configuration {
    */
   callbackThreshold(weight = 1) {
     return Math.max(
-      1,
+      2,
       weight *
         (this.threshold_is_percentage ?
           Math.floor(this.active_users * (this.callback_threshold_base / 100)) :

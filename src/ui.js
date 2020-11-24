@@ -153,6 +153,8 @@ export function messageIntersectionHandler(entries, _observer) {
     document.getElementById('messages-card-container');
 /** @return {Element} */ export const youtubeStreamContainerElement = () =>
     document.getElementById('youtube-stream-container');
+/** @return {Element} */ export const userCountElement = () =>
+    document.getElementById('user-count');
 /** @return {Element} */ export const youtubeVideoIframeElement = () =>
     document.getElementById('youtube-video');
 /** @return {Element} */ export const youtubeChatIframeElement = () =>

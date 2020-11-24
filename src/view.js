@@ -59,6 +59,10 @@ export function applyNewConfiguration(configuration) {
     logging.logEvent('screen_view', {'screen_name': 'main'});
   }
 
+  // Update the number of active users.
+  ui.userCountElement().textContent = configuration.active_users;
+  ui.userCountElement().parentElement.removeAttribute('hidden');
+
   // If there's a YouTube stream ID, show the embedded player.
   if (ui.youtubeVideoIframeElement()) {
     if (configuration.youtube_video) {

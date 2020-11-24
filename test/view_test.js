@@ -33,6 +33,11 @@ describe('view', function() {
         '    <button id="intro-button"></button>' +
         '  </div>' +
         '  <div id="messages-card-container" hidden></div>' +
+        '  <div id="youtube-stream-container" hidden>' +
+        '    <div hidden>' +
+        '      <span id="user-count">0</span> users currently chatting' +
+        '    </div>' +
+        '  </div>' +
         '</div>' +
         '<div id="hidden-audio"></div>';
 
@@ -254,4 +259,25 @@ describe('view', function() {
        ui.promoElement().should.have.attr('hidden');
        ui.outerContainerElement().should.not.have.attr('hidden');
      });
+
+  it('shows the user count when the app is enabled', function() {
+    // User count container starts hidden.
+    ui.userCountElement().parentElement.should.have.attr('hidden');
+
+    // Set enabled to true -> fills displayed user count value, shows container
+    CONFIG.copyFromFirestoreData_({enabled: true});
+    CONFIG.active_users = 35;
+    applyNewConfiguration(CONFIG);
+
+    ui.userCountElement().parentElement.should.not.have.attr('hidden');
+    ui.userCountElement().textContent.should.equal('35');
+
+    // User count update -> updates displayed value.
+    CONFIG.copyFromFirestoreData_({enabled: true});
+    CONFIG.active_users = 36;
+    applyNewConfiguration(CONFIG);
+
+    ui.userCountElement().parentElement.should.not.have.attr('hidden');
+    ui.userCountElement().textContent.should.equal('36');
+  });
 });

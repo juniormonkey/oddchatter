@@ -153,7 +153,8 @@ class CallbackProgress {
    * @param {string} callbackText The full callback to use in the progress bar.
    * @param {number} timestamp The timestamp to display, in milliseconds since
    *     epoch.
-   * @param {number} weight A multiplier to apply to the callback window size and threshold.
+   * @param {number} weight A multiplier to apply to the callback window size
+   *     and threshold.
    */
   constructor(callbackEmoji, callbackText, timestamp, weight) {
     this.id = CALLBACK_ID.next();

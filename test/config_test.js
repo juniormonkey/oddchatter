@@ -48,7 +48,7 @@ describe('config', function() {
     CONFIG.active_users = 25;
     CONFIG.callback_threshold_base = 15;
     CONFIG.threshold_is_percentage = true;
-    CONFIG.callbackThreshold(2).should.equal(6);
+    CONFIG.callbackThreshold(2).should.equal(7);
   });
 
   it('returns window size in ms', function() {

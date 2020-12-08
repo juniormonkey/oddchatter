@@ -13,28 +13,28 @@ describe('config', function() {
     CONFIG.active_users = 25;
     CONFIG.callback_threshold_base = 0;
     CONFIG.threshold_is_percentage = false;
-    CONFIG.callbackThreshold().should.equal(2);
+    CONFIG.callbackThreshold(1).should.equal(2);
   });
 
   it('returns threshold when not a percentage', function() {
     CONFIG.active_users = 25;
     CONFIG.callback_threshold_base = 3;
     CONFIG.threshold_is_percentage = false;
-    CONFIG.callbackThreshold().should.equal(3);
+    CONFIG.callbackThreshold(1).should.equal(3);
   });
 
   it('returns threshold when percentage requested', function() {
     CONFIG.active_users = 25;
     CONFIG.callback_threshold_base = 15;
     CONFIG.threshold_is_percentage = true;
-    CONFIG.callbackThreshold().should.equal(3);
+    CONFIG.callbackThreshold(1).should.equal(3);
   });
 
   it('returns threshold at least 2 when percentage requested', function() {
     CONFIG.active_users = 25;
     CONFIG.callback_threshold_base = 3;
     CONFIG.threshold_is_percentage = true;
-    CONFIG.callbackThreshold().should.equal(2);
+    CONFIG.callbackThreshold(1).should.equal(2);
   });
 
   it('returns adjusted threshold when weight is passed', function() {
@@ -53,7 +53,7 @@ describe('config', function() {
 
   it('returns window size in ms', function() {
     CONFIG.callback_window_ms_base = 10000;
-    CONFIG.callbackWindowMs().should.equal(10000);
+    CONFIG.callbackWindowMs(1).should.equal(10000);
   });
 
   it('returns adjusted window size when weight is passed', function() {

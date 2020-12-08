@@ -15,6 +15,8 @@ const Timestamp = firebase.firestore.Timestamp;
 const firebasemock = require('firebase-mock');
 const should = require('chai').should();
 
+const callbacksMap = new Map();
+
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name', 'authorPic.png',
                      messageText, null);
@@ -34,10 +36,11 @@ function fakeFirestoreUpdate(fakeFirestore) {
   }
 }
 
-function verifyProgressBarWidth(element, expectedWidthInVoices) {
+function verifyProgressBarWidth(callback, element, expectedWidthInVoices) {
   element.should.exist;
-  element.style.width.should.equal(
-      `${100 * expectedWidthInVoices / CONFIG.callbackThreshold() }%`);
+  const expectedWidth =
+      100 * expectedWidthInVoices / CONFIG.callbackThreshold(callback.weight);
+  element.style.width.should.equal(`${expectedWidth}%`);
   element.querySelectorAll('.callback-progress-voice')
       .length.should.equal(expectedWidthInVoices);
 }
@@ -93,6 +96,8 @@ describe('callbacks', function() {
       // This is needed because the real app would call this in the auth state
       // changed listener, which this test does not set up.
       callback.initAudio();
+
+      callbacksMap.set(callback.callback.getCollection(), callback.callback);
     });
 
     CONFIG.threshold_is_percentage = false;
@@ -153,14 +158,18 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
 
     fakeFirestore.get('SCIENCE').push({
       id: 'alice',
@@ -177,14 +186,18 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           2);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
   });
 
   it('correctly calculates width when threshold is percentage', function() {
@@ -235,14 +248,18 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
 
     fakeFirestore.get('SCIENCE').push({
       id: 'alice',
@@ -259,14 +276,18 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           2);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
   });
 
   it('replaces the progress bar with the video when the threshold is met',
@@ -314,14 +335,18 @@ describe('callbacks', function() {
        // 4 messages and two progress bars.
        document.getElementById('messages').children.length.should.equal(6);
 
-       verifyProgressBarWidth(document.getElementById('messages')
-           .children[2]
-           .querySelector('.callback-progress-bar'),
-                              1);
-       verifyProgressBarWidth(document.getElementById('messages')
-           .children[5]
-           .querySelector('.callback-progress-bar'),
-                              2);
+       verifyProgressBarWidth(
+           callbacksMap.get('SCIENCE'),
+           document.getElementById('messages')
+               .children[2]
+               .querySelector('.callback-progress-bar'),
+           1);
+       verifyProgressBarWidth(
+           callbacksMap.get('SHIPS'),
+           document.getElementById('messages')
+               .children[5]
+               .querySelector('.callback-progress-bar'),
+           2);
 
        fakeFirestore.get('SHIPS').push({
          id: 'david',
@@ -338,15 +363,103 @@ describe('callbacks', function() {
        // 4 messages, one progress bar, and one video.
        document.getElementById('messages').children.length.should.equal(6);
 
-       verifyProgressBarWidth(document.getElementById('messages')
-           .children[2]
-           .querySelector('.callback-progress-bar'),
-                              1);
+       verifyProgressBarWidth(
+           callbacksMap.get('SCIENCE'),
+           document.getElementById('messages')
+               .children[2]
+               .querySelector('.callback-progress-bar'),
+           1);
        should.not.exist(document.getElementById('messages')
            .children[5]
            .querySelector('.callback-progress-bar'));
        document.getElementById('messages')
            .children[5]
+           .querySelector('.callback-video')
+           .should.exist;
+     });
+
+  it('replaces the progress bar with video when a weighted threshold is met',
+     function() {
+       MockDate.set(140000);
+       createMessage('A', 'message A').display();
+       MockDate.set(141000);
+       createMessage('B', 'message B').display();
+       MockDate.set(144000);
+       createMessage('C', 'message C').display();
+       MockDate.set(148000);
+       createMessage('D', 'message D').display();
+
+       /** @const {Map<string, Array<Object>} */
+       const fakeFirestore = new Map();
+       fakeFirestore.set('APPLAUSE', []);
+       fakeFirestore.get('APPLAUSE').push({
+         id: 'alice',
+         data: () => ({
+           profilePicUrl: 'alice.png',
+           timestamp: Timestamp.fromMillis(147000),
+         }),
+       });
+       fakeFirestore.get('APPLAUSE').push({
+         id: 'bob',
+         data: () => ({
+           profilePicUrl: 'bob.png',
+           timestamp: Timestamp.fromMillis(149000),
+         }),
+       });
+       fakeFirestore.get('APPLAUSE').push({
+         id: 'carol',
+         data: () => ({
+           profilePicUrl: 'carol.png',
+           timestamp: Timestamp.fromMillis(148000),
+         }),
+       });
+       fakeFirestore.get('APPLAUSE').push({
+         id: 'david',
+         data: () => ({
+           profilePicUrl: 'david.png',
+           timestamp: Timestamp.fromMillis(150000),
+         }),
+       });
+
+       fakeFirestore.get('APPLAUSE').length.should.equal(4);
+       fakeFirestoreUpdate(fakeFirestore);
+
+       // 4 messages and one progress bar.
+       document.getElementById('messages').children.length.should.equal(5);
+
+       verifyProgressBarWidth(
+           callbacksMap.get('APPLAUSE'),
+           document.getElementById('messages')
+               .children[4]
+               .querySelector('.callback-progress-bar'),
+           4);
+
+       fakeFirestore.get('APPLAUSE').push({
+         id: 'edward',
+         data: () => ({
+           profilePicUrl: 'edward.png',
+           timestamp: Timestamp.fromMillis(151000),
+         }),
+       });
+       fakeFirestore.get('APPLAUSE').push({
+         id: 'francyne',
+         data: () => ({
+           profilePicUrl: 'francyne.png',
+           timestamp: Timestamp.fromMillis(152000),
+         }),
+       });
+
+       fakeFirestore.get('APPLAUSE').length.should.equal(6);
+       fakeFirestoreUpdate(fakeFirestore);
+
+       // 4 messages and one video.
+       document.getElementById('messages').children.length.should.equal(5);
+
+       should.not.exist(document.getElementById('messages')
+           .children[4]
+           .querySelector('.callback-progress-bar'));
+       document.getElementById('messages')
+           .children[4]
            .querySelector('.callback-video')
            .should.exist;
      });
@@ -393,14 +506,18 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
 
     MockDate.set(170000);
 
@@ -419,18 +536,24 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(7);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[6]
-        .querySelector('.callback-progress-bar'),
-                           1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[6]
+            .querySelector('.callback-progress-bar'),
+        1);
   });
 
   it('creates a new progress bar after the video is played', function() {
@@ -475,14 +598,18 @@ describe('callbacks', function() {
     // 4 messages and two progress bars.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[5]
-        .querySelector('.callback-progress-bar'),
-                           2);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[5]
+            .querySelector('.callback-progress-bar'),
+        2);
 
     fakeFirestore.get('SHIPS').push({
       id: 'david',
@@ -499,10 +626,12 @@ describe('callbacks', function() {
     // 4 messages, one progress bar, and one video.
     document.getElementById('messages').children.length.should.equal(6);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
     should.not.exist(document.getElementById('messages')
         .children[5]
         .querySelector('.callback-progress-bar'));
@@ -530,10 +659,12 @@ describe('callbacks', function() {
     // 4 messages, two progress bars, and one video
     document.getElementById('messages').children.length.should.equal(7);
 
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[2]
-        .querySelector('.callback-progress-bar'),
-                           1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SCIENCE'),
+        document.getElementById('messages')
+            .children[2]
+            .querySelector('.callback-progress-bar'),
+        1);
     should.not.exist(document.getElementById('messages')
         .children[5]
         .querySelector('.callback-progress-bar'));
@@ -541,9 +672,11 @@ describe('callbacks', function() {
         .children[5]
         .querySelector('.callback-video')
         .should.exist;
-    verifyProgressBarWidth(document.getElementById('messages')
-        .children[6]
-        .querySelector('.callback-progress-bar'),
-                           1);
+    verifyProgressBarWidth(
+        callbacksMap.get('SHIPS'),
+        document.getElementById('messages')
+            .children[6]
+            .querySelector('.callback-progress-bar'),
+        1);
   });
 });

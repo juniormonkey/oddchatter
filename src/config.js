@@ -84,31 +84,27 @@ export class Configuration {
   }
 
   /**
-   * @param {number=} weight Optional, a multiplier to apply to the returned
-   * window size.
+   * @param {number} weight A multiplier to apply to the returned window size.
    * @return {number} The amount of time in ms within which a minimum of
    * callbackThreshold() of voices need to send a callback for the app to
    * play the callback's video.
    */
-  callbackWindowMs(weight = 1) {
+  callbackWindowMs(weight) {
     return weight * this.callback_window_ms_base;
   }
 
   /**
-   * @param {number=} weight Optional, a multiplier to apply to the returned
-   * threshold.
+   * @param {number} weight A multiplier to apply to the returned threshold.
    * @return {number} The minimum number of voices that need to send a
    * callback within callbackWindowMs() for the app to play the
    * callback's video.
    */
-  callbackThreshold(weight = 1) {
-    return Math.max(
-      2,
-      weight *
-        (this.threshold_is_percentage ?
-          Math.floor(this.active_users * (this.callback_threshold_base / 100)) :
-          this.callback_threshold_base),
-    );
+  callbackThreshold(weight) {
+    let threshold = this.callback_threshold_base;
+    if (this.threshold_is_percentage) {
+      threshold = this.active_users * threshold / 100;
+    }
+    return Math.max(2, Math.floor(weight * threshold));
   }
 
   /**

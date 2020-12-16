@@ -14,14 +14,14 @@ const sinon = require('sinon');
 const chai = require('chai');
 const sinonChai = require('sinon-chai');
 
-chai.should();
+const should = chai.should();
 chai.use(sinonChai);
 
 import Autolinker from 'autolinker';
 import createDOMPurify from 'dompurify';
 
 function createMessage(id, messageText, uid = 'authorUid') {
-  return new Message(id, new Date(), uid, 'Author Name', 'authorPic.png',
+  return new Message(id, new Date(), uid, `${uid} Name`, 'authorPic.png',
                      messageText, null);
 }
 
@@ -297,5 +297,48 @@ describe('messages', function() {
         .innerHTML.should.equal('SHORT: <a href="http://oddsalon.com"' +
                                 ' target="_blank" rel="noopener noreferrer"' +
                                 '>oddsalon.com</a>');
+  });
+
+  it('only shows the first of duplicate messges', function() {
+    MockDate.set(100000);
+    createMessage('A', 'Message one').display();
+    MockDate.set(100010);
+    createMessage('B', 'Message two').display();
+    MockDate.set(100020);
+    createMessage('C', 'Message one').display();
+    MockDate.set(100030);
+    createMessage('D', 'Message one').display();
+    MockDate.set(100040);
+    createMessage('E', 'Message one', 'author two').display();
+    MockDate.set(110000);
+    createMessage('F', 'Message one').display();
+
+    // Four messages (A, B, E, and F).
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(4);
+
+    document.getElementById('A').querySelector('.message')
+        .innerHTML.should.equal('Message one');
+    document.getElementById('A').querySelector('.name')
+        .innerHTML.should.equal('authorUid Name');
+
+    document.getElementById('B').querySelector('.message')
+        .innerHTML.should.equal('Message two');
+    document.getElementById('B').querySelector('.name')
+        .innerHTML.should.equal('authorUid Name');
+
+    should.not.exist(document.getElementById('C'));
+    should.not.exist(document.getElementById('D'));
+
+    document.getElementById('E').querySelector('.message')
+        .innerHTML.should.equal('Message one');
+    document.getElementById('E').querySelector('.name')
+        .innerHTML.should.equal('author two Name');
+
+    // F is more than one second later, so it's not a duplicate.
+    document.getElementById('F').querySelector('.message')
+        .innerHTML.should.equal('Message one');
+    document.getElementById('F').querySelector('.name')
+        .innerHTML.should.equal('authorUid Name');
   });
 });

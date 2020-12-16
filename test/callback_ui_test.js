@@ -51,7 +51,9 @@ describe('callbacks', function() {
     global.DOMPurify = createDOMPurify(window);
 
     document.body.innerHTML =
-        '<div id="messages"></div>' +
+        '<div id="messages">' +
+        '  <div id="last-message">&nbsp;</div>' +
+        '</div>' +
         '<form id="message-form">' +
         '  <input type="text" id="message">' +
         '  <button id="submit" type="submit">Send</button>' +
@@ -156,7 +158,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -184,7 +187,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -246,7 +250,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -274,7 +279,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -333,7 +339,9 @@ describe('callbacks', function() {
        fakeFirestoreUpdate(fakeFirestore);
 
        // 4 messages and two progress bars.
-       document.getElementById('messages').children.length.should.equal(6);
+       document.getElementById('messages')
+           .querySelectorAll('.message-container')
+           .length.should.equal(6);
 
        verifyProgressBarWidth(
            callbacksMap.get('SCIENCE'),
@@ -361,7 +369,9 @@ describe('callbacks', function() {
        fakeFirestoreUpdate(fakeFirestore);
 
        // 4 messages, one progress bar, and one video.
-       document.getElementById('messages').children.length.should.equal(6);
+       document.getElementById('messages')
+           .querySelectorAll('.message-container')
+           .length.should.equal(6);
 
        verifyProgressBarWidth(
            callbacksMap.get('SCIENCE'),
@@ -425,7 +435,9 @@ describe('callbacks', function() {
        fakeFirestoreUpdate(fakeFirestore);
 
        // 4 messages and one progress bar.
-       document.getElementById('messages').children.length.should.equal(5);
+       document.getElementById('messages')
+           .querySelectorAll('.message-container')
+           .length.should.equal(5);
 
        verifyProgressBarWidth(
            callbacksMap.get('APPLAUSE'),
@@ -453,7 +465,9 @@ describe('callbacks', function() {
        fakeFirestoreUpdate(fakeFirestore);
 
        // 4 messages and one video.
-       document.getElementById('messages').children.length.should.equal(5);
+       document.getElementById('messages')
+           .querySelectorAll('.message-container')
+           .length.should.equal(5);
 
        should.not.exist(document.getElementById('messages')
            .children[4]
@@ -504,7 +518,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -534,7 +549,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(7);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(7);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -596,7 +612,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages and two progress bars.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -624,7 +641,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages, one progress bar, and one video.
-    document.getElementById('messages').children.length.should.equal(6);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(6);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),
@@ -657,7 +675,8 @@ describe('callbacks', function() {
     fakeFirestoreUpdate(fakeFirestore);
 
     // 4 messages, two progress bars, and one video
-    document.getElementById('messages').children.length.should.equal(7);
+    document.getElementById('messages').querySelectorAll('.message-container')
+        .length.should.equal(7);
 
     verifyProgressBarWidth(
         callbacksMap.get('SCIENCE'),

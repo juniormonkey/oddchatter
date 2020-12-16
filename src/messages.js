@@ -71,6 +71,10 @@ export class Message {
     }
     const nextMessage = ui.findDivToInsertBefore(this.timestampMillis_());
 
+    if (this.messageAlreadyDisplayed_(nextMessage)) {
+      return;
+    }
+
     // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
@@ -125,15 +129,7 @@ export class Message {
     }
 
     if (this.text) { // If the message is text.
-      messageElement.textContent = this.text;
-      // Run DOMPurify to sanitize the message text.
-      /* eslint-disable-next-line closure/no-undef */
-      messageElement.innerHTML = DOMPurify.sanitize(messageElement.innerHTML);
-      // Autolink URLs in the message text.
-      messageElement.innerHTML = this.autolinker.link(messageElement.innerHTML);
-      // Replace all line breaks by <br>.
-      messageElement.innerHTML =
-          messageElement.innerHTML.replace(/\n/g, '<br>');
+      this.fillMessageElement_(messageElement);
     } else if (this.videoUrl) { // If the message is a video.
       const video = document.createElement('video');
       video.playsInline = true;
@@ -181,6 +177,7 @@ export class Message {
     const div = container.firstChild;
     div.setAttribute('id', this.id);
 
+    div.setAttribute('author', this.authorUid);
     div.setAttribute('timestamp', this.timestampMillis_());
 
     if (!nextDiv) {
@@ -202,6 +199,54 @@ export class Message {
       this.timestamp = new Date();
     }
     return this.timestamp.getTime();
+  }
+
+  /**
+   * Fills and sanitizes the message text into the given element.
+   * @param {Element} messageElement The element to fill.
+   * @private
+   */
+  fillMessageElement_(messageElement) {
+    messageElement.textContent = this.text;
+    // Run DOMPurify to sanitize the message text.
+    /* eslint-disable-next-line closure/no-undef */
+    messageElement.innerHTML = DOMPurify.sanitize(messageElement.innerHTML);
+    // Autolink URLs in the message text.
+    messageElement.innerHTML = this.autolinker.link(messageElement.innerHTML);
+    // Replace all line breaks by <br>.
+    messageElement.innerHTML =
+        messageElement.innerHTML.replace(/\n/g, '<br>');
+  }
+
+  /**
+   * @param {Element} nextMessage The div before which we would insert this
+   * message, if we were to add it to the UI.
+   * @return {boolean} True if this message (by contents and author, not ID)
+   * is already present in the UI, in the past 1000ms.
+   */
+  messageAlreadyDisplayed_(nextMessage) {
+    if (!nextMessage) {
+      nextMessage = ui.lastMessageElement();
+    }
+    let candidate = nextMessage.previousElementSibling;
+    const messageElement = document.createElement('div');
+    this.fillMessageElement_(messageElement);
+    while (candidate) {
+      const candidateTime = parseInt(candidate.getAttribute('timestamp'), 10);
+      if (!candidateTime) {
+        continue;
+      }
+      if (candidateTime < this.timestampMillis_() - 1000) {
+        break;
+      }
+      if (candidate.getAttribute('author') === this.authorUid &&
+          candidate.querySelector('.message').innerHTML ===
+              messageElement.innerHTML) {
+        return true;
+      }
+      candidate = candidate.previousElementSibling;
+    }
+    return false;
   }
 }
 

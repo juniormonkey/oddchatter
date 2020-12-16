@@ -14,7 +14,9 @@ function createMessage(id, messageText, uid = 'authorUid') {
 describe('ui', function() {
   beforeEach(function() {
     document.body.innerHTML =
-        '<div id="messages"></div>' +
+        '<div id="messages">' +
+        '  <div id="last-message">&nbsp;</div>' +
+        '</div>' +
         '<form id="message-form">' +
         '  <input type="text" id="message">' +
         '  <button id="submit" type="submit">Send</button>' +

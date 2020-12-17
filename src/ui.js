@@ -64,11 +64,7 @@ export function findDivToInsertBefore(timestamp) {
   } else {
     const insertionPoint = goog.array.binarySearch(
         existingMessages, timestamp, (targetTime, node) => {
-          const nodeTime = parseInt(node.getAttribute('timestamp'), 10);
-
-          if (!nodeTime) {
-            throw new Error(`Child ${node.id} has no 'timestamp' attribute`);
-          }
+          const nodeTime = parseTimestampAttribute(node);
           return targetTime - nodeTime;
         });
 
@@ -106,6 +102,27 @@ export function messageIntersectionHandler(entries, _observer) {
       scrollContainerElement().removeAttribute('hidden');
     }
   }
+}
+
+export class TimestampNotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'TimestampNotFoundError';
+  }
+}
+
+/**
+ * Returns the parsed time, in milliseconds, represented by the 'timestamp'
+ * attribute of the given element.
+ * @param {Element} node The DOM Element containing the timestamp.
+ */
+export function parseTimestampAttribute(node) {
+  const nodeTime = parseInt(node.getAttribute('timestamp'), 10);
+  if (!nodeTime) {
+    throw new TimestampNotFoundError(
+        `Child ${node.id} has no 'timestamp' attribute`);
+  }
+  return nodeTime;
 }
 
 // Shortcuts to DOM Elements.

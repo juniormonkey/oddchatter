@@ -24,6 +24,8 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 const CALLBACK_STRINGS =
     callbacks.CALLBACKS.map(callback => callback.getMessage());
 
+const DUPLICATE_WINDOW_MS = 5000;
+
 export class Message {
 
   /**
@@ -71,6 +73,13 @@ export class Message {
     }
     const nextMessage = ui.findDivToInsertBefore(this.timestampMillis_());
 
+    /** @type {boolean} */
+    const messageAlreadyDisplayed =
+        (!!this.text && this.messageAlreadyDisplayed_(nextMessage));
+    if (!config.isAdminMode() && messageAlreadyDisplayed) {
+      return;
+    }
+
     // Scroll down after displaying...
     const scrollAfterDisplaying =
         /*
@@ -85,6 +94,10 @@ export class Message {
     const div =
       document.getElementById(this.id) ||
       this.createAndInsertElement_(nextMessage);
+    if (config.isAdminMode() && messageAlreadyDisplayed) {
+      div.classList.add('duplicate');
+    }
+
     // profile picture
     if (this.authorPic) {
       div.querySelector('.pic').style.backgroundImage =
@@ -125,15 +138,7 @@ export class Message {
     }
 
     if (this.text) { // If the message is text.
-      messageElement.textContent = this.text;
-      // Run DOMPurify to sanitize the message text.
-      /* eslint-disable-next-line closure/no-undef */
-      messageElement.innerHTML = DOMPurify.sanitize(messageElement.innerHTML);
-      // Autolink URLs in the message text.
-      messageElement.innerHTML = this.autolinker.link(messageElement.innerHTML);
-      // Replace all line breaks by <br>.
-      messageElement.innerHTML =
-          messageElement.innerHTML.replace(/\n/g, '<br>');
+      this.fillMessageElement_(messageElement);
     } else if (this.videoUrl) { // If the message is a video.
       const video = document.createElement('video');
       video.playsInline = true;
@@ -181,6 +186,7 @@ export class Message {
     const div = container.firstChild;
     div.setAttribute('id', this.id);
 
+    div.setAttribute('author', this.authorUid);
     div.setAttribute('timestamp', this.timestampMillis_());
 
     if (!nextDiv) {
@@ -202,6 +208,77 @@ export class Message {
       this.timestamp = new Date();
     }
     return this.timestamp.getTime();
+  }
+
+  /**
+   * Fills and sanitizes the message text into the given element.
+   * @param {Element} messageElement The element to fill.
+   * @private
+   */
+  fillMessageElement_(messageElement) {
+    messageElement.textContent = this.text;
+    // Run DOMPurify to sanitize the message text.
+    /* eslint-disable-next-line closure/no-undef */
+    messageElement.innerHTML = DOMPurify.sanitize(messageElement.innerHTML);
+    // Autolink URLs in the message text.
+    messageElement.innerHTML = this.autolinker.link(messageElement.innerHTML);
+    // Replace all line breaks by <br>.
+    messageElement.innerHTML =
+        messageElement.innerHTML.replace(/\n/g, '<br>');
+  }
+
+  /**
+   * @param {Element} nextMessage The div before which we would insert this
+   * message, if we were to add it to the UI.
+   * @return {boolean} True if this message (by contents and author, not ID)
+   * is already present in the UI, in either the past or next
+   * DUPLICATE_WINDOW_MS.
+   */
+  messageAlreadyDisplayed_(nextMessage) {
+    let candidate = nextMessage ? nextMessage : ui.lastMessageElement();
+    while (candidate) {
+      try {
+        const candidateTime = ui.parseTimestampAttribute(candidate);
+        if (candidateTime > this.timestampMillis_() + DUPLICATE_WINDOW_MS) {
+          break;
+        }
+      } catch (err) {
+        if (err instanceof ui.TimestampNotFoundError) {
+          // continue
+        } else {
+          throw err;
+        }
+      }
+      candidate = candidate.nextElementSibling;
+    }
+
+    if (!candidate) {
+      candidate = ui.lastMessageElement();
+    }
+    const tempMessageElement = document.createElement('div');
+    this.fillMessageElement_(tempMessageElement);
+
+    while (candidate) {
+      try {
+        const candidateTime = ui.parseTimestampAttribute(candidate);
+        if (candidateTime < this.timestampMillis_() - DUPLICATE_WINDOW_MS) {
+          break;
+        }
+        if (candidate.getAttribute('author') === this.authorUid &&
+            candidate.querySelector('.message').innerHTML ===
+            tempMessageElement.innerHTML) {
+          return true;
+        }
+      } catch (err) {
+        if (err instanceof ui.TimestampNotFoundError) {
+          // continue
+        } else {
+          throw err;
+        }
+      }
+      candidate = candidate.previousElementSibling;
+    }
+    return false;
   }
 }
 

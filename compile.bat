@@ -26,6 +26,7 @@ call npx google-closure-compiler ^
   --dependency_mode=PRUNE ^
   --compilation_level=ADVANCED_OPTIMIZATIONS ^
   --entry_point='src\main' ^
+  --define=config.DEBUG_MODE ^
   %*
 
 call npx postcss styles/main.css -o public\styles\main.css > NUL

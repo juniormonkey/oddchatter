@@ -24,6 +24,8 @@ const MESSAGE_TEMPLATE = '<div class="message-container">' +
 const CALLBACK_STRINGS =
     callbacks.CALLBACKS.map(callback => callback.getMessage());
 
+const DUPLICATE_WINDOW_MS = 5000;
+
 export class Message {
 
   /**
@@ -229,14 +231,15 @@ export class Message {
    * @param {Element} nextMessage The div before which we would insert this
    * message, if we were to add it to the UI.
    * @return {boolean} True if this message (by contents and author, not ID)
-   * is already present in the UI, in the past 1000ms.
+   * is already present in the UI, in either the past or next
+   * DUPLICATE_WINDOW_MS.
    */
   messageAlreadyDisplayed_(nextMessage) {
     let candidate = nextMessage ? nextMessage : ui.lastMessageElement();
     while (candidate) {
       try {
         const candidateTime = ui.parseTimestampAttribute(candidate);
-        if (candidateTime > this.timestampMillis_() + 1000) {
+        if (candidateTime > this.timestampMillis_() + DUPLICATE_WINDOW_MS) {
           break;
         }
       } catch (err) {
@@ -258,7 +261,7 @@ export class Message {
     while (candidate) {
       try {
         const candidateTime = ui.parseTimestampAttribute(candidate);
-        if (candidateTime < this.timestampMillis_() - 1000) {
+        if (candidateTime < this.timestampMillis_() - DUPLICATE_WINDOW_MS) {
           break;
         }
         if (candidate.getAttribute('author') === this.authorUid &&

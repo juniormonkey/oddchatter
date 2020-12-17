@@ -79,6 +79,7 @@ describe('messages', function() {
   });
 
   afterEach(function() {
+    overrideAdminMode(false);
     sinon.restore();
     document.body.innerHTML = '';
     MockDate.reset();

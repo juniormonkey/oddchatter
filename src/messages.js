@@ -71,7 +71,10 @@ export class Message {
     }
     const nextMessage = ui.findDivToInsertBefore(this.timestampMillis_());
 
-    if (this.messageAlreadyDisplayed_(nextMessage)) {
+    /** @type {boolean} */
+    const messageAlreadyDisplayed =
+        (!!this.text && this.messageAlreadyDisplayed_(nextMessage));
+    if (!config.isAdminMode() && messageAlreadyDisplayed) {
       return;
     }
 
@@ -89,6 +92,10 @@ export class Message {
     const div =
       document.getElementById(this.id) ||
       this.createAndInsertElement_(nextMessage);
+    if (config.isAdminMode() && messageAlreadyDisplayed) {
+      div.classList.add('duplicate');
+    }
+
     // profile picture
     if (this.authorPic) {
       div.querySelector('.pic').style.backgroundImage =
@@ -225,24 +232,46 @@ export class Message {
    * is already present in the UI, in the past 1000ms.
    */
   messageAlreadyDisplayed_(nextMessage) {
-    if (!nextMessage) {
-      nextMessage = ui.lastMessageElement();
-    }
-    let candidate = nextMessage.previousElementSibling;
-    const messageElement = document.createElement('div');
-    this.fillMessageElement_(messageElement);
+    let candidate = nextMessage ? nextMessage : ui.lastMessageElement();
     while (candidate) {
-      const candidateTime = parseInt(candidate.getAttribute('timestamp'), 10);
-      if (!candidateTime) {
-        continue;
+      try {
+        const candidateTime = ui.parseTimestampAttribute(candidate);
+        if (candidateTime > this.timestampMillis_() + 1000) {
+          break;
+        }
+      } catch (err) {
+        if (err instanceof ui.TimestampNotFoundError) {
+          // continue
+        } else {
+          throw err;
+        }
       }
-      if (candidateTime < this.timestampMillis_() - 1000) {
-        break;
-      }
-      if (candidate.getAttribute('author') === this.authorUid &&
-          candidate.querySelector('.message').innerHTML ===
-              messageElement.innerHTML) {
-        return true;
+      candidate = candidate.nextElementSibling;
+    }
+
+    if (!candidate) {
+      candidate = ui.lastMessageElement();
+    }
+    const tempMessageElement = document.createElement('div');
+    this.fillMessageElement_(tempMessageElement);
+
+    while (candidate) {
+      try {
+        const candidateTime = ui.parseTimestampAttribute(candidate);
+        if (candidateTime < this.timestampMillis_() - 1000) {
+          break;
+        }
+        if (candidate.getAttribute('author') === this.authorUid &&
+            candidate.querySelector('.message').innerHTML ===
+            tempMessageElement.innerHTML) {
+          return true;
+        }
+      } catch (err) {
+        if (err instanceof ui.TimestampNotFoundError) {
+          // continue
+        } else {
+          throw err;
+        }
       }
       candidate = candidate.previousElementSibling;
     }

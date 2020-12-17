@@ -43,3 +43,8 @@
   padding-bottom: 5px;
   font-weight: bold;
 }
+
+.duplicate {
+  color: red;
+  background-color: #ff000010;
+}

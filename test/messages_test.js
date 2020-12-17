@@ -312,6 +312,8 @@ describe('messages', function() {
     createMessage('E', 'Message one', 'author two').display();
     MockDate.set(110000);
     createMessage('F', 'Message one').display();
+    MockDate.set(109800);
+    createMessage('G', 'Message one').display();
 
     // Four messages (A, B, E, and F).
     document.getElementById('messages').querySelectorAll('.message-container')

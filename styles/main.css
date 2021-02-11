@@ -29,7 +29,7 @@
 }
 
 #messages {
-  height: calc(100% - 110px);
+  height: calc(100% - 158px);
 }
 
 .callback-progress-bar .callback-progress-callback {
@@ -67,16 +67,13 @@
 
 #message-form {
   display: block;
+  padding: 0 4px;
 }
 
 .one-button-form {
   display: block;
-  width: calc(100% / 7);
-  margin: 0 10px 0 0;
-}
-
-.one-button-form:last-child {
-  margin-right: 0;
+  margin: 5px;
+  width: auto;
 }
 
 .one-button-form button {
@@ -86,11 +83,11 @@
 }
 
 #message-form .mdl-textfield {
-  width: calc(100% - 113px);
+  width: calc(100% - 63px);
 }
 
 #message-form button {
-  width: 100px;
+  width: 50px;
   margin: 0 0 0 10px;
 }
 
@@ -310,7 +307,7 @@
 }
 
 #scroll-down-container {
-  top: calc(100% - 158px);
+  top: calc(100% - 216px);
 }
 
 .active-users {
@@ -319,4 +316,39 @@
   margin-bottom: 20px;
   text-align: right;
   width: 100%;
+}
+
+.messagebuttons {
+  margin-top: -10px;
+}
+
+.messagebuttons-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+@media screen and (max-width: 610px) {
+  #messages-card-container {
+    height: 100%;
+  }
+
+  #messages {
+    height: calc(100% - 168px);
+  }
+
+  .mdl-cell--4-col-phone.mdl-cell--4-col-phone {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .mdl-card__supporting-text {
+    padding: 4px;
+  }
+
+  #scroll-down-container {
+    left: calc(50% - 70px);
+  }
 }

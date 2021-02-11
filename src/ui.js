@@ -208,6 +208,10 @@ document.getElementById('science');
     document.getElementById('steen');
 /** @return {Element} */ export const steenFormElement = () =>
     document.getElementById('steen-form');
+/** @return {Element} */ export const cheersButtonElement = () =>
+document.getElementById('cheers');
+/** @return {Element} */ export const cheersFormElement = () =>
+    document.getElementById('cheers-form');
 
 /** @return {Element} */ export const scrollFormElement = () =>
     document.getElementById('scroll-down-form');

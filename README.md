@@ -42,7 +42,7 @@ Firebase supports running a web app on localhost, against a hosted database. Mak
 
 ```sh
 $ firebase use dev
-$ firebase serve --only hosting:dev
+$ firebase serve --only hosting:odd-chatter-dev
 ```
 
 Then your app will be available at http://localhost:5000.
@@ -76,13 +76,13 @@ The production link that we send to Odd Salon attendees is https://odd-chatter.w
 2. Run a local instance of the prod code against the dev database, to verify that everything looks good:
 
    ```sh
-   $ firebase serve -P dev --only hosting:release
+   $ firebase serve -P dev --only hosting:odd-chatter
    ```
 
 3. If everything looks good, run a local instance of the prod code against the prod database, and make sure everything is OK:
 
    ```sh
-   $ firebase serve -P release --only hosting:release
+   $ firebase serve -P release --only hosting:odd-chatter
    ```
 
 4. If this looks good too, deploy everything:
@@ -92,6 +92,35 @@ The production link that we send to Odd Salon attendees is https://odd-chatter.w
    ```
 
 5. Commit the new contents of the `release/` directory into version control, for posterity.
+
+### Deploying the admin console
+
+The admin console is at https://odd-chatter-admin.web.app, with a dev instance at https://odd-chatter-admin-dev.web.app. To release the admin console, follow these steps:
+
+1. Run a local instance of the dev admin console, at http://localhost:5000:
+
+  ```sh
+  $ firebase use dev
+  $ firebase serve --only hosting:odd-chatter-admin-dev
+  ```
+
+2. Run a local instance of the prod admin console against the dev database, to verify that everything looks good:
+
+   ```sh
+   $ firebase serve -P dev --only hosting:odd-chatter-admin
+   ```
+
+3. If everything looks good, run a local instance of the prod code against the prod database, and make sure everything is OK:
+
+   ```sh
+   $ firebase serve -P release --only hosting:odd-chatter-admin
+   ```
+
+4. If this looks good too, deploy everything (NB this deploys both the admin console and the chat app):
+
+   ```sh
+   $ firebase deploy -P release
+   ```
 
 ## How this works
 

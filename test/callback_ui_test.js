@@ -135,19 +135,24 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'alice',
       data: () => ({
+        userName: 'Alice',
         profilePicUrl: 'alice.png',
         timestamp: Timestamp.fromMillis(147000),
       }),
     });
     fakeFirestore.get('SHIPS').push({
       id: 'bob',
-      data: () => (
-          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
+      data: () => ({
+        userName: 'Bob',
+        profilePicUrl: 'bob.png',
+        timestamp: Timestamp.fromMillis(149000),
+      }),
     });
 
     fakeFirestore.get('SCIENCE').push({
       id: 'carol',
       data: () => ({
+        userName: 'Carol',
         profilePicUrl: 'carol.png',
         timestamp: Timestamp.fromMillis(143000),
       }),
@@ -177,6 +182,7 @@ describe('callbacks', function() {
     fakeFirestore.get('SCIENCE').push({
       id: 'alice',
       data: () => ({
+        userName: 'Alice',
         profilePicUrl: 'alice.png',
         timestamp: Timestamp.fromMillis(150000),
       }),
@@ -227,19 +233,24 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'alice',
       data: () => ({
+        userName: 'Alice',
         profilePicUrl: 'alice.png',
         timestamp: Timestamp.fromMillis(147000),
       }),
     });
     fakeFirestore.get('SHIPS').push({
       id: 'bob',
-      data: () => (
-          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
+      data: () => ({
+        userName: 'Bob',
+        profilePicUrl: 'bob.png',
+        timestamp: Timestamp.fromMillis(149000),
+      }),
     });
 
     fakeFirestore.get('SCIENCE').push({
       id: 'carol',
       data: () => ({
+        userName: 'Carol',
         profilePicUrl: 'carol.png',
         timestamp: Timestamp.fromMillis(143000),
       }),
@@ -269,6 +280,7 @@ describe('callbacks', function() {
     fakeFirestore.get('SCIENCE').push({
       id: 'alice',
       data: () => ({
+        userName: 'Alice',
         profilePicUrl: 'alice.png',
         timestamp: Timestamp.fromMillis(150000),
       }),
@@ -314,6 +326,7 @@ describe('callbacks', function() {
        fakeFirestore.get('SHIPS').push({
          id: 'alice',
          data: () => ({
+           userName: 'Alice',
            profilePicUrl: 'alice.png',
            timestamp: Timestamp.fromMillis(147000),
          }),
@@ -321,6 +334,7 @@ describe('callbacks', function() {
        fakeFirestore.get('SHIPS').push({
          id: 'bob',
          data: () => ({
+           userName: 'Bob',
            profilePicUrl: 'bob.png',
            timestamp: Timestamp.fromMillis(149000),
          }),
@@ -329,6 +343,7 @@ describe('callbacks', function() {
        fakeFirestore.get('SCIENCE').push({
          id: 'carol',
          data: () => ({
+           userName: 'Carol',
            profilePicUrl: 'carol.png',
            timestamp: Timestamp.fromMillis(143000),
          }),
@@ -359,6 +374,7 @@ describe('callbacks', function() {
        fakeFirestore.get('SHIPS').push({
          id: 'david',
          data: () => ({
+           userName: 'David',
            profilePicUrl: 'david.png',
            timestamp: Timestamp.fromMillis(150000),
          }),
@@ -405,6 +421,7 @@ describe('callbacks', function() {
        fakeFirestore.get('APPLAUSE').push({
          id: 'alice',
          data: () => ({
+           userName: 'Alice',
            profilePicUrl: 'alice.png',
            timestamp: Timestamp.fromMillis(147000),
          }),
@@ -412,6 +429,7 @@ describe('callbacks', function() {
        fakeFirestore.get('APPLAUSE').push({
          id: 'bob',
          data: () => ({
+           userName: 'Bob',
            profilePicUrl: 'bob.png',
            timestamp: Timestamp.fromMillis(149000),
          }),
@@ -419,6 +437,7 @@ describe('callbacks', function() {
        fakeFirestore.get('APPLAUSE').push({
          id: 'carol',
          data: () => ({
+           userName: 'Carol',
            profilePicUrl: 'carol.png',
            timestamp: Timestamp.fromMillis(148000),
          }),
@@ -426,6 +445,7 @@ describe('callbacks', function() {
        fakeFirestore.get('APPLAUSE').push({
          id: 'david',
          data: () => ({
+           userName: 'David',
            profilePicUrl: 'david.png',
            timestamp: Timestamp.fromMillis(150000),
          }),
@@ -449,6 +469,7 @@ describe('callbacks', function() {
        fakeFirestore.get('APPLAUSE').push({
          id: 'edward',
          data: () => ({
+           userName: 'Edward',
            profilePicUrl: 'edward.png',
            timestamp: Timestamp.fromMillis(151000),
          }),
@@ -456,6 +477,7 @@ describe('callbacks', function() {
        fakeFirestore.get('APPLAUSE').push({
          id: 'francyne',
          data: () => ({
+           userName: 'Francyne',
            profilePicUrl: 'francyne.png',
            timestamp: Timestamp.fromMillis(152000),
          }),
@@ -495,19 +517,24 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'alice',
       data: () => ({
+        userName: 'Alice',
         profilePicUrl: 'alice.png',
         timestamp: Timestamp.fromMillis(147000),
       }),
     });
     fakeFirestore.get('SHIPS').push({
       id: 'bob',
-      data: () => (
-          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
+      data: () => ({
+        userName: 'Bob',
+        profilePicUrl: 'bob.png',
+        timestamp: Timestamp.fromMillis(149000),
+      }),
     });
 
     fakeFirestore.get('SCIENCE').push({
       id: 'carol',
       data: () => ({
+        userName: 'Carol',
         profilePicUrl: 'carol.png',
         timestamp: Timestamp.fromMillis(143000),
       }),
@@ -539,6 +566,7 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'david',
       data: () => ({
+        userName: 'David',
         profilePicUrl: 'david.png',
         timestamp: Timestamp.fromMillis(170000),
       }),
@@ -589,19 +617,24 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'alice',
       data: () => ({
+        userName: 'Alice',
         profilePicUrl: 'alice.png',
         timestamp: Timestamp.fromMillis(147000),
       }),
     });
     fakeFirestore.get('SHIPS').push({
       id: 'bob',
-      data: () => (
-          {profilePicUrl: 'bob.png', timestamp: Timestamp.fromMillis(149000)}),
+      data: () => ({
+        userName: 'Bob',
+        profilePicUrl: 'bob.png',
+        timestamp: Timestamp.fromMillis(149000),
+      }),
     });
 
     fakeFirestore.get('SCIENCE').push({
       id: 'carol',
       data: () => ({
+        userName: 'Carol',
         profilePicUrl: 'carol.png',
         timestamp: Timestamp.fromMillis(143000),
       }),
@@ -631,6 +664,7 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'david',
       data: () => ({
+        userName: 'David',
         profilePicUrl: 'david.png',
         timestamp: Timestamp.fromMillis(150000),
       }),
@@ -665,6 +699,7 @@ describe('callbacks', function() {
     fakeFirestore.get('SHIPS').push({
       id: 'erica',
       data: () => ({
+        userName: 'Erica',
         profilePicUrl: 'erica.png',
         timestamp: Timestamp.fromMillis(152000),
       }),

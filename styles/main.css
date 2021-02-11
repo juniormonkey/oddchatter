@@ -122,7 +122,7 @@
 }
 
 #promo-image {
-  background-image: url('/images/oddments.jpg');
+  background-image: url('/images/best-in-show.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -185,8 +185,8 @@
   }
 
   #promo-image {
-    background-image: url('/images/oddments.jpg');
-    height: 150px;
+    background-image: url('/images/best-in-show-mobile.jpg');
+    height: 300px;
     width: 300px;
   }
 

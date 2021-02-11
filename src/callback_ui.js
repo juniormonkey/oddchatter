@@ -75,6 +75,7 @@ export class CallbackUi {
           const voices = docsWithinWindow.map(
               (doc) => ({
                 uid: doc.id,
+                userName: doc.data()['userName'],
                 profilePhoto: doc.data()['profilePicUrl'],
               }));
           this.displayProgress_(lastTimestampMillis, voices,
@@ -106,7 +107,7 @@ export class CallbackUi {
       this.progressBar.display();
     }
     for (const voice of voices) {
-      this.progressBar.increment(voice.uid, voice.profilePhoto);
+      this.progressBar.increment(voice.uid, voice.userName, voice.profilePhoto);
     }
   }
 
@@ -221,9 +222,10 @@ class CallbackProgress {
   /**
    * Adds a voice to the progress bar.
    * @param {string} uid The UID of the user whose voice to add.
+   * @param {string} name The user's name, to show as a title text.
    * @param {string} photoUrl The URL of the user's profile photo.
    */
-  increment(uid, photoUrl) {
+  increment(uid, name, photoUrl) {
     if (!this.voices.includes(uid)) {
       this.voices.push(uid);
 
@@ -240,6 +242,7 @@ class CallbackProgress {
       if (photoUrl) {
         authorPic.style.backgroundImage =
             `url(${ui.addSizeToGoogleProfilePic(photoUrl)})`;
+        authorPic.title = name;
       }
       progressBar.insertBefore(
           authorPic, this.div.querySelector('.callback-progress-callback'));

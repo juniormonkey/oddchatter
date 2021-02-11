@@ -112,6 +112,7 @@ function checkForCallbacks_(text) {
         .doc(user.getUid())
         .set({
           'profilePicUrl': user.getProfilePicUrl(),
+          'userName': user.getUserName(),
           'timestamp': window.firebase.firestore.FieldValue.serverTimestamp(),
         })
         .catch((error) => {

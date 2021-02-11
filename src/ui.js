@@ -112,7 +112,7 @@ export class TimestampNotFoundError extends Error {
 }
 
 /**
- * Returns the parsed time, in milliseconds, represented by the 'timestamp'
+ * @return the parsed time, in milliseconds, represented by the 'timestamp'
  * attribute of the given element.
  * @param {Element} node The DOM Element containing the timestamp.
  */

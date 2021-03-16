@@ -119,7 +119,7 @@
 }
 
 #promo-image {
-  background-image: url('/images/best-in-show.jpg');
+  background-image: url('/images/delights-and-distractions.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -182,8 +182,8 @@
   }
 
   #promo-image {
-    background-image: url('/images/best-in-show-mobile.jpg');
-    height: 300px;
+    background-image: url('/images/delights-and-distractions.jpg');
+    height: 150px;
     width: 300px;
   }
 

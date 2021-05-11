@@ -71,6 +71,6 @@
     "stylelint-config-standard": "^22.0.0"
   },
   "engines": {
-    "node": "8"
+    "node": ">=8"
   }
 }

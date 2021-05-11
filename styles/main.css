@@ -119,7 +119,7 @@
 }
 
 #promo-image {
-  background-image: url('/images/delights-and-distractions.jpg');
+  background-image: url('/images/hold-my-beer.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -182,8 +182,8 @@
   }
 
   #promo-image {
-    background-image: url('/images/delights-and-distractions.jpg');
-    height: 150px;
+    background-image: url('/images/hold-my-beer-mobile.jpg');
+    height: 224px;
     width: 300px;
   }
 

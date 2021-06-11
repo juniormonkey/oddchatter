@@ -1,5 +1,19 @@
 @import 'styles/common.css';
 
+:root {
+  --promo-image: url('/images/love-is-love.jpg');
+  --promo-image-height: 500px;
+  --promo-image-width: 889px;
+}
+
+@media screen and (max-width: 610px) {
+  :root {
+    --promo-image: url('/images/love-is-love.jpg');
+    --promo-image-height: 168px;
+    --promo-image-width: 300px;
+  }
+}
+
 .message-container .callback-emoji {
   background-color: rgba(0, 0, 0, 0.54);
   width: 30px;
@@ -126,12 +140,12 @@
 }
 
 #promo-image {
-  background-image: url('/images/love-is-love.jpg');
+  background-image: var(--promo-image);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 500px;
-  width: 889px;
+  height: var(--promo-image-height);
+  width: var(--promo-image-width);
   display: block;
   margin: auto;
 }
@@ -182,7 +196,7 @@
   }
 
   #promo-container {
-    top: calc(50% - 62px - 84px);
+    top: calc(50% - 62px - var(--promo-image-height)/2);
     width: 300px;
     position: relative;
     display: block;
@@ -190,16 +204,8 @@
   }
 
   #promo-image-container {
-    background-color: black;
-    height: 168px;
-    width: 300px;
-    display: block;
-  }
-
-  #promo-image {
-    background-image: url('/images/love-is-love.jpg');
-    height: 168px;
-    width: 300px;
+    height: var(--promo-image-height);
+    width: var(--promo-image-width);
   }
 
   #promo-social,

@@ -31,11 +31,19 @@
   "homepage": "https://github.com/juniormonkey/oddchatter#readme",
   "dependencies": {
     "autolinker": "^3.14.3",
+    "autoprefixer": "^10.2.5",
     "dompurify": "^2.2.9",
     "firebase": "^8.6.7",
     "firebase-admin": "^9.9.0",
     "firebase-functions": "^3.14.1",
-    "google-closure-library": "^20210406.0.0"
+    "google-closure-library": "^20210406.0.0",
+    "lodash": "^4.17.21",
+    "postcss-less": "^4.0.1",
+    "postcss-safe-parser": "^5.0.2",
+    "postcss-sass": "^0.5.0",
+    "postcss-scss": "^3.0.5",
+    "stylelint-config-recommended": "^5.0.0",
+    "sugarss": "^3.0.3"
   },
   "devDependencies": {
     "@sinonjs/fake-timers": "^7.1.2",

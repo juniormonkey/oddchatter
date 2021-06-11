@@ -1,5 +1,19 @@
 @import 'styles/common.css';
 
+:root {
+  --promo-image: url('/images/love-is-love.jpg');
+  --promo-image-height: 500px;
+  --promo-image-width: 889px;
+}
+
+@media screen and (max-width: 610px) {
+  :root {
+    --promo-image: url('/images/love-is-love.jpg');
+    --promo-image-height: 168px;
+    --promo-image-width: 300px;
+  }
+}
+
 .message-container .callback-emoji {
   background-color: rgba(0, 0, 0, 0.54);
   width: 30px;
@@ -118,14 +132,22 @@
   margin: auto;
 }
 
-#promo-image {
-  background-image: url('/images/hold-my-beer.jpg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+#promo-image-container {
+  background-color: black;
   height: 500px;
   width: 1000px;
   display: block;
+}
+
+#promo-image {
+  background-image: var(--promo-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: var(--promo-image-height);
+  width: var(--promo-image-width);
+  display: block;
+  margin: auto;
 }
 
 #promo-social,
@@ -174,17 +196,16 @@
   }
 
   #promo-container {
-    top: calc(50% - 210px);
+    top: calc(50% - 62px - var(--promo-image-height) / 2);
     width: 300px;
     position: relative;
     display: block;
     margin: auto;
   }
 
-  #promo-image {
-    background-image: url('/images/hold-my-beer-mobile.jpg');
-    height: 224px;
-    width: 300px;
+  #promo-image-container {
+    height: var(--promo-image-height);
+    width: var(--promo-image-width);
   }
 
   #promo-social,

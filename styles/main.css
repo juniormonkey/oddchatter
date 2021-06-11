@@ -196,7 +196,7 @@
   }
 
   #promo-container {
-    top: calc(50% - 62px - var(--promo-image-height)/2);
+    top: calc(50% - 62px - var(--promo-image-height) / 2);
     width: 300px;
     position: relative;
     display: block;

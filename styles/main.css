@@ -118,14 +118,22 @@
   margin: auto;
 }
 
+#promo-image-container {
+  background-color: black;
+  height: 500px;
+  width: 1000px;
+  display: block;
+}
+
 #promo-image {
-  background-image: url('/images/hold-my-beer.jpg');
+  background-image: url('/images/love-is-love.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   height: 500px;
-  width: 1000px;
+  width: 889px;
   display: block;
+  margin: auto;
 }
 
 #promo-social,
@@ -174,16 +182,23 @@
   }
 
   #promo-container {
-    top: calc(50% - 210px);
+    top: calc(50% - 62px - 84px);
     width: 300px;
     position: relative;
     display: block;
     margin: auto;
   }
 
+  #promo-image-container {
+    background-color: black;
+    height: 168px;
+    width: 300px;
+    display: block;
+  }
+
   #promo-image {
-    background-image: url('/images/hold-my-beer-mobile.jpg');
-    height: 224px;
+    background-image: url('/images/love-is-love.jpg');
+    height: 168px;
     width: 300px;
   }
 

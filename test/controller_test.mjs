@@ -10,8 +10,8 @@ import FakeTimers from '@sinonjs/fake-timers';
 
 import firebasemock from 'firebase-mock';
 import chai from 'chai';
-import chai_dom from 'chai-dom';
-chai.use(chai_dom);
+import chaiDom from 'chai-dom';
+chai.use(chaiDom);
 chai.should();
 
 

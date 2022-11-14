@@ -2,9 +2,9 @@
 
 import {
   CONFIG,
-} from '../src/config.js';
+} from '../src/config.mjs';
 
-const chai = require('chai');
+import chai from 'chai';
 chai.should();
 
 describe('config', function() {

@@ -3,14 +3,15 @@
 import {
   CONFIG,
   overrideAdminMode,
-} from '../src/config.js';
-import {init} from '../src/controller.js';
+} from '../src/config.mjs';
+import {init} from '../src/controller.mjs';
 
-const FakeTimers = require('@sinonjs/fake-timers');
+import FakeTimers from '@sinonjs/fake-timers';
 
-const firebasemock = require('firebase-mock');
-const chai = require('chai');
-chai.use(require('chai-dom'));
+import firebasemock from 'firebase-mock';
+import chai from 'chai';
+import chaiDom from 'chai-dom';
+chai.use(chaiDom);
 chai.should();
 
 

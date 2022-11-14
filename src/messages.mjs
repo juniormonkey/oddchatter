@@ -2,10 +2,10 @@
  * @fileoverview Code for handling messages in chat.
  */
 
-import * as callbacks from './callbacks.js';
-import * as config from './config.js';
-import * as ui from './ui.js';
-import * as user from './user.js';
+import * as callbacks from './callbacks.mjs';
+import * as config from './config.mjs';
+import * as ui from './ui.mjs';
+import * as user from './user.mjs';
 
 /**
  * Template for messages.

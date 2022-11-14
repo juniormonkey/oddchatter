@@ -2,8 +2,8 @@
  * @fileoverview The callbacks we listen for.
  */
 
-import * as config from './config.js';
-import * as ui from './ui.js';
+import * as config from './config.mjs';
+import * as ui from './ui.mjs';
 
 export class Callback {
   /**

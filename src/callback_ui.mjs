@@ -2,12 +2,12 @@
  * @fileoverview The callbacks we listen for.
  */
 
-import * as callbacks from './callbacks.js';
-import * as config from './config.js';
-import * as logging from './logging.js';
-import * as messages from './messages.js';
-import * as ui from './ui.js';
-import * as user from './user.js';
+import * as callbacks from './callbacks.mjs';
+import * as config from './config.mjs';
+import * as logging from './logging.mjs';
+import * as messages from './messages.mjs';
+import * as ui from './ui.mjs';
+import * as user from './user.mjs';
 
 export class CallbackUi {
   /**

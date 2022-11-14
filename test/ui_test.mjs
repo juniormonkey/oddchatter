@@ -1,10 +1,11 @@
 /* eslint-disable closure/no-undef */
 import MockDate from 'mockdate';
 
-import {Message} from '../src/messages.js';
-import {addSizeToGoogleProfilePic, findDivToInsertBefore} from '../src/ui.js';
+import {Message} from '../src/messages.mjs';
+import {addSizeToGoogleProfilePic, findDivToInsertBefore} from '../src/ui.mjs';
 
-const should = require('chai').should();
+import chai from 'chai';
+const should = chai.should();
 
 function createMessage(id, messageText, uid = 'authorUid') {
   return new Message(id, new Date(), uid, 'Author Name',

@@ -3,17 +3,18 @@
 import firebase from 'firebase';
 import MockDate from 'mockdate';
 
-import {CALLBACKS} from '../src/callback_ui.js';
-import {CONFIG} from '../src/config.js';
-import {Message} from '../src/messages.js';
+import {CALLBACKS} from '../src/callback_ui.mjs';
+import {CONFIG} from '../src/config.mjs';
+import {Message} from '../src/messages.mjs';
 
 import Autolinker from 'autolinker';
 import createDOMPurify from 'dompurify';
 
 const Timestamp = firebase.firestore.Timestamp;
 
-const firebasemock = require('firebase-mock');
-const should = require('chai').should();
+import firebasemock from 'firebase-mock';
+import chai from 'chai';
+const should = chai.should();
 
 const callbacksMap = new Map();
 

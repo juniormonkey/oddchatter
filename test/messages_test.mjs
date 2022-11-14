@@ -4,15 +4,15 @@ import MockDate from 'mockdate';
 
 import {
   overrideAdminMode,
-} from '../src/config.js';
+} from '../src/config.mjs';
 import {
   Message,
-} from '../src/messages.js';
+} from '../src/messages.mjs';
 
-const firebasemock = require('firebase-mock');
-const sinon = require('sinon');
-const chai = require('chai');
-const sinonChai = require('sinon-chai');
+import firebasemock from 'firebase-mock';
+import sinon from 'sinon';
+import chai from 'chai';
+import sinonChai from 'sinon-chai';
 
 const should = chai.should();
 chai.use(sinonChai);
@@ -165,7 +165,7 @@ describe('messages', function() {
         .should.not.have.been.called;
   });
 
-  // Callback strings are handled by callbacks.js.
+  // Callback strings are handled by callbacks.mjs.
   it('hides messages that match a callback string', function() {
     MockDate.set(100000);
     createMessage('A', 'message A').display();

@@ -3,13 +3,14 @@
 import {
   CONFIG,
   overrideAdminMode,
-} from '../src/config.js';
-import * as ui from '../src/ui.js';
-import {applyNewAuthState, applyNewConfiguration} from '../src/view.js';
+} from '../src/config.mjs';
+import * as ui from '../src/ui.mjs';
+import {applyNewAuthState, applyNewConfiguration} from '../src/view.mjs';
 
-const firebasemock = require('firebase-mock');
-const chai = require('chai');
-chai.use(require('chai-dom'));
+import firebasemock from 'firebase-mock';
+import chai from 'chai';
+import chai_dom from 'chai-dom';
+chai.use(chai_dom);
 chai.should();
 
 describe('view', function() {

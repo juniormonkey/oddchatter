@@ -3,12 +3,12 @@
  * this app as a MVC, this is the Controller.
  */
 
-import * as callbacks from './callbacks.js';
-import * as logging from './logging.js';
-import * as notifications from './notifications.js';
-import * as presence from './presence.js';
-import * as ui from './ui.js';
-import * as user from './user.js';
+import * as callbacks from './callbacks.mjs';
+import * as logging from './logging.mjs';
+import * as notifications from './notifications.mjs';
+import * as presence from './presence.mjs';
+import * as ui from './ui.mjs';
+import * as user from './user.mjs';
 
 /**
  * Initializes all the event listeners.

@@ -2,10 +2,10 @@
  * @fileoverview Main JS code for the Odd Chatter page.
  */
 
-import * as config from './config.js';
-import * as controller from './controller.js';
-import * as presence from './presence.js';
-import * as view from './view.js';
+import * as config from './config.mjs';
+import * as controller from './controller.mjs';
+import * as presence from './presence.mjs';
+import * as view from './view.mjs';
 
 function main() {
   /** Checks that the Firebase SDK has been correctly setup and configured. */

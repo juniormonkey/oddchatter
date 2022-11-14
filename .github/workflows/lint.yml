@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npx eslint functions/ src/ test/ --ext .js,.jsx,.ts,.tsx
+        run: npx eslint functions/ src/ test/ --ext .js,.jsx,.mjs,.ts,.tsx
 
       - name: Run stylelint 
         run: npx stylelint styles/*

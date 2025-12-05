@@ -11,19 +11,31 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: read
+
     steps:
       - uses: actions/checkout@v2
 
       - name: Set Node.js version ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
+          cache: npm
+          registry-url: "https://npm.pkg.github.com"
 
-      - name: Authenticate with private NPM package
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+      - name: Install npm dependencies
+        # Skip post-install scripts here, as a malicious script could steal NODE_AUTH_TOKEN.
+        run: "npm ci --ignore-scripts"
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install packages
-        run: npm ci
+      # `npm rebuild` will run all those post-install scripts for us.
+      - name: Run post-install scripts
+        run: "npm rebuild && npm run prepare --if-present"
+        shell: bash
 
       - name: Run ESLint
         run: npx eslint functions/ src/ test/ --ext .js,.jsx,.mjs,.ts,.tsx

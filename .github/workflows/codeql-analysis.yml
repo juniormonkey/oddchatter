@@ -18,6 +18,9 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     strategy:
       fail-fast: false

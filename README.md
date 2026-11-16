@@ -1,5 +1,7 @@
 # Odd Chatter
 
+> **ARCHIVED:** Odd Chatter is retired and will not be deployed again. Database security rules in this repository are locked down (`false`) by default.
+
 A callback-enabled chat UI for use while watching Odd Salon.
 
    * https://www.oddsalon.com
